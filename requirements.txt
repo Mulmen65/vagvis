@@ -1,0 +1,3 @@
+# Testad med Streamlit 1.66.0 (oktober 2026). Vägvis räknar i besökarens webbläsare,
+# så inga andra Python-paket behövs.
+streamlit==1.66.0

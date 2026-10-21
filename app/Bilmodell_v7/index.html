@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Bilar och körsträcka per område</title>
+  <meta name="description" content="Bilar per hushåll, körsträcka per bil och klimatpåverkan från hushållens bilar för varje DeSO i Malmö, Helsingborg och Gävle, uppskattningar för nya stadsdelar och effekter av mobilitetsåtgärder.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2313222c'/%3E%3Ccircle cx='11' cy='21' r='3.2' fill='%23fff'/%3E%3Ccircle cx='21' cy='21' r='3.2' fill='%23fff'/%3E%3Cpath d='M7 18l3-7h12l3 7z' fill='%2386b6ef'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="lib/leaflet/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="hoppa" href="#innehall">Hoppa till innehållet</a>
+
+  <header class="sidhuvud">
+    <div class="ram">
+      <div class="sidhuvud-rad">
+        <p class="intern"><span class="intern-prick" aria-hidden="true"></span>Intern version, inte för spridning</p>
+        <div class="verktyg" role="group" aria-label="Underlag och kvalitet">
+          <button type="button" class="verktyg-knapp" id="knapp-kontroll" aria-haspopup="dialog">
+            <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6 10.4l2.6 2.6L14.2 7.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Referenskontroll</button>
+          <button type="button" class="verktyg-knapp" id="knapp-ref" aria-haspopup="dialog">
+            <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 4.2c2.4-.9 4.6-.7 6.5.8v11c-1.9-1.5-4.1-1.7-6.5-.8zM16.5 4.2c-2.4-.9-4.6-.7-6.5.8v11c1.9-1.5 4.1-1.7 6.5-.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            Referenser</button>
+        </div>
+      </div>
+      <h1>Bilar och körsträcka per område</h1>
+      <p class="ingress">Välj ett område i Malmö, Helsingborg eller Gävle och se hur många bilar hushållen har och hur långt varje bil körs per år. Lägg till mobilitetsåtgärder för att se hur bilinnehav, bilkörning och klimatpåverkan kan förändras, i befintlig bebyggelse, vid förtätning och i nya stadsdelar. Fliken Klimatpåverkan visar koldioxidutsläppen från hushållens bilar på karta, med och utan åtgärdspaket.</p>
+    </div>
+  </header>
+
+  <main id="innehall" class="ram">
+    <div class="flikar" role="tablist" aria-label="Vy">
+      <button role="tab" id="flik-befintliga" aria-controls="vy-befintliga" aria-selected="true"><span class="flik-lang">Befintliga områden</span><span class="flik-kort" aria-hidden="true">Befintliga</span></button>
+      <button role="tab" id="flik-nya" aria-controls="vy-nya" aria-selected="false" tabindex="-1"><span class="flik-lang">Nya områden</span><span class="flik-kort" aria-hidden="true">Nya</span></button>
+      <button role="tab" id="flik-klimat" aria-controls="vy-klimat" aria-selected="false" tabindex="-1"><span class="flik-lang">Klimatpåverkan</span><span class="flik-kort" aria-hidden="true">Klimat</span></button>
+      <button role="tab" id="flik-referenser" aria-controls="vy-referenser" aria-selected="false" tabindex="-1"><span class="flik-lang">Åtgärder och underlag</span><span class="flik-kort" aria-hidden="true">Åtgärder</span></button>
+    </div>
+
+    <div class="layout" id="layout">
+      <div class="vansterspalt">
+
+        <!-- ============ Befintliga områden ============ -->
+        <section id="vy-befintliga" role="tabpanel" aria-labelledby="flik-befintliga">
+          <form class="val" onsubmit="return false">
+            <fieldset class="segment">
+              <legend>Stad</legend>
+              <div class="segment-knappar" id="b-stad"></div>
+            </fieldset>
+            <label class="falt">
+              <span class="falt-namn">Stadsdelsområde</span>
+              <select id="b-stadsdel"></select>
+            </label>
+            <label class="falt">
+              <span class="falt-namn">DeSO-område</span>
+              <select id="b-deso"></select>
+              <span class="falt-hjalp">DeSO saknar egna namn. Listan visar namnet på det RegSO-område som DeSO:n ligger i, följt av SCB:s DeSO-kod.</span>
+            </label>
+          </form>
+
+          <article class="resultat" aria-live="polite" aria-labelledby="b-rubrik">
+            <header class="resultat-huvud">
+              <h2 id="b-rubrik"></h2>
+              <p id="b-underrubrik" class="resultat-sub"></p>
+            </header>
+            <div class="avlasningar">
+              <div class="avlasning">
+                <h3 class="avlasning-namn">Bilar per hushåll</h3>
+                <p class="avlasning-varde"><span id="b-bph"></span></p>
+                <p class="avlasning-enhet" id="b-bph-not">bilar som hushållen har tillgång till</p>
+                <div class="remsa" id="b-remsa-bph"></div>
+              </div>
+              <div class="avlasning">
+                <h3 class="avlasning-namn">Körsträcka per bil</h3>
+                <p class="avlasning-varde"><span id="b-km"></span><span class="avlasning-suffix">km/år</span></p>
+                <p class="avlasning-enhet" id="b-mil"></p>
+                <div class="remsa" id="b-remsa-km"></div>
+              </div>
+            </div>
+            <div class="effektrad" id="b-effekt" hidden></div>
+            <dl class="detaljer" id="b-detaljer"></dl>
+            <div class="bidrag" id="b-bidrag" hidden></div>
+            <div class="paket" id="b-paket" hidden></div>
+          </article>
+
+          <section class="atgarder" id="b-atgarder" aria-labelledby="b-atg-rubrik"></section>
+          <div class="sammanfattning" id="b-sammanfattning" aria-hidden="true" hidden></div>
+        </section>
+
+        <!-- ============ Nya områden ============ -->
+        <section id="vy-nya" role="tabpanel" aria-labelledby="flik-nya" hidden>
+          <form class="val" onsubmit="return false">
+            <label class="falt">
+              <span class="falt-namn">Nybyggnadsområde</span>
+              <select id="n-omrade"></select>
+            </label>
+            <p class="omrade-text" id="n-text"></p>
+
+            <fieldset class="grupp">
+              <legend>Motsvarande befintligt område</legend>
+              <div class="segment">
+                <span class="falt-namn" id="n-stad-namn">Stad</span>
+                <div class="segment-knappar" id="n-stad" role="radiogroup" aria-labelledby="n-stad-namn"></div>
+              </div>
+              <label class="falt">
+                <span class="falt-namn">Stadsdelsområde</span>
+                <select id="n-stadsdel"></select>
+              </label>
+              <label class="falt">
+                <span class="falt-namn">DeSO-område</span>
+                <select id="n-deso"></select>
+              </label>
+              <p class="falt-hjalp" id="n-motiv"></p>
+            </fieldset>
+
+            <fieldset class="grupp">
+              <legend>Det nya området</legend>
+              <div class="falt-rad">
+                <label class="falt" id="n-kommun-falt">
+                  <span class="falt-namn">Kommun</span>
+                  <select id="n-kommun"></select>
+                </label>
+                <label class="falt">
+                  <span class="falt-namn">Antal bostäder</span>
+                  <input id="n-bostader" type="number" inputmode="numeric" min="0" step="100">
+                </label>
+                <label class="falt">
+                  <span class="falt-namn">Avstånd till Stortorget, km</span>
+                  <input id="n-avstand" type="text" inputmode="decimal" autocomplete="off" pattern="[0-9]+([,.][0-9]+)?">
+                </label>
+                <label class="falt">
+                  <span class="falt-namn">Parkeringstal, platser per bostad</span>
+                  <input id="n-ptal" type="text" inputmode="decimal" autocomplete="off" pattern="[0-9]+([,.][0-9]+)?" placeholder="Valfritt, t.ex. 0,4">
+                </label>
+              </div>
+              <p class="falt-hjalp">Klicka i kartan för att flytta området; avståndet räknas då om. Parkeringstalet sätter ett tak för bilar per hushåll. Malmös förslag till mobilitetsnorm motsvarar ungefär 0,25–0,56 platser per bostad.</p>
+              <label class="kryss">
+                <input id="n-lage" type="checkbox">
+                <span>Räkna om körsträckan till det nya områdets läge</span>
+              </label>
+            </fieldset>
+          </form>
+
+          <article class="resultat" aria-live="polite" aria-labelledby="n-rubrik">
+            <header class="resultat-huvud">
+              <h2 id="n-rubrik"></h2>
+              <p id="n-underrubrik" class="resultat-sub"></p>
+            </header>
+            <div class="avlasningar">
+              <div class="avlasning">
+                <h3 class="avlasning-namn">Uppskattade bilar per hushåll</h3>
+                <p class="avlasning-varde"><span id="n-bph"></span></p>
+                <p class="avlasning-enhet" id="n-bph-not"></p>
+                <div class="remsa" id="n-remsa-bph"></div>
+              </div>
+              <div class="avlasning">
+                <h3 class="avlasning-namn">Uppskattad körsträcka per bil</h3>
+                <p class="avlasning-varde"><span id="n-km"></span><span class="avlasning-suffix">km/år</span></p>
+                <p class="avlasning-enhet" id="n-km-not"></p>
+                <div class="remsa" id="n-remsa-km"></div>
+              </div>
+            </div>
+            <div class="effektrad" id="n-effekt" hidden></div>
+            <dl class="detaljer" id="n-detaljer"></dl>
+            <div class="bidrag" id="n-bidrag" hidden></div>
+            <div class="paket" id="n-paket" hidden></div>
+            <details class="berakning">
+              <summary>Så räknas uppskattningen</summary>
+              <ol id="n-berakning"></ol>
+            </details>
+          </article>
+
+          <section class="atgarder" id="n-atgarder" aria-labelledby="n-atg-rubrik"></section>
+          <div class="sammanfattning" id="n-sammanfattning" aria-hidden="true" hidden></div>
+        </section>
+      </div>
+
+      <aside class="kartspalt" aria-label="Karta">
+        <div class="karta-ram">
+          <div id="karta" role="application" aria-label="Karta över DeSO-områden. Klicka på ett område för att välja det."></div>
+          <p class="karta-saknas" id="karta-saknas" hidden>Kartan kunde inte laddas. Alla val fungerar ändå i listorna till vänster.</p>
+        </div>
+        <div class="teckenforklaring" id="teckenforklaring"></div>
+      </aside>
+    </div>
+
+    <!-- ============ Åtgärder och referenser ============ -->
+    <section id="vy-referenser" class="referenser" role="tabpanel" aria-labelledby="flik-referenser" hidden>
+      <div class="ref-intro">
+        <h2>Mobilitetsåtgärder och vetenskapligt underlag</h2>
+        <p>Här visas varje åtgärd i modellen: vilken effekt modellen räknar med, hur effekten har härletts och vilka studier den bygger på. Underlaget kommer i första hand från Norden och övriga norra Europa. Effektstorlekar och samverkansregler har uppdaterats med IVL:s internationella litteraturöversikt <a href="https://ivl.diva-portal.org/smash/get/diva2:1840739/FULLTEXT01.pdf" target="_blank" rel="noopener">Snabb omställning av vägtrafiken för minskad klimatpåverkan</a> (rapport C820, 2024). Där belägget kommer från andra länder anges det.</p>
+        <p>Varje åtgärd är märkt Push (gör bilen mindre attraktiv), Pull (gör alternativen bättre) eller Stöd (information, arbetsresor och körsätt).</p>
+        <p class="ref-knappar"><button type="button" class="knapp-sek" data-oppna="referenser">Alla <span id="ref-antal"></span> referenser</button>
+          <button type="button" class="knapp-sek" data-oppna="kontroll">Referenskontroll och osäkerhet</button></p>
+        <div class="grader" id="ref-grader"></div>
+      </div>
+      <div id="ref-lista"></div>
+      <section class="ref-block ref-kort" id="ref-samverkan" aria-labelledby="ref-komb-rubrik">
+        <h3 id="ref-komb-rubrik">Samverkan mellan åtgärder</h3>
+        <div id="ref-komb"></div>
+      </section>
+      <section class="ref-block" id="ref-ejmodell" aria-labelledby="ref-ejmodell-rubrik">
+        <h3 id="ref-ejmodell-rubrik">Åtgärder i IVL-rapporten som inte ingår i modellen</h3>
+        <ul class="ref-ejmodell" id="ref-ejmodell-lista"></ul>
+      </section>
+    </section>
+
+    <!-- ============ Klimatpåverkan ============ -->
+    <section id="vy-klimat" class="klimat" role="tabpanel" aria-labelledby="flik-klimat" hidden>
+      <div class="klimat-intro">
+        <h2>Klimatpåverkan från hushållens bilar</h2>
+        <p>Koldioxidutsläpp från bilarna som hushållen i varje område har tillgång till, räknat som</p>
+        <p class="formel">CO₂ = hushåll × bilar per hushåll × km per bil × (ICE-andel × 0,15 + EV-andel × 0,02)</p>
+        <p>0,15 och 0,02 är kg CO₂ per km för bensin/diesel (ICE) och el (EV). Grönt är lägre och rött högre än snittet för staden.</p>
+      </div>
+
+      <div class="klimat-layout">
+        <form class="klimat-val" onsubmit="return false" aria-label="Val för klimatkartan">
+          <fieldset class="segment">
+            <legend>Stad</legend>
+            <div class="segment-knappar" id="k-stad"></div>
+          </fieldset>
+          <fieldset class="segment">
+            <legend>Indelning</legend>
+            <div class="segment-knappar" id="k-niva"></div>
+          </fieldset>
+          <label class="falt">
+            <span class="falt-namn">Färgläggs efter</span>
+            <select id="k-matt"></select>
+          </label>
+
+          <fieldset class="grupp">
+            <legend>Åtgärder i hela staden</legend>
+            <label class="falt">
+              <span class="falt-namn">Åtgärdspaket</span>
+              <select id="k-paket"></select>
+              <span class="falt-hjalp" id="k-paket-not">Samma nivå och andel i alla områden. Visar hur mycket klimatpåverkan kan minska.</span>
+            </label>
+          </fieldset>
+
+          <fieldset class="grupp">
+            <legend>Elbilar i bilparken</legend>
+            <label class="falt">
+              <span class="falt-namn">Elbilsandel enligt</span>
+              <select id="k-ar"></select>
+              <span class="falt-hjalp" id="k-ar-not"></span>
+            </label>
+            <div class="falt-rad k-falt">
+              <label class="falt"><span class="falt-namn">Elbilar, % av bilarna</span>
+                <input id="k-el" type="text" inputmode="decimal" autocomplete="off"></label>
+              <label class="falt"><span class="falt-namn">Laddhybrider, % av bilarna</span>
+                <input id="k-lh" type="text" inputmode="decimal" autocomplete="off"></label>
+              <label class="falt"><span class="falt-namn">Laddhybrider på el, % av körningen</span>
+                <input id="k-eldrift" type="text" inputmode="decimal" autocomplete="off"></label>
+            </div>
+            <div class="falt-rad k-falt">
+              <label class="falt"><span class="falt-namn">ICE, kg CO₂ per km</span>
+                <input id="k-efice" type="text" inputmode="decimal" autocomplete="off"></label>
+              <label class="falt"><span class="falt-namn">EV, kg CO₂ per km</span>
+                <input id="k-efev" type="text" inputmode="decimal" autocomplete="off"></label>
+            </div>
+            <p class="k-fel" id="k-fel" role="alert" hidden>Kontrollera värdet. Andelarna anges i procent (0–100) och elbilar plus laddhybrider får inte överstiga 100 %. Utsläppen anges i kg per km.</p>
+            <p class="k-ef" id="k-ef" aria-live="polite"></p>
+            <p class="falt-hjalp" id="k-ar-kalla"></p>
+            <button type="button" class="lank-knapp" id="k-aterstall">Återställ antagandena</button>
+          </fieldset>
+        </form>
+
+        <div class="klimat-kartspalt">
+          <h3 class="k-rubrik" id="k-rubrik"></h3>
+          <div class="nyckeltal" aria-live="polite">
+            <div><span class="nt-namn">Totalt</span><span class="nt-varde"><span id="k-tot"></span><small>ton CO₂/år</small></span></div>
+            <div><span class="nt-namn">Per invånare</span><span class="nt-varde"><span id="k-inv"></span><small>kg/år</small></span></div>
+            <div><span class="nt-namn">Per hushåll</span><span class="nt-varde"><span id="k-hh"></span><small>kg/år</small></span></div>
+            <div><span class="nt-namn">Per fordonskm</span><span class="nt-varde"><span id="k-gkm"></span><small>g CO₂</small></span></div>
+          </div>
+          <div class="karta-ram">
+            <div id="k-karta" role="application" aria-label="Karta över klimatpåverkan per område. Klicka på ett område för detaljer; samma värden finns i tabellen nedanför."></div>
+            <p class="karta-saknas" id="k-karta-saknas" hidden>Kartan kunde inte laddas. Alla värden finns i tabellen nedanför.</p>
+          </div>
+          <p class="k-scen" id="k-scen" aria-live="polite" hidden></p>
+          <p class="k-osak" id="k-osak" hidden></p>
+          <div class="k-teckenforklaring" id="k-teckenforklaring"></div>
+          <div class="k-vald" id="k-vald" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <section class="tabell-sektion" aria-labelledby="k-tabell-rubrik">
+        <div class="k-tabell-huvud">
+          <h2 id="k-tabell-rubrik"></h2>
+          <button type="button" class="lank-knapp" id="k-ladda">Ladda ner tabellen (CSV)</button>
+        </div>
+        <p class="tabell-hjalp">Sorterad efter valt mått. Klicka på en rad för att visa området i kartan.</p>
+        <div class="tabell-rull">
+          <table class="deso-tabell k-tabell">
+            <thead>
+              <tr id="k-tabell-huvud">
+                <th scope="col">Område</th>
+                <th scope="col" class="tal">Invånare</th>
+                <th scope="col" class="tal">Hushåll</th>
+                <th scope="col" class="tal">Fordonskm per hushåll</th>
+                <th scope="col" class="tal">kg CO₂ per invånare</th>
+                <th scope="col" class="tal">kg CO₂ per hushåll</th>
+                <th scope="col" class="tal">Ton CO₂ per år</th>
+                <th scope="col" class="tal" id="k-th-minskning" hidden>Minskning, ton per år</th>
+              </tr>
+            </thead>
+            <tbody id="k-tabell"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="om k-om" aria-labelledby="k-om-rubrik">
+        <h2 id="k-om-rubrik">Så räknas klimatpåverkan</h2>
+        <div class="om-spalter">
+          <div>
+            <h3>Beräkningen</h3>
+            <p>Fordonskilometer per område är hushåll × bilar per hushåll × körsträcka per bil, samma skattningar för 2023 som i de andra flikarna. De multipliceras med ett genomsnittligt utsläpp per km.</p>
+            <p>EV-andelen är elbilarnas andel av bilparken plus den del av laddhybridernas körning som sker på el. Resten, även vanliga elhybrider, räknas som bensin och diesel.</p>
+            <p>Färgerna visar hur området ligger mot snittet för staden utan åtgärder: grönt under, grått nära snittet (±7 %) och rött över. Med ett åtgärdspaket blir kartan grönare i takt med att utsläppen minskar.</p>
+            <p>Åtgärdspaketen räknas med samma effekter och samverkansregler som i flikarna Befintliga och Nya områden, enligt bland annat IVL:s litteraturöversikt (2024). Åtgärder som minskar fordonskm och åtgärder som minskar utsläppen per km, som lägre hastighet på motorleder, multipliceras.</p>
+          </div>
+          <div>
+            <h3>Att tänka på</h3>
+            <ul>
+              <li>Elbilsandelen är densamma i hela staden. Den ändrar nivån men inte mönstret på kartan, som därför följer bilkörningen per invånare. Andelen varierar sannolikt mellan områden, bland annat med inkomst.</li>
+              <li>Kommunstatistiken gäller alla bilar som är registrerade i kommunen, även företagens. Andelen elbilar bland hushållens egna bilar är troligen något lägre. Elbilar är å andra sidan nyare och körs ofta längre än genomsnittsbilen.</li>
+              <li>Laddhybriderna antas köras 40 % på el. Europeiska mätningar visar 45–49 % för privata laddhybrider och 11–15 % för tjänstebilar.</li>
+              <li>Elbilsandelen för 2025 kombineras med bilinnehav och körsträcka för 2023.</li>
+              <li>IVL räknar med 0,14 kg CO₂e per km för personbilar 2021 och ungefär 0,18 kg per km med den sänkta reduktionsplikten från 2024. Värdet för ICE kan ändras i fältet ovan.</li>
+              <li>Åtgärdspaketet tillämpas lika i alla områden. I verkligheten skiljer sig förutsättningarna, till exempel för parkeringsavgifter och kollektivtrafik, mellan innerstad och ytterområden.</li>
+              <li>Osäkerheten räknas med en Monte Carlo-simulering av åtgärdseffekter, utsläppsfaktorer och bilmodellens fordonskm. Referenskontrollen visar att skillnaderna mellan städer är större än spannen i underlaget, så det bredare intervallet är det mer realistiska.</li>
+              <li id="k-ytor-not"></li>
+              <li>Kommunen kan beställa bilar per drivmedel för delområden från SCB (BILPAK). Då kan elbilsandelen variera mellan områden.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Källor</h3>
+            <ul class="kallor" id="k-kallor"></ul>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- Tabell för befintliga områden -->
+    <section class="tabell-sektion" id="b-tabell-sektion" aria-labelledby="b-tabell-rubrik">
+      <h2 id="b-tabell-rubrik"></h2>
+      <p class="tabell-hjalp">Värden utan åtgärder. Klicka på en rad för att välja området. Staplarna har samma skala för hela staden.</p>
+      <div class="tabell-rull">
+        <table class="deso-tabell">
+          <thead>
+            <tr>
+              <th scope="col">DeSO-område</th>
+              <th scope="col" class="tal">Hushåll</th>
+              <th scope="col" class="stapel-kol">Bilar per hushåll</th>
+              <th scope="col" class="stapel-kol">Körsträcka per bil, km/år</th>
+              <th scope="col" class="tal">Fordonskm per hushåll</th>
+            </tr>
+          </thead>
+          <tbody id="b-tabell"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Jämförelse för nya områden -->
+    <section class="tabell-sektion" id="n-tabell-sektion" aria-labelledby="n-tabell-rubrik" hidden>
+      <h2 id="n-tabell-rubrik">Samma beräkning med andra motsvarande områden</h2>
+      <p class="tabell-hjalp">Valet av motsvarande område styr resultatet mest. Värdena inkluderar valda åtgärder. Klicka på en rad för att använda området.</p>
+      <div class="tabell-rull">
+        <table class="deso-tabell">
+          <thead>
+            <tr>
+              <th scope="col">Motsvarande område</th>
+              <th scope="col">Varför det kan passa</th>
+              <th scope="col" class="tal">Bilar per hushåll</th>
+              <th scope="col" class="tal">Körsträcka per bil, km/år</th>
+              <th scope="col" class="tal">Fordonskm per hushåll</th>
+            </tr>
+          </thead>
+          <tbody id="n-tabell"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="om" id="om-allmant" aria-labelledby="om-rubrik">
+      <h2 id="om-rubrik">Om siffrorna</h2>
+      <div class="om-spalter">
+        <div>
+          <h3>Vad som visas</h3>
+          <p><strong>Bilar per hushåll</strong> är personbilar i trafik registrerade på de folkbokförda i området, delat med antalet hushåll och uppräknat med en faktor för förmånsbilar (φ = <span data-meta="phi"></span>).</p>
+          <p><strong>Körsträcka per bil</strong> är kommunens genomsnittliga körsträcka från besiktningsregistret, fördelad inom staden efter områdets avstånd till Stortorget (ε = <span data-meta="eps"></span>). Den är alltså modellerad, inte uppmätt per område.</p>
+          <p>För ett stadsdelsområde vägs DeSO-värdena: bilar per hushåll efter antal hushåll, körsträckan efter antal bilar.</p>
+        </div>
+        <div>
+          <h3>Att tänka på</h3>
+          <ul>
+            <li>Alla värden är modellskattningar för <span data-meta="referensar"></span> på <span data-meta="geografi"></span>-indelningen.</li>
+            <li>Malmös körsträcka per invånare avser 2024, Helsingborgs och Gävles 2023, medan bilar och hushåll avser 2023.</li>
+            <li>Gävle: fem DeSO i Bergby-Norrsundet och Hedesunda saknas i gränsfilen. De har ungefärligt läge och streckade, ungefärliga ytor i kartan; värdena räknas på samma sätt som för övriga DeSO.</li>
+            <li>Stadsdelsområdena är en egen indelning av SCB:s RegSO-områden för den här modellen, inte kommunernas officiella indelning.</li>
+            <li>Uppskattningar för nya områden bygger på att det nya området blir likt det valda befintliga området. Osäkerheten bedöms till ±25–40 %.</li>
+            <li>Osäkerhetsintervallen för befintliga DeSO (P5–P95) fångar osäkerheten i modellens parametrar, inte i registerdatan.</li>
+            <li>Åtgärdseffekterna bygger på studier i andra städer och förutsätter att åtgärden genomförs fullt ut enligt beskrivningen. 90-procentsintervallen kommer från en Monte Carlo-simulering med underlagets spann. Effektstorlekar och samverkansregler är avstämda mot IVL:s litteraturöversikt C820 (2024); under Referenskontroll jämförs modellen med 32 publicerade resultat.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Källor</h3>
+          <ul class="kallor">
+            <li>SCB: personbilar per DeSO (TAB6091), hushåll (TAB6568), folkmängd (TAB6574), fordon per kommun (TAB1278), DeSO-gränser (öppna geodata).</li>
+            <li>Malmö stad, Miljöbarometern: körsträcka med bil 2024.</li>
+            <li>2030-sekretariatet: körsträcka per invånare 2023, Helsingborg (555 mil) och Gävle (561 mil).</li>
+            <li>Trafikanalys: Körsträckor 2024 (privatbilsfaktor ρ = <span data-meta="rho"></span>).</li>
+            <li>Modell: <span data-meta="modellversion"></span>, uttag <span data-meta="uttagsdatum"></span>.</li>
+          </ul>
+          <p><a href="data/deso_resultat.csv" download>Ladda ner alla DeSO-värden (CSV)</a></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="sidfot">
+    <div class="ram">
+      <p>Karta © OpenStreetMap-bidragsgivare. DeSO-gränser: SCB. Kommunytor: Malmö stad (delområden), SCB, Kodapan (CC0) och OpenStreetMap. Typsnitt Barlow (SIL Open Font License). Kartbibliotek Leaflet.</p>
+    </div>
+  </footer>
+
+  <!-- ============ Referenskontroll ============ -->
+  <dialog id="dlg-kontroll" class="dlg" aria-labelledby="kk-rubrik">
+    <div class="dlg-ram">
+      <header class="dlg-huvud">
+        <div>
+          <p class="dlg-overrubrik">Kvalitetskontroll</p>
+          <h2 id="kk-rubrik">Referenskontroll mot publicerade studier</h2>
+          <p class="dlg-sub">Publicerade resultat, modellens träffsäkerhet och osäkerhet</p>
+        </div>
+        <button type="button" class="dlg-stang" data-stang aria-label="Stäng">×</button>
+      </header>
+      <div class="dlg-flikar" id="kk-flikar" role="tablist" aria-label="Del av kontrollen">
+        <button type="button" role="tab" id="kkf-studier" aria-controls="kk-vy-studier" aria-selected="true">Mot studier</button>
+        <button type="button" role="tab" id="kkf-osak" aria-controls="kk-vy-osakerhet" aria-selected="false" tabindex="-1">Osäkerhetsanalys</button>
+        <button type="button" role="tab" id="kkf-metod" aria-controls="kk-vy-metod" aria-selected="false" tabindex="-1">Metod</button>
+      </div>
+      <div class="dlg-kropp">
+        <p class="kk-laddar" id="kk-laddar" hidden>Beräknar kontrollfallen …</p>
+        <section id="kk-vy-studier" role="tabpanel" aria-labelledby="kkf-studier">
+          <div class="kk-nyckel" id="kk-nyckel"></div>
+          <div class="kk-tolkning" id="kk-tolkning"></div>
+          <div class="kk-verktyg">
+            <div class="kk-filter" id="kk-filter" role="group" aria-label="Visa kontroller"></div>
+            <label class="kk-sok"><span class="sr-only">Sök studie, åtgärd eller ort</span><input id="kk-sok" type="search" placeholder="Sök studie, åtgärd eller ort" autocomplete="off"></label>
+          </div>
+          <div class="kk-legend" aria-hidden="true">
+            <span><svg width="14" height="14"><path d="M7 0l7 7-7 7-7-7z" fill="currentColor"/></svg>Studiens värde</span>
+            <span><i class="lg-pub"></i>Studiens intervall</span>
+            <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-mod"/></svg>Modellens centrala värde</span>
+            <span><i class="lg-iv"></i>Modellens 90 %-intervall</span>
+            <span class="lg-not">Effekt i procent, negativt = minskning</span>
+          </div>
+          <p class="kk-antal" id="kk-antal"></p>
+          <div class="kk-diagram">
+            <div class="kk-rad kk-axelrad" aria-hidden="true"><div></div><div id="kk-axel"></div><div></div></div>
+            <div id="kk-rader"></div>
+            <div class="kk-rad kk-axelrad" aria-hidden="true"><div></div><div id="kk-axel-ned"></div><div></div></div>
+          </div>
+          <div class="kk-export">
+            <button type="button" class="lank-knapp" id="kk-svg">Ladda ned diagram (SVG)</button>
+            <button type="button" class="lank-knapp" id="kk-csv">Ladda ned resultat (CSV)</button>
+          </div>
+          <details class="kk-detaljer">
+            <summary>Visa alla <span id="kk-tabell-antal"></span> resultat som tabell</summary>
+            <div class="tabell-rull">
+              <table class="kk-tabell">
+                <thead><tr><th scope="col">Nr</th><th scope="col">Studie och jämförelse</th><th scope="col" class="tal">Publicerat</th><th scope="col" class="tal">Modell</th><th scope="col" class="tal">Modellens 90 %-intervall</th><th scope="col">Tolkning</th><th scope="col">Kategori</th><th scope="col">Modellinställning</th></tr></thead>
+                <tbody id="kk-tabell"></tbody>
+              </table>
+            </div>
+          </details>
+        </section>
+        <section id="kk-vy-osakerhet" role="tabpanel" aria-labelledby="kkf-osak" hidden>
+          <form class="ko-val" onsubmit="return false">
+            <fieldset class="segment"><legend>Stad</legend><div class="segment-knappar" id="ko-stad"></div></fieldset>
+            <label class="falt"><span class="falt-namn">Åtgärdspaket i hela staden</span><select id="ko-paket"></select></label>
+          </form>
+          <div id="ko-resultat"></div>
+          <h3>Hur brett blir intervallet med olika antaganden?</h3>
+          <div id="ko-jamfor" class="ko-figur"></div>
+          <h3>Vad driver osäkerheten i minskningen?</h3>
+          <div id="ko-tornado" class="ko-figur"></div>
+          <h3>Fördelningar</h3>
+          <div class="tabell-rull"><table class="ko-tabell ko-par"><thead><tr><th scope="col">Parameter</th><th scope="col" class="tal">Lägst – centralt – högst</th><th scope="col">Underlag</th></tr></thead><tbody id="ko-parametrar"></tbody></table></div>
+          <h4>Åtgärdernas effekter, minst / centralt / mest</h4>
+          <div class="tabell-rull"><table class="ko-tabell"><thead><tr><th scope="col">Åtgärd</th><th scope="col" class="tal">Bilinnehav</th><th scope="col" class="tal">Fordonskm</th><th scope="col" class="tal">CO₂ per km</th><th scope="col" class="tal">Evidens</th></tr></thead><tbody id="ko-atgarder"></tbody></table></div>
+          <div class="ko-spalter">
+            <div><h3>Vad som ingår</h3><p id="ko-ingar"></p></div>
+            <div><h3>Vad som inte ingår</h3><ul id="ko-ingar-inte"></ul></div>
+          </div>
+        </section>
+        <section id="kk-vy-metod" role="tabpanel" aria-labelledby="kkf-metod" hidden>
+          <h3>Så görs kontrollen</h3>
+          <div id="km-metod"></div>
+          <h3>Tolkning av resultaten</h3>
+          <ul class="km-status" id="km-status"></ul>
+          <h3>Överföringsosäkerhet</h3>
+          <div id="km-overforing"></div>
+        </section>
+      </div>
+      <footer class="dlg-fot">
+        <span>Monte Carlo med 2 000 dragningar och korrelation 0,5 mellan åtgärder</span>
+        <button type="button" class="knapp" data-stang>Stäng</button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- ============ Referenser ============ -->
+  <dialog id="dlg-ref" class="dlg" aria-labelledby="rf-rubrik">
+    <div class="dlg-ram">
+      <header class="dlg-huvud">
+        <div>
+          <p class="dlg-overrubrik">Underlag</p>
+          <h2 id="rf-rubrik">Referenser</h2>
+          <p class="dlg-sub">Studierna bakom åtgärdernas effekter, samverkansreglerna och referenskontrollen</p>
+        </div>
+        <button type="button" class="dlg-stang" data-stang aria-label="Stäng">×</button>
+      </header>
+      <div class="dlg-kropp">
+        <div class="kk-verktyg">
+          <div class="kk-filter" id="rf-filter" role="group" aria-label="Visa referenser"></div>
+          <label class="kk-sok"><span class="sr-only">Sök författare, ort eller ämne</span><input id="rf-sok" type="search" placeholder="Sök författare, ort eller ämne" autocomplete="off"></label>
+        </div>
+        <p class="kk-antal" id="rf-antal"></p>
+        <ol class="rf-lista" id="rf-lista"></ol>
+      </div>
+      <footer class="dlg-fot">
+        <span>Länkarna öppnas i en ny flik</span>
+        <button type="button" class="knapp" data-stang>Stäng</button>
+      </footer>
+    </div>
+  </dialog>
+
+  <script src="lib/leaflet/leaflet.js"></script>
+  <script src="data.js"></script>
+  <script src="atgarder.js"></script>
+  <script src="osakerhet.js"></script>
+  <script src="geo.js"></script>
+  <script src="mc.js"></script>
+  <script src="klimat.js"></script>
+  <script src="app.js"></script>
+  <script src="kontroll.js"></script>
+</body>
+</html>
