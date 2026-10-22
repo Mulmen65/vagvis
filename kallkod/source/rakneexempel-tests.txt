@@ -1,0 +1,8 @@
+OK  A basinställning: 321 områden, räkneexemplet = kartan för basfall och scenario (avvikelse under 0,1 kg CO₂e i alla områden). Väglängd i områdena 3406.3 km.
+OK  A 1280C1450: 6289.3 ton CO₂e, 20.89 milj. fordonskm, 33.26 km väg.
+OK  A Helsingborg: ingen kalibrering, faktor 1 för alla fordonsslag.
+OK  A scenario: 321 områden, räkneexemplet = kartan för basfall och scenario (avvikelse under 0,1 kg CO₂e i alla områden). Väglängd i områdena 3406.3 km.
+OK  A scenario: de boendes trafik och ny väg (1,2 km) syns som egna rader i räkneexemplet för 1280C1450.
+OK  B: 360 områden, räkneexemplet = kartan för direkt CO₂, livscykel och alla delar (avvikelse under 0,1 kg).
+OK  Ytor: 672 områden har yta; webbläsarens ytformel avviker högst 1.08 % från SWEREF 99 TM.
+Alla kontroller godkända (22 s).

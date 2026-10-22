@@ -1,3 +1,45 @@
+VÄGVIS 2.0.7 – 22 oktober 2026 (CO2 per hektar och fliken Så räknas resultatet)
+
+Basfallet är oförändrat: startresultatet i A är identiskt med 2.0.6 tal för tal (10 914 värden), och alla
+resultat i A och B, med och utan scenario, är identiska (59 268 jämförda värden). Beräkningsmotorerna har bara
+fått nya fält för räkneexemplet.
+
+CO2 per hektar (Karta & områden)
+- Modell A: områdespanelen visar totalen (ton CO2e per år) och utsläppen per hektar landyta bredvid varandra,
+  även för scenariot och 95-procentsintervallet. Kartan har valet Totalt / Per hektar. Tabellen har kolumnerna
+  Ton/ha och Landyta, och tooltipen visar båda talen.
+- Landytan är DeSO-gränsen (SCB) klippt mot Bilmodell v7:s landmask, räknad i SWEREF 99 TM
+  (source/berakna_ytor.py, resultat i source/omradesytor.json). Vatten inom kommungränsen räknas inte som yta,
+  men trafiken på broar ingår fortfarande i totalen.
+- Modell B: nytt mått "ton CO2 per hektar" (direkt eller livscykel), i kartan, panelen, tooltipen och tabellen.
+  Ytan är v7:s landklippta DeSO-yta. Eftersom tätheten skiljer mycket mellan stad och landsbygd färgas
+  måttet mot medianen för områdena, med gränserna ¼, ½, 0,8, 1,25, 2 och 4 gånger medianen.
+- Exporten "Exportera denna nivå" och resultattabellen har yta och ton per hektar.
+
+Ny flik: Så räknas resultatet (båda modellerna)
+- Räknar om valt område steg för steg ur samma beräkning som kartan, med verkliga tal:
+  A: vägnät per vägklass (km, schablon-ÅDT, ÅDT i snitt, fordonskm) → fordonsslag → kalibrering (Malmö) →
+  g CO2e per km i sex delar (personbilen drivlina för drivlina) → ton, och per hektar.
+  B: hushåll och bilar (SCB) → bilar per hushåll (× 1,05) → körsträcka (C × avstånd^0,1) → fordonskm →
+  elandel → direkt CO2 som Bilmodell v7 → livscykel, och per hektar. Stadsdelsområden visar alla sina DeSO.
+- Summan jämförs med kartans värde ("Stämmer med kartan"). Scenariot förklaras när det skiljer sig.
+- Schablonerna och var de kommer ifrån: varje värde med storlek, hur det har tagits fram, status (Källa,
+  Jämförd eller Antagande) och källhänvisning.
+- Kontroller mot oberoende data, till exempel Malmös vägnät före kalibrering mot kommunens redovisning (−8 %),
+  Helsingborg mot kommunens klimat- och energiplan (+30 %), avgaser per km mot Trafikverkets HBEFA-faktorer,
+  livscykel per km mot ICCT (2025) och batteriet mot IVL (61–106 kg CO2e/kWh).
+- Så kan resultatet bli säkrare: de viktigaste förbättringarna av indata.
+- Referenslista med länkar. Nio nya källor under Metod & källor (Trafikverket, Trafikanalys, IVL, Göteborgs
+  stad, Helsingborgs stad, Energimyndigheten och Bilmodell v7:s källor).
+- Knappen "Så räknas resultatet" finns i områdespanelen i kartan.
+
+Nya tester: source/test_rakneexempel.cjs (räkneexemplet = kartan för alla 321 områden i A och 360 i B, basfall
+och scenario; ytor) och source/test_webblasare_rakneexempel.py.
+
+Gävle i modell A: kräver Gävles vägnät från OpenStreetMap och DeSO 2025 från SCB, som inte kan hämtas från
+byggmiljön. Se meddelandet till 2.0.7.
+
+
 VÄGVIS 2.0.6 – 22 oktober 2026 (tydligare scenario och scenariot i kartan)
 
 Basfallet är oförändrat: startresultatet i A är identiskt med 2.0.5 tal för tal, och beräkningen i A och B är

@@ -2,6 +2,9 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),V=require('./core.js');
 const {V7}=require('./sokvagar.cjs'),root=path.resolve(__dirname,'..'),read=f=>fs.readFileSync(path.join(__dirname,f),'utf8'),safe=x=>JSON.stringify(x).replaceAll('<','\\u003c');
 const initial=JSON.parse(read('geodata_project.json')),household=JSON.parse(read('household_project.json')),land=JSON.parse(read('land_masks.json'));
+/* 2.0.7: ytor per område (berakna_ytor.py) och Bilmodell v7:s modellparametrar för räkneexemplet */
+const ytor=JSON.parse(read('omradesytor.json'));for(const [m,pr] of [['A',initial],['B',household]])for(const a of pr.areas)if(!ytor[m][a.level+'|'+a.city+'|'+a.id])throw Error('Yta saknas för '+m+' '+a.id+'. Kör python source/berakna_ytor.py.');
+const v7meta=JSON.parse(fs.readFileSync(path.join(V7,'data.js'),'utf8').match(/window\.MODELL_META = (\{.*?\});\n/)[1]);
 const config=V.config(initial.config||{});V.validateProject(initial);require('./households.js').validate(household,V.config(household.config));
 let leafletCSS=fs.readFileSync(path.join(V7,'lib/leaflet/leaflet.css'),'utf8');
 leafletCSS=leafletCSS.replace(/url\(images\/([^\)]+)\)/g,(_,name)=>'url(data:image/png;base64,'+fs.readFileSync(path.join(V7,'lib/leaflet/images',name)).toString('base64')+')');
@@ -10,7 +13,7 @@ const startResult=(()=>{const bp=V.validateProject(JSON.parse(safe(initial))),bc
 let e=ok();if(!e){console.log('Beräknar startresultatet ('+bc.iterations+' simuleringar, 1–3 min) …');require('node:child_process').execFileSync(process.execPath,[path.join(__dirname,'startresultat.cjs'),key],{stdio:'inherit'});e=ok();if(!e)throw Error('Startresultatet kunde inte beräknas.');}return e;})();
 const v7berakning=require('./v7_utdrag.cjs').v7Berakning(V7);fs.writeFileSync(path.join(__dirname,'v7_berakning.js'),v7berakning);
 const v7js=f=>fs.readFileSync(path.join(V7,f),'utf8').replaceAll('</script','<\\/script');
-let html=read('shell.html');const values={STYLE:read('style.css'),LEAFLET_CSS:leafletCSS,LEAFLET:fs.readFileSync(path.join(V7,'lib/leaflet/leaflet.js'),'utf8'),PROJECT:safe(initial),CONFIG:safe(config),HOUSEHOLD_PROJECT:safe(household),LAND:safe(land),CORE:read('core.js'),HOUSEHOLDS:read('households.js'),MAPS:read('maps.js'),NETWORK:read('network.js'),APP:read('app.js'),RESULT:safe(startResult),V7_ATGARDER:v7js('atgarder.js'),V7_OSAKERHET:v7js('osakerhet.js'),V7_MC:v7js('mc.js'),V7_BERAKNING:v7berakning.replaceAll('</script','<\\/script')};
+let html=read('shell.html');const values={STYLE:read('style.css'),LEAFLET_CSS:leafletCSS,LEAFLET:fs.readFileSync(path.join(V7,'lib/leaflet/leaflet.js'),'utf8'),PROJECT:safe(initial),CONFIG:safe(config),HOUSEHOLD_PROJECT:safe(household),LAND:safe(land),YTOR:safe(ytor),V7META:safe(v7meta),CORE:read('core.js'),HOUSEHOLDS:read('households.js'),MAPS:read('maps.js'),NETWORK:read('network.js'),APP:read('app.js'),RESULT:safe(startResult),V7_ATGARDER:v7js('atgarder.js'),V7_OSAKERHET:v7js('osakerhet.js'),V7_MC:v7js('mc.js'),V7_BERAKNING:v7berakning.replaceAll('</script','<\\/script')};
 for(const [key,val]of Object.entries(values))html=html.replace('/*__'+key+'__*/',()=>val);
 if(/\/\*__[A-Z_]+__\*\//.test(html))throw Error('Unfilled build token');
 fs.mkdirSync(path.join(root,'Netlify'),{recursive:true});fs.writeFileSync(path.join(root,'Vagvis_2.0.html'),html);fs.writeFileSync(path.join(root,'Netlify/index.html'),html);

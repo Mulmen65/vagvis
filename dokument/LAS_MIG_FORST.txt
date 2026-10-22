@@ -1,4 +1,4 @@
-VÄGVIS 2.0.6 – TVÅ MODELLER FÖR TRAFIKENS KLIMATAVTRYCK
+VÄGVIS 2.0.7 – TVÅ MODELLER FÖR TRAFIKENS KLIMATAVTRYCK
 22 oktober 2026
 
 KOM IGÅNG
@@ -80,6 +80,13 @@ välja Basfall, Scenario eller Förändring. Förändringen färgas i procent av
 områdespanelen följer samma val. Knappen Visa i kartan i områdesscenariot öppnar kartan med förändringen.
 Har du ändrat indata efter beräkningen visar kartan den senaste beräkningen tills du beräknar igen.
 
+CO2 PER HEKTAR OCH SÅ RÄKNAS RESULTATET (2.0.7)
+Kartan och områdespanelen visar både totalen och utsläppen per hektar. I A väljer du Totalt eller Per hektar
+ovanför kartan; per hektar avser landytan (DeSO-gränsen klippt mot land). I B väljer du måttet
+"ton CO2 per hektar". Fliken Så räknas resultatet räknar om valt område steg för steg ur samma beräkning som
+kartan, visar varje schablon med källa och status (Källa, Jämförd, Antagande) och jämför modellen med
+oberoende uppgifter. Välj område i listan, eller klicka "Så räknas resultatet" i områdespanelen i kartan.
+
 I modell A syns bara den del av de boendes körning som sker inom DeSO:n, räknat ur DeSO:ns yta och 25 km
 reslängd: för de flesta DeSO 1–6 %, för Jägersro öst-Stenkällan 3,7 %. Andelen kan ändras. Genomfart, arbetsplatser, besökare och gods ändras inte.
 
@@ -134,4 +141,5 @@ Kontrollera med: node source/test_core.cjs
                   VAGVIS_TEST_WORKER=1 node source/test_bundle.cjs (Mac/Linux)
                   python3 source/test_downloader.py
                   node source/test_omradesscenario.cjs
+                  node source/test_rakneexempel.cjs
 Se Kontrollresultat.txt för vad som faktiskt har verifierats. En riktig webbläsares kartlayout och extern OSM/API-hämtning har inte verifierats i leveransmiljön.

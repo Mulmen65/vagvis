@@ -15,6 +15,8 @@ source/                Beräkning, gränssnitt, startdata, byggskript och tester
   geodata_project.json Startprojekt för A: DeSO 2025 och OSM-vägnätet
   household_project.json  Startprojekt för B: ur Bilmodell v7
   startresultat.json   Förberäknat startresultat för A (byggs om när motorn ändras)
+  omradesytor.json     Yta och landyta per område (från berakna_ytor.py)
+  berakna_ytor.py      Räknar ytorna i SWEREF 99 TM (kräver shapely och pyproj)
   test_*.cjs, test_*.py  Kontroller, *-tests.txt är senaste utfall
 underlag/              OSM-vägnät, DeSO-gränser, hushållsunderlag och proveniens
 bygg_appen.cjs         Bygger och kopierar till app/ och dokument/
@@ -40,6 +42,8 @@ Bilmodell v7 ligger i `app/Bilmodell_v7`. Både appen och bygget använder den m
    slå ihop en pull request.
 5. Streamlit uppdaterar appen inom någon minut. Versionen står längst ned i Vägvis.
 
+Ändras områdesgränserna: kör `python kallkod/source/berakna_ytor.py` före bygget. Bygget stoppar om en yta saknas.
+
 ## Kontroller
 
 Från arkivets översta mapp, efter att appen har byggts:
@@ -48,6 +52,7 @@ Från arkivets översta mapp, efter att appen har byggts:
 node kallkod/source/test_core.cjs
 node kallkod/source/test_v2.cjs
 node kallkod/source/test_omradesscenario.cjs
+node kallkod/source/test_rakneexempel.cjs
 node kallkod/source/test_bundle.cjs
 node kallkod/source/test_network.cjs
 python kallkod/source/test_package.py

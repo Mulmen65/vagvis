@@ -1,4 +1,4 @@
-# Vägvis 2.0.6 på Streamlit
+# Vägvis 2.0.7 på Streamlit
 
 Vägvis beräknar vägtrafikens klimatavtryck per DeSO, stadsdelsområde och kommun i två modeller:
 
@@ -9,6 +9,8 @@ Vägvis beräknar vägtrafikens klimatavtryck per DeSO, stadsdelsområde och kom
   mobilitetsåtgärder i båda modellerna, med förval för Jägersro ur Trivectors mobilitetsstrategi (2025).
 - **Scenariot i kartan (2.0.6):** efter en beräkning visar kartan basfall, scenario eller förändring, och
   områdesscenariot sammanfattas i ord.
+- **Per hektar och Så räknas resultatet (2.0.7):** kartan visar både totalen och CO₂ per hektar, och en ny
+  flik räknar om valt område steg för steg, med schablonernas källor och kontroller mot oberoende data.
 
 Det här arkivet publicerar Vägvis som en Streamlit-app. All beräkning sker i besökarens webbläsare.
 Streamlit-servern skickar bara sidorna, så appen klarar sig gott inom Streamlit Community Clouds
@@ -119,12 +121,12 @@ tre sätt att få dit den.
 
 **A. Ladda upp en uppdatering (zip-fil)**
 
-1. Packa upp zip-filen, till exempel `vagvis-uppdatering-2.0.5.zip`. Du får en mapp med till exempel
+1. Packa upp zip-filen, till exempel `vagvis-uppdatering-2.0.7.zip`. Du får en mapp med till exempel
    `app`, `dokument`, `kallkod` och `README.md`.
 2. Öppna arkivet på GitHub och klicka **Add file** → **Upload files**.
 3. Öppna den uppackade mappen, markera **allt innehåll i mappen** (inte själva mappen) och dra det till
    webbläsarfönstret. En fil med samma namn i samma mapp ersätts; övriga filer påverkas inte.
-4. Vänta tills alla filer syns i listan. Skriv ett meddelande, till exempel `Vägvis 2.0.5`, låt
+4. Vänta tills alla filer syns i listan. Skriv ett meddelande, till exempel `Vägvis 2.0.7`, låt
    **Commit directly to the main branch** vara valt och klicka **Commit changes**.
 
 **B. Godkänn en pull request**
@@ -143,7 +145,7 @@ kontrollera enligt `kallkod/README.md` och lägg in `kallkod/`, `app/` och `doku
 **Kontrollera att den nya versionen är live**
 
 1. Vänta en minut efter att ändringen hamnat på `main` och ladda om appen. Versionen står längst ned
-   i Vägvis, till exempel *Vägvis 2.0.5 · ton per kalenderår*.
+   i Vägvis, till exempel *Vägvis 2.0.7 · ton per kalenderår*.
 2. Visas fortfarande den gamla versionen: klicka **Manage app** nere till höger och välj **Reboot app**.
    Ändras `requirements.txt` startar Streamlit om appen själv, vilket tar några minuter.
 

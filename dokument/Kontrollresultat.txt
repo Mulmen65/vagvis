@@ -1,3 +1,36 @@
+VÄGVIS 2.0.7 – TILLÄGG 22 OKTOBER 2026 (CO2 per hektar och Så räknas resultatet)
+
+Basfallet är oförändrat mot 2.0.6:
+- Startresultatet i A (alla områden, centrala värden, intervall, kalibreringsfaktorer och kommunernas
+  dragningar, 10 914 värden) är identiskt. Det har bara fått beräkningsraderna för räkneexemplet.
+- Simuleringar i A och B med och utan scenario (områdesändring, ny väg, de boendes trafik, trafikförändring,
+  elandel) ger identiska värden i 2.0.6 och 2.0.7: 59 268 jämförda värden, 0 avvikelser.
+- Alla tidigare tester passerar: test_core (41), test_v2 (40), test_omradesscenario, test_bundle (10),
+  test_network (7) och alla sju webbläsartester.
+
+Räkneexemplet (source/test_rakneexempel.cjs):
+- A basinställning: 321 områden, räkneexemplet = kartan för basfall och scenario (avvikelse under 0,1 kg CO₂e i alla områden). Väglängd i områdena 3406.3 km.
+- A 1280C1450: 6289.3 ton CO₂e, 20.89 milj. fordonskm, 33.26 km väg.
+- A Helsingborg: ingen kalibrering, faktor 1 för alla fordonsslag.
+- A scenario: 321 områden, räkneexemplet = kartan för basfall och scenario (avvikelse under 0,1 kg CO₂e i alla områden). Väglängd i områdena 3406.3 km.
+- A scenario: de boendes trafik och ny väg (1,2 km) syns som egna rader i räkneexemplet för 1280C1450.
+- B: 360 områden, räkneexemplet = kartan för direkt CO₂, livscykel och alla delar (avvikelse under 0,1 kg).
+- Ytor: 672 områden har yta; webbläsarens ytformel avviker högst 1.08 % från SWEREF 99 TM.
+Alla kontroller godkända (21 s).
+
+Ytor (source/berakna_ytor.py, SWEREF 99 TM): Malmö 16 133 ha landyta (33 588 ha med vatten inom kommungränsen),
+Helsingborg 34 679 ha (42 494 ha). Exempel 1280C1450 Jägersro öst-Stenkällan: 227,8 ha.
+
+Riktig webbläsare (Chromium, source/test_webblasare_rakneexempel.py), alla kontroller godkända:
+- A, 1280C1450: 6 289 ton CO2e per år och 27,6 ton CO2e per hektar landyta; 95 %: 10,9–62,7 ton per hektar.
+  Kartan per hektar, tabellen (Ton/ha, Landyta), tooltipen och exporten har per hektar.
+- Så räknas resultatet, A: fem steg; summan 6 289 ton = kartans värde. Kontrollen Malmö före kalibrering
+  −8 % mot kommunens redovisning; Helsingborg +30 % mot kommunens klimat- och energiplan. 20 källor, 18 med länk.
+- B, 1280C1450: 1 370 ton CO2 per år och 6,0 ton CO2 per hektar (Malmös median 34,5). Sju steg; summan =
+  kartans värden, även för ett stadsdelsområde och i Gävle.
+- Mobil (390 px) utan sidledsrullning, inga fel i konsolen.
+
+
 VÄGVIS 2.0.6 – TILLÄGG 22 OKTOBER 2026 (scenariot i korthet och scenariot i kartan)
 
 Basfallet är oförändrat mot 2.0.5: startresultatet i A (1 605 fält) är identiskt; beräkningsmotorerna är
