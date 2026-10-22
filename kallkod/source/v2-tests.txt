@@ -1,0 +1,42 @@
+OK unconverted MVD is rejected instead of silently becoming assumed AADT
+OK documented MVD to AADT retains the raw value, factor and uncertainty group
+OK a conversion without source or CV is rejected
+OK different measurement year needs a documented year adjustment
+OK bidirectional counts cannot be copied to an individual carriageway
+OK documented direction split produces complementary counts
+OK opposite direction and impossible direction share are rejected
+OK zero directional count stays zero and still needs documentation
+OK annual vehicle-km roundtrips using link length and 366 days
+OK raw MVD inside a saved-project structure is rejected
+OK canonical GeoJSON reimport preserves conversion audit and shared errors
+OK one MVD profile produces one shared error across spatial fragments
+OK explicit target year cannot override the selected model year
+OK initial territorial project retains its 293 uncut analytical DeSO and has an OSM network with only schablon traffic
+OK embedded start result belongs to the start project and default settings, and Malmö is calibrated to its 2024 reference
+OK display masks exclude offshore sample points but retain city land
+OK display clipping does not erase a bridge link in municipal waters
+OK household model contains all 326 Bilmodell v7 rows for Malmö, Helsingborg and Gävle with v7 geometry
+OK household vehicle-km use households times cars per household times km per car
+OK direct CO2 equals the Bilmodell v7 climate tab for every DeSO in all three cities
+OK household lifecycle is v7 direct CO2 plus upstream fuel, vehicle, battery, maintenance and end of life
+OK recycling remains separate for household emissions
+OK duplicated household rows and missing district crosswalk fail validation
+OK household city equals sum of DeSO and districts in every draw
+OK unchanged household scenario has exactly zero difference
+OK household repeatability and paired 20 percent decrease
+OK spatial uncertainty redistributes but never inflates fixed city vehicle-km
+OK household CSV records model, data year, share year, v7 direct CO2, components and intervals
+OK own electric car shares apply to one city only, like Bilmodell v7
+OK Bilmodell v7 own 90 percent interval is reproduced with v7 code and agrees with the Vägvis draws
+OK v7 calculation code is a verbatim, regenerated extract of Bilmodell v7
+OK household measures: city package scales scenario CO2 exactly by v7 fV × fC, only in the chosen city, base unchanged
+OK household new dwellings in a DeSO follow v7 Befintliga områden (more households, density, measures for new homes)
+OK household base draws are identical with and without measures; measure uncertainty widens only the scenario
+OK household validation rejects an unknown measure scope and negative new dwellings
+OK territorial scenario: empty area/road lists give identical results to no lists
+OK territorial scenario: an area change scales only that DeSO in the scenario and a new road adds length × ÅDT × days
+OK territorial scenario: base draws are unchanged when new roads are added (separate random stream)
+OK territorial scenario validation rejects unknown road types and DeSO
+OK example traffic import is explicit fictional data and accepts all supported examples
+
+40 Vägvis 2.0 checks passed. These are computation and geometry checks, not a live browser or network test.

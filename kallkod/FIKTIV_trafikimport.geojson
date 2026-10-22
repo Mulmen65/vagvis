@@ -1,0 +1,130 @@
+{
+  "type": "FeatureCollection",
+  "name": "FIKTIVA EXEMPEL – inte verklig trafik",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "city": "1280",
+        "roadClass": "primary",
+        "source": "FIKTIVT EXEMPEL – inte en verklig mätning",
+        "quality": "measured",
+        "year": 2024,
+        "flowDirection": "both",
+        "geometryDirection": "both",
+        "countBasis": "geometry",
+        "aadtCV": 0.1,
+        "classShares": {
+          "car": 0.8,
+          "van": 0.1,
+          "rigid": 0.035,
+          "artic": 0.025,
+          "bus": 0.02,
+          "mc": 0.015,
+          "moped": 0.005
+        },
+        "id": "FIKTIV-1",
+        "flowMetric": "AADT",
+        "flow": 12000
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            13.0,
+            55.59
+          ],
+          [
+            13.005,
+            55.6
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "city": "1280",
+        "roadClass": "primary",
+        "source": "FIKTIVT EXEMPEL – inte en verklig mätning",
+        "quality": "measured",
+        "year": 2024,
+        "flowDirection": "both",
+        "geometryDirection": "both",
+        "countBasis": "geometry",
+        "aadtCV": 0.1,
+        "classShares": {
+          "car": 0.8,
+          "van": 0.1,
+          "rigid": 0.035,
+          "artic": 0.025,
+          "bus": 0.02,
+          "mc": 0.015,
+          "moped": 0.005
+        },
+        "id": "FIKTIV-2",
+        "flowMetric": "MVD",
+        "flow": 14000,
+        "mvdToAadtFactor": 0.85,
+        "conversionSource": "FIKTIV årsprofil – ersätt med dokumenterad lokal omräkning",
+        "conversionCV": 0.1,
+        "conversionGroup": "FIKTIV_MVD_2024"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            13.01,
+            55.59
+          ],
+          [
+            13.015,
+            55.6
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "city": "1280",
+        "roadClass": "primary",
+        "source": "FIKTIVT EXEMPEL – inte en verklig mätning",
+        "quality": "measured",
+        "year": 2024,
+        "flowDirection": "both",
+        "geometryDirection": "forward",
+        "countBasis": "geometry",
+        "aadtCV": 0.1,
+        "classShares": {
+          "car": 0.8,
+          "van": 0.1,
+          "rigid": 0.035,
+          "artic": 0.025,
+          "bus": 0.02,
+          "mc": 0.015,
+          "moped": 0.005
+        },
+        "id": "FIKTIV-3",
+        "flowMetric": "AADT",
+        "flow": 30000,
+        "directionShare": 0.52,
+        "directionSource": "FIKTIV riktningsmätning",
+        "directionCV": 0.05
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            13.02,
+            55.59
+          ],
+          [
+            13.025,
+            55.6
+          ]
+        ]
+      }
+    }
+  ]
+}

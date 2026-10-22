@@ -1,0 +1,7 @@
+A: Vägnätet från OpenStreetMap ingår sedan 2.0.2 (väggeometri och vägklass, dataläge 20 oktober 2026). Uppmätt ÅDT-/trafikarbetssatt länktrafik för 2024 med riktning, fordonsklass och käll-/osäkerhetsmetadata saknas fortfarande; alla länkar har schablon-ÅDT per vägklass.
+
+B: Den uppladdade v7-appens hushållsdata för 2023 och DeSO 2018 ingår. Aktuella/registerverifierade 2024-hushållsdata, körsträckandelar per drivlina och officiella stadsdelsnycklar saknas fortfarande.
+
+Båda: LCA-antaganden behöver granskas mot lokala fordons-, energi- och livslängdsunderlag. En jämförelse mellan modellerna kräver gemensamt år, geografi, fordonsomfattning och konsekvent livscykelgräns. Resultaten ska inte adderas.
+
+Se Trafikdata_till_Malmo.html/.txt för den konkreta dataförfrågan.

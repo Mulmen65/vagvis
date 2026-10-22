@@ -1,0 +1,23 @@
+[
+  {
+    "source": "MALMO_TRAFFIC_CKAN",
+    "url": "https://opendata-api.malmo.se/api/3/action/package_show?id=trafikmatning-for-biltrafik",
+    "attempted": "2026-10-19T13:41:10.687703+00:00",
+    "status": 403,
+    "message": "Forbidden. Calls to this URL are not allowed."
+  },
+  {
+    "source": "MALMO_ROAD_LINKS",
+    "url": "https://gis.malmo.se/arcgis/rest/services/Geodata/Vagar_mittlinjer/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
+    "attempted": "2026-10-19T13:41:10.691659+00:00",
+    "status": 403,
+    "message": "Forbidden. Calls to this URL are not allowed."
+  },
+  {
+    "source": "OSM_NETWORK",
+    "url": "https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A20%5D%3Bway%5B%22highway%22%3D%22motorway%22%5D%2855.55%2C13.00%2C55.56%2C13.01%29%3Bout+tags+geom%3B",
+    "attempted": "2026-10-19T13:41:10.696924+00:00",
+    "status": 403,
+    "message": "Forbidden. Calls to this URL are not allowed."
+  }
+]

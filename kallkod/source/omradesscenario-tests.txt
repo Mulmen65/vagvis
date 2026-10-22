@@ -1,0 +1,14 @@
+OK områdesscenario "som området" ger samma scenario som 2.0.4:s åtgärder för en DeSO (v7 Befintliga områden)
+OK nya hushåll från ett motsvarande område räknas som v7 Nya områden (bilar per hushåll och km per bil, med parkeringstal)
+OK detaljvyn summerar till samma DeSO-, stadsdels- och kommunvärden som beräkningen
+OK osäkerheten i vyn har centralvärden nära den deterministiska beräkningen
+OK simuleringen: basfallet oförändrat, områdets scenario dras och kommunen är summan av DeSO
+OK åtgärderna under Åtgärder & underlag gäller övriga områden när ett områdesscenario är aktivt
+OK ogiltiga områdesscenarier stoppas
+7 kontroller av områdesscenariot i modell B passerade.
+OK de boendes trafik i en DeSO läggs till personbilstrafiken i scenariot, utan kalibreringsfaktor
+OK minskad trafik (negativ) fungerar och övriga områden är oförändrade
+OK simuleringen: basfallets dragningar är desamma med och utan de boendes trafik
+OK ogiltig lista och okänd DeSO stoppas
+OK ytan för en DeSO räknas i km²
+5 kontroller av de boendes trafik i modell A passerade.

@@ -1,0 +1,12 @@
+OK bundled browser-global startup and calculation
+OK all five navigation views render strings without runtime exceptions
+OK scenario input, dirty state and paired recalculation
+OK CSV and complete project exports contain computed results and provenance
+OK explicitly fictional demo and vector map generation
+OK no automatic external code/assets; Netlify and offline files identical
+OK switch to household model, 2018 geography and 2023 source data
+OK all five household navigation views render
+OK measures and reference check views (Bilmodell v7 code) render and change only the scenario
+OK coastal clipping markup and household exports
+OK switching retains independent project data, assumptions and results
+10 bundle smoke checks passed (worker mode true). No real browser layout or live download check.

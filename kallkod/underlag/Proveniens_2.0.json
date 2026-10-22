@@ -1,0 +1,63 @@
+{
+  "attachments": {
+    "bilmodell_v7_netlify.zip": "d0418d76576aa33fe04bc0c7332e7d06a21cd9ac5f64eac0942d24a4dd87f023"
+  },
+  "territorialBoundarySource": "Bifogade GIS 2025_v2, konverterade i Vägvis 1.1",
+  "householdActivitySource": "bilmodell_v7_netlify.zip/data.js, referensår 2023, DeSO 2018",
+  "coastDisplayMaskSource": "bilmodell_v7_netlify.zip/geo.js, endast visningsklippning för A",
+  "newMeasuredTrafficAdded": false,
+  "osmNetwork": [
+    {
+      "source": "OSM_OVERPASS",
+      "city": "1280",
+      "file": "vagnat_1280_malmo.json",
+      "sha256": "f2480bd046c8242907e042063203b96ad0c1abfc1d06865469fabfc45dba27e2",
+      "bytes": 9579360,
+      "osmBase": "2026-10-20T12:05:06Z",
+      "ways": 12598,
+      "waysOutsideDeso": 3406,
+      "lengthKm": 1748.5,
+      "simplificationLengthChange": -0.000878,
+      "path": "underlag/osm/vagnat_1280_malmo.json",
+      "query": "way[highway~\"^(motorway|trunk|primary|secondary|tertiary|residential|living_street|unclassified|service)(_link)?$\"](DeSO-omslutande rektangel); out tags geom qt",
+      "downloadedBy": "användaren, via direktlänkarna i Vägvis 2.0.1, 2026-10-20",
+      "licence": "ODbL, © OpenStreetMap-bidragsgivare"
+    },
+    {
+      "source": "OSM_OVERPASS",
+      "city": "1283",
+      "file": "vagnat_1283_helsingborg.json",
+      "sha256": "f66d3147a9a7dcbabfdd72cabd9e11ee7ce8e6a43859f1d5bd12b3edc2cd12c3",
+      "bytes": 12261902,
+      "osmBase": "2026-10-20T12:03:06Z",
+      "ways": 9730,
+      "waysOutsideDeso": 10147,
+      "lengthKm": 1768.1,
+      "simplificationLengthChange": -0.001015,
+      "path": "underlag/osm/vagnat_1283_helsingborg.json",
+      "query": "way[highway~\"^(motorway|trunk|primary|secondary|tertiary|residential|living_street|unclassified|service)(_link)?$\"](DeSO-omslutande rektangel); out tags geom qt",
+      "downloadedBy": "användaren, via direktlänkarna i Vägvis 2.0.1, 2026-10-20",
+      "licence": "ODbL, © OpenStreetMap-bidragsgivare"
+    }
+  ],
+  "networkTraffic": "Schablon-ÅDT per vägklass (ROAD_DEFAULTS i source/core.js); ingen uppmätt trafik.",
+  "householdModel": {
+    "version": "2.0.3",
+    "source": "Bilmodell_v7 i paketet (identisk med användarens bilmodell_v7_netlify.zip)",
+    "files": {
+      "data.js": "96660641340ae6a02f80ce77a5504e6631352025ad4a6749c884cbd2d141fd2b",
+      "geo.js": "27ca40d1be5c0459f460c18ad79de2e03213e71e34cd29cd83066df7ccebcb3a",
+      "klimat.js": "c70724bf16b5ae4309a9278318abf237c067803ba9cf06566463dd9a42264f6e",
+      "osakerhet.js": "60544e4abc0e3cc3975f64e505b07904e46d0304f01aee072860dfa4662aec0b",
+      "mc.js": "ca7dbb20f33255261c942f8252f1d597696a4d9af4612d5a32118ce65d84784f"
+    },
+    "cities": {
+      "1280": 192,
+      "1283": 80,
+      "2180": 54
+    },
+    "directCO2": "Samma formel och antaganden som fliken Klimatpåverkan i Bilmodell v7 (klimat.js)",
+    "lifecycle": "v7 direkt CO2 + bränslets tidigare led + fordon + batteri + underhåll + slutbehandling (Vägvis core.js)",
+    "builtWith": "source/bygg_hushallsprojekt.cjs"
+  }
+}

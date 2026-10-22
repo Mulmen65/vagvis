@@ -1,0 +1,15 @@
+VÄGNÄT FRÅN OPENSTREETMAP – DIREKTLÄNKAR (Vägvis 2.0.1)
+
+Använd länkarna om knappen Hämta öppna underlag inte fungerar på din dator.
+1. Högerklicka på länken i en webbläsare och välj Spara länk som (eller klistra in adressen i webbläsaren och spara svaret).
+   Filen blir 10–60 MB och kan ta 1–3 minuter. Spara den t.ex. som vagnat_malmo.json.
+2. Öppna Vägvis, gå till Trafik & geodata och klicka Importera vägnät. Välj filen. Kommunen känns igen automatiskt.
+3. Klicka Spara komplett projekt.
+
+OSM ger väggeometri och vägklass, inte uppmätt trafik. Alla länkar får schablon-ÅDT per vägklass.
+
+Malmö (1280):
+https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A300%5D%3Bway%5B%22highway%22~%22%5E(motorway%7Ctrunk%7Cprimary%7Csecondary%7Ctertiary%7Cresidential%7Cliving_street%7Cunclassified%7Cservice)(_link)%3F%24%22%5D(55.48059%2C12.71714%2C55.67977%2C13.15176)%3Bout%20tags%20geom%20qt%3B
+
+Helsingborg (1283):
+https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A300%5D%3Bway%5B%22highway%22~%22%5E(motorway%7Ctrunk%7Cprimary%7Csecondary%7Ctertiary%7Cresidential%7Cliving_street%7Cunclassified%7Cservice)(_link)%3F%24%22%5D(55.91704%2C12.53963%2C56.26213%2C12.98915)%3Bout%20tags%20geom%20qt%3B

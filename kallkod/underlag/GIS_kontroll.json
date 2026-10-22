@@ -1,0 +1,121 @@
+{
+  "files": [
+    {
+      "file": "DESO_2025_Malmo.zip",
+      "sha256": "b39611e41c39a1df2a8206c33d7b83f1fa69797403c0113254ad98220696105c",
+      "city": "1280",
+      "count": 209,
+      "fields": [
+        "fid",
+        "objectid",
+        "objektiden",
+        "objekttyp",
+        "desokod",
+        "regsokod",
+        "lanskod",
+        "kommunkod",
+        "version",
+        "ansvarig_o",
+        "referensda"
+      ],
+      "sourceCRS": "PROJCS[\"SWEREF99_TM\",GEOGCS[\"GCS_SWEREF99\",DATUM[\"D_SWEREF99\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",15.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+      "projectionParameters": {
+        "False_Easting": 500000.0,
+        "False_Northing": 0.0,
+        "Central_Meridian": 15.0,
+        "Scale_Factor": 0.9996,
+        "Latitude_Of_Origin": 0.0
+      },
+      "roundTripMaxMetres": 0.00047601571066182484,
+      "areaKm2Projected": 335.87854776989747,
+      "coordinateCount": 23607,
+      "versions": {
+        "2025_v2": 209
+      },
+      "bboxLonLat": [
+        12.717142636382608,
+        55.4805867102337,
+        13.151761931792967,
+        55.67976988352705
+      ],
+      "comparisonToV6": {
+        "comparison": "Existing v6 lon/lat vertices; consistency check, not independent surveyed control",
+        "newVertices": 23607,
+        "matchesUnder1m": 6667,
+        "nearestMedianMetres": 10.072817430756762,
+        "nearestP95Metres": 136.3481652179882
+      }
+    },
+    {
+      "file": "Deso2025HelsingborgsKommun.zip",
+      "sha256": "f936a311cbd9133b44d521ad488524d0fc36a93b006f552e7285b4a9a4242321",
+      "city": "1283",
+      "count": 84,
+      "fields": [
+        "OBJECTID",
+        "ansvarig_o",
+        "desokod",
+        "kommunkod",
+        "lanskod",
+        "objektiden",
+        "objekttyp",
+        "referensda",
+        "regsokod",
+        "version",
+        "UPPDATERAT",
+        "KONTROLLER",
+        "SHAPE_STAr",
+        "SHAPE_STLe"
+      ],
+      "sourceCRS": "PROJCS[\"SWEREF99_13_30\",GEOGCS[\"GCS_SWEREF99\",DATUM[\"D_SWEREF99\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",150000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",13.5],PARAMETER[\"Scale_Factor\",1.0],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+      "projectionParameters": {
+        "False_Easting": 150000.0,
+        "False_Northing": 0.0,
+        "Central_Meridian": 13.5,
+        "Scale_Factor": 1.0,
+        "Latitude_Of_Origin": 0.0
+      },
+      "roundTripMaxMetres": 0.0004956498745587087,
+      "areaKm2Projected": 425.1034141114502,
+      "coordinateCount": 14511,
+      "versions": {
+        "2025_v2": 84
+      },
+      "bboxLonLat": [
+        12.539632191345605,
+        55.91703926171021,
+        12.98915431337584,
+        56.262129858460426
+      ],
+      "comparisonToV6": {
+        "comparison": "Existing v6 lon/lat vertices; consistency check, not independent surveyed control",
+        "newVertices": 14511,
+        "matchesUnder1m": 7793,
+        "nearestMedianMetres": 0.553924697995119,
+        "nearestP95Metres": 105.14389835780688
+      }
+    }
+  ],
+  "previousModel": {
+    "1280": {
+      "oldDeSOCount": 192,
+      "districtCount": 12,
+      "sourceClaim": "SCB, DeSO 2025 (9 delade DeSO sammanslagna till DeSO 2018)",
+      "residentDataYear": 2023,
+      "residentDataGeography": "DeSO 2018"
+    },
+    "1283": {
+      "oldDeSOCount": 80,
+      "districtCount": 10,
+      "sourceClaim": "SCB, DeSO 2025 (3 delade DeSO sammanslagna till DeSO 2018)",
+      "residentDataYear": 2023,
+      "residentDataGeography": "DeSO 2018"
+    }
+  },
+  "interpretation": [
+    "Raw DeSO 2025 boundaries are used as supplied; no reconstruction to 2018.",
+    "Districts are the 12 Malmö and 10 Helsingborg groupings from the supplied v6 model. They are NOT confirmed municipal current administrative areas.",
+    "Resident household kilometre estimates from v6 are not imported as territorial road traffic.",
+    "No road-link geometry or observed flow fields in these two DeSO shapefiles."
+  ]
+}

@@ -1,0 +1,180 @@
+VÄGVIS 2.0.5 – TILLÄGG 22 OKTOBER 2026 (Områdesscenario för en DeSO)
+
+Basfallet är oförändrat mot 2.0.4:
+- Modell A: startresultatet (alla områden, centrala värden, intervall och dragningar för kommunerna) är
+  identiskt med 2.0.4. A med 2.0.4:s områdesändringar och nya vägar ger identiska resultat.
+- Modell B: alla 360 resultatposter med standardinställningar är identiska med 2.0.4, liksom resultaten med
+  2.0.4:s åtgärder (paket för hela staden, en DeSO med nya bostäder och ett stadsdelsområde).
+
+Beräkningstester (source/test_omradesscenario.cjs, 12 kontroller):
+- Utgångsläget "som området" ger samma scenario som 2.0.4:s åtgärder för en DeSO (v7 Befintliga områden).
+- Nya hushåll från ett motsvarande område ger samma bilar per hushåll, km per bil och fordonskm som v7:s
+  Nya områden (atgardseffekt och tillampa ur v7:s egen kod), med och utan parkeringstal.
+- Vyns tal summerar till samma DeSO-, stadsdels- och kommunvärden som beräkningen; kommunen är summan av DeSO.
+- Basfallets dragningar är identiska med och utan områdesscenario; övriga DeSO påverkas inte.
+- I A läggs de boendes trafik till personbilstrafiken i scenariot utan kalibreringsfaktor; basfallets dragningar
+  är identiska; ogiltiga indata stoppas.
+
+Riktig webbläsare (Chromium, source/test_webblasare_omradesscenario.py):
+- Förvalet "Jägersro: mobilitetsstrategin som åtgärder" i DeSO 1280C1450 ger i vyn modell B 1 370 → 2 920 ton
+  direkt CO2 och modell A +99 ton CO2e på DeSO:ns vägar (andel 3,7 %, 0,43 miljoner fordonskm).
+  Full beräkning: A +98,9 ton (95 %: +22 till +297 ton), B scenario 2 924 ton direkt CO2. Vyn och beräkningen
+  stämmer överens.
+- Jämförelse i DeSO 1280C1450 (centrala värden, kommunens elbilsandel 2025):
+  referens utan strategi 0,56 bilar per hushåll och 470 kg direkt CO2 per ny invånare;
+  strategin som åtgärder 0,30 och 190 kg (90 %: 120–260 kg);
+  Trivectors målnivå 0,30 och 220 kg. Budgeten 160 kg nås med ungefär 41 % eldriven körning i målnivån.
+- Textfält behåller fokus, åtgärder ändrar resultatet direkt, kartans knapp öppnar områdesscenariot, Gävle
+  räknas i B, sparat projekt och egen HTML-kopia innehåller scenariot, Rensa tar bort det, mobil (390 px) utan
+  sidledsrullning, inga fel i konsolen.
+- Alla tidigare webbläsartester (A, B mot v7, åtgärder och referenskontroll mot v7, områdesval, startresultat)
+  ger samma utfall som i 2.0.4.
+
+INTE VERIFIERAT I 2.0.5
+- Andelen av de boendes körning som sker inom DeSO:n är en geometrisk uppskattning, inte uppmätt.
+- Översättningen av Trivectors principer till v7:s åtgärder är en tolkning. Bilpool för 70 % av hushållen ligger
+  utanför v7:s underlag (högst 60 %).
+- Arbetsplatser, besökare, godstransporter och byggtrafik i ett nytt område ingår inte.
+
+
+VÄGVIS 2.0.4 – TILLÄGG 21 OKTOBER 2026 (åtgärder, referenskontroll och scenario per område)
+
+Basfallet är oförändrat mot 2.0.3:
+- Modell A: startresultatet (alla områden, centrala värden, 95-procentsintervall, dragningar för kommunerna,
+  kalibreringsfaktorer och varningar) är identiskt med 2.0.3.
+- Modell B: alla 360 resultatposter (direkt CO2, livscykel, intervall, scenario och v7:s 90-procentsintervall)
+  är identiska med 2.0.3 med standardinställningarna.
+
+Riktig webbläsare (Chromium, source/test_webblasare_atgarder.py), Bilmodell v7 och Vägvis i samma webbläsare:
+- IVL-paketet för hela staden i Malmö, Helsingborg och Gävle: ton CO2 per DeSO med paketet är lika i alla
+  326 DeSO (0 avvikelser). v7:s 90-procentsintervall för minskningen är lika:
+  Malmö 31 000–61 700 ton (18–34 %), Helsingborg 17 700–35 600 ton (18–34 %), Gävle 13 000–26 200 ton (18–34 %).
+- IVL-paketet i DeSO 1280C1040 med 200 nya bostäder: förändringen är −320 ton i både v7 (Befintliga områden)
+  och Vägvis.
+- Referenskontrollen: alla 32 kontrollfall har samma modellvärde, 90-procentsintervall och bedömning som i v7.
+  Nyckeltalen är lika: 32 kontroller, 4 av 9, 3 av 9, +50 %. Överföringsosäkerheten σ = 0,50.
+- Basfallet i B är oförändrat när åtgärder är valda.
+
+Beräkningstester (source/test_v2.cjs, 40 totalt, 9 nya): utdraget ur v7:s kod är ordagrant och genererat på nytt;
+paket i en kommun skalar scenariot exakt med v7:s fV × fC och bara i den kommunen; nya bostäder följer v7:s
+formel; basfallets dragningar är identiska med och utan åtgärder; tomma scenariolistor i A ger identiska
+resultat; en områdesändring skalar bara sitt område; en ny väg ger längd × ÅDT × dygn; basfallets dragningar
+i A är identiska med nya vägar; ogiltiga vägtyper, DeSO och omfattningar avvisas.
+
+INTE VERIFIERAT I 2.0.4
+- Åtgärdseffekterna gäller under de förutsättningar som beskrivs i v7:s underlag; de är inte kalibrerade mot
+  lokala uppföljningar i Malmö, Helsingborg eller Gävle.
+- Nya vägar i A får vägtypens schablon för fordonsfördelning och ÅDT om inget annat anges. Omfördelning av
+  trafik från andra vägar ingår inte.
+
+
+VÄGVIS 2.0.3 – TILLÄGG 21 OKTOBER 2026 (modell B mot Bilmodell v7)
+
+Riktig webbläsare (Chromium, source/test_webblasare_hushall.py): Bilmodell v7 och Vägvis öppnas i samma
+webbläsare. Tabellen i v7:s flik Klimatpåverkan (kg CO2 per invånare, kg per hushåll, ton per år) jämförs
+med Vägvis B för alla 192 + 80 + 54 DeSO och 12 + 10 + 9 stadsdelsområden: 0 avvikelser av 357 områden.
+v7:s 90-procentsintervall för hela kommunen är också identiskt:
+- Malmö 159 000–204 700 ton, Helsingborg 89 600–119 500 ton, Gävle 65 500–88 300 ton.
+Kommuntotaler, direkt CO2: Malmö 175 500 ton, Helsingborg 100 800 ton, Gävle 74 100 ton.
+Livscykel: Malmö 279 300 ton, Helsingborg 159 700 ton, Gävle 116 900 ton CO2e.
+
+Nya kontroller i source/test_v2.cjs (31 totalt): alla 326 rader är identiska med v7:s data.js; direkt CO2 per
+DeSO följer formeln i v7:s klimat.js, med andelarna lästa ur klimat.js; 1280C1040 ger 1 980 ton, 790 kg per
+invånare och 2 420 kg per hushåll; livscykeln är summan av sina delar; egna elbilsandelar påverkar bara en
+kommun; v7:s 90-procentsintervall räknas med v7:s mc.js och stämmer inom 2 % med Vägvis egna dragningar.
+Alla tidigare kontroller passerar.
+
+INTE VERIFIERAT I 2.0.3
+- Bilmodell v7:s egna indata och antaganden har inte kontrollerats på nytt mot register.
+- Livscykeltillägget för B är ett Vägvis-antagande, inte en del av v7.
+
+
+VÄGVIS 2.0.2 – TILLÄGG 20 OKTOBER 2026 (inbyggt OSM-vägnät)
+
+Indata: användarens två Overpass-filer (dataläge 2026-10-20), kontrollsummor i underlag/Proveniens_2.0.json.
+Inläsning (source/lagg_in_osm.py): svaren är fullständiga (ingen felanmärkning från Overpass), kommunen
+identifieras från DeSO-ytorna, och bara länkar som ligger i kommunens DeSO behålls: 12 598 i Malmö
+och 9 730 i Helsingborg. Förenklingen med 2 m tolerans ändrar total väglängd med mindre än 0,11 %.
+
+Beräkning med 3 000 simuleringar, frö 19062026, standardinställningar (kalibrerat läge):
+- Malmö: TTW 268 313 ton (referensen 268 300 ton), livscykel 414 269 ton, 95 % 325 656–525 078 ton.
+  Kalibreringsfaktorer: lätta fordon 1,054, tunga utan släp 1,738, med släp 0,565.
+  Utan kalibrering (läget nät) ger schablonerna 245,8 kt TTW, 8 % under referensen.
+- Helsingborg (ingen referens, räknas direkt på nätet): TTW 220 453 ton, livscykel 342 176 ton,
+  95 % 215 429–528 531 ton.
+- DeSO 1280C1050: 16,11 miljoner fordonskm, TTW 2 747 ton, livscykel 4 306 ton.
+
+Startresultatet räknas vid bygget (source/startresultat.cjs) och följer med i appen, så att appen öppnar
+direkt i stället för att låsa sig 1–3 minuter. Det används bara när projekt, inställningar och
+modellversion är oförändrade (kontrollsumma). Varje ändring kräver ny beräkning som förut.
+
+Kontroller:
+- 28 tester för version 2.0 (nytt: startresultatet hör till startprojektet och standardinställningarna,
+  och Malmö träffar referensen). Startprojektets test kräver nu vägnät för båda kommunerna,
+  bara schablon-ÅDT och OSM/ODbL-källa.
+- Riktig webbläsare (Chromium, Playwright) mot Netlify-mappen: startresultatet används och menyn är
+  inte låst vid start. Ny beräkning i webbläsaren (Web Worker) ger exakt samma tal som det inbyggda
+  resultatet. Kartor och översikt för båda kommunerna har granskats på skärmbilder.
+- Alla tidigare kontroller passerar: 41 motor, 10 + 10 UI-kontroller, 7 nätverk, 8 nedladdningsskript,
+  6 paket.
+
+INTE VERIFIERAT I 2.0.2
+- Att schablon-ÅDT per vägklass stämmer på enskilda gator. Ingen uppmätt trafik har lagts till.
+  Områdesresultaten visar hur vägnätet fördelar trafiken, inte uppmätt trafik i området.
+- Helsingborgs nivå: utan kommunreferens finns ingen kontroll av totalen.
+
+
+VÄGVIS 2.0.1 – TILLÄGG 20 OKTOBER 2026 (hämtning av vägnät)
+
+7 nätverkskontroller (source/test_network.cjs) med simulerade Overpass-svar:
+reservserver när första servern inte svarar ("Failed to fetch"), nya försök vid 429 och 504,
+frivilliga servicevägar, underkänt ofullständigt svar, begripligt fel när allt är blockerat,
+rutindelning, direktlänk och import av en nedladdad OSM-fil som godkänns av projektvalideringen.
+2 nya fall i source/test_downloader.py: reservserver/nya försök och rutor/dubbletter/servicevägar.
+Riktig webbläsare (Chromium via Playwright, source/test_webblasare.py) med simulerade Overpass-svar:
+hämtning för båda kommunerna där första anropet avbryts, beräkning efter hämtning, import av en
+nedladdad OSM-fil och fallet där alla servrar är blockerade. Logg: source/browser-tests.txt.
+Alla tidigare kontroller (41 + 27 + 10 + 10 + 6 + 6) passerar oförändrade.
+
+INTE VERIFIERAT I 2.0.1
+- Skarp hämtning från Overpass. Leveransmiljön når inte OpenStreetMap (HTTP 403 i proxyn).
+  Hämtningen behöver köras i din webbläsare eller med nedladdningsskriptet på din dator.
+
+
+VÄGVIS 2.0 – KONTROLL VID LEVERANS, 20 OKTOBER 2026
+
+41 tester av den territoriella motorn: geometrisk delning, hål, multipolygoner,
+väg på gräns, enhetsomräkning, skottår, LCA-komponenter, kalibrering,
+scenarioeffekter, osäkerhet, reproducerbarhet och saknade värden.
+
+27 tester för version 2.0: dokumenterad MVD-omräkning, årskorrigering,
+riktningsfördelning, delade omräkningsfel, årsfordonskm, rådata/auditbevarande,
+kustmaskens havs-/landpunkter, bevarad trafik på en väg i kommunens vatten,
+hushållsformeln och LCA, saknad områdesnyckel, kommunsumma i varje dragning,
+reproducerbarhet, separat återvinningskredit och tydligt märkt CSV-export.
+
+10 UI-kontroller utan Worker och 10 med simulerad Worker-protokollväg:
+start, fem vyer för båda modellerna, scenario/omräkning, CSV-/projektexport,
+kartans SVG-klippning och bevarat projekt vid byte mellan A/B.
+DOM-shim används; detta är inte en riktig webbläsare.
+
+6 fixturetester av nedladdningsskriptet. Inga nya skarpa API-anrop.
+6 paketkontroller: inbäddade tillgångar, byte-identisk huvud-HTML lokalt/Netlify,
+medföljande filer, SHA256, OSM-attribuering/Referer-policy och faktiskt HTTP-svar
+från den lokala startservern på loopback och ledig port.
+
+Alla ovanstående kontroller passerade. Detaljerade loggar finns i source/.
+Den bifogade originalappen v7 kontrollerades byte för byte mot ZIP-bilagan.
+
+INTE VERIFIERAT
+- Grafisk layout, mus-/pekskärmsinteraktion, SVG-klippning i Leaflet och export
+  av egen HTML-kopia i en riktig webbläsare. Chromium finns inte installerat
+  i leveransmiljön. Fallback-SVG och geometrier har kontrollerats automatiskt.
+- Livehämtning av OpenStreetMap-kartbilder, kommun-API eller faktisk trafik.
+- Att v7:s register-/modelluppgifter och LCA-antaganden motsvarar lokala
+  observerade värden 2024; inga nya trafikflöden har lagts till.
+- Netlify-publicering eller användarens kontospecifika kostnad.
+
+Geometrisk kontroll visar att havsfärgning kan tas bort i kartvisningen utan
+att administrativa vattenytor eller brotrafik tas bort från trafikberäkningen.
+Det gör inte i sig resultaten till en validerad utsläppsinventering.

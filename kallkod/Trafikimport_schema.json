@@ -1,0 +1,275 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vägvis 2.0 trafikimport – GeoJSON EPSG:4326",
+  "type": "object",
+  "required": [
+    "type",
+    "features"
+  ],
+  "properties": {
+    "type": {
+      "const": "FeatureCollection"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "geometry",
+          "properties"
+        ],
+        "properties": {
+          "type": {
+            "const": "Feature"
+          },
+          "geometry": {
+            "type": "object",
+            "required": [
+              "type",
+              "coordinates"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "LineString",
+                  "MultiLineString"
+                ]
+              },
+              "coordinates": {
+                "type": "array"
+              }
+            }
+          },
+          "properties": {
+            "type": "object",
+            "required": [
+              "id",
+              "city",
+              "flowMetric",
+              "flow",
+              "flowDirection",
+              "geometryDirection",
+              "countBasis",
+              "source"
+            ],
+            "anyOf": [
+              {
+                "required": [
+                  "year"
+                ]
+              },
+              {
+                "required": [
+                  "measurementYear"
+                ]
+              }
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unikt väglänk-ID per kommun."
+              },
+              "city": {
+                "type": "string",
+                "enum": [
+                  "1280",
+                  "1283"
+                ]
+              },
+              "roadClass": {
+                "type": "string"
+              },
+              "flowMetric": {
+                "enum": [
+                  "AADT",
+                  "MVD",
+                  "ANNUAL_VKM"
+                ],
+                "description": "AADT=fordon per årsmedeldygn. MVD=fordon per medelvardagsdygn under mätperiod. ANNUAL_VKM=årliga fordonskm på hela geometrin."
+              },
+              "flow": {
+                "type": "number",
+                "minimum": 0
+              },
+              "year": {
+                "type": "integer",
+                "minimum": 1900,
+                "maximum": 2200,
+                "description": "Mätår. measurementYear kan användas i stället."
+              },
+              "measurementYear": {
+                "type": "integer"
+              },
+              "targetYear": {
+                "type": "integer",
+                "description": "Målår; normalt samma som modellens år."
+              },
+              "flowDirection": {
+                "enum": [
+                  "both",
+                  "forward",
+                  "backward"
+                ]
+              },
+              "geometryDirection": {
+                "enum": [
+                  "both",
+                  "forward",
+                  "backward"
+                ]
+              },
+              "countBasis": {
+                "const": "geometry"
+              },
+              "quality": {
+                "enum": [
+                  "measured",
+                  "modelled",
+                  "assumed"
+                ]
+              },
+              "source": {
+                "type": "string"
+              },
+              "measurementId": {
+                "type": "string"
+              },
+              "aadtCV": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 3,
+                "description": "Mät-/modellfel i ÅDT, exklusive separata omräkningsfel. CV=standardavvikelse/medelvärde."
+              },
+              "classShares": {
+                "type": "object",
+                "description": "Andelar av trafikarbetet. Alla sju ska summera till 1. Buss räknas separat.",
+                "properties": {
+                  "car": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "van": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "rigid": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "artic": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "bus": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "mc": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "moped": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              "heavyShare": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Tunga lastbilar EXKLUSIVE buss. Använd full classShares om möjligt."
+              },
+              "busShare": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "mvdToAadtFactor": {
+                "type": "number",
+                "minimum": 1e-06,
+                "maximum": 10
+              },
+              "conversionSource": {
+                "type": "string",
+                "minLength": 1
+              },
+              "conversionCV": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 3
+              },
+              "conversionGroup": {
+                "type": "string",
+                "description": "Samma grupp = samma gemensamma slumpfaktor inom kommunen. Annars används källtexten som grupp."
+              },
+              "yearFactor": {
+                "type": "number",
+                "minimum": 1e-06,
+                "maximum": 10
+              },
+              "yearFactorSource": {
+                "type": "string",
+                "minLength": 1
+              },
+              "yearFactorCV": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 3
+              },
+              "yearFactorGroup": {
+                "type": "string",
+                "description": "Samma grupp = samma gemensamma slumpfaktor inom kommunen. Annars används källtexten som grupp."
+              },
+              "directionShare": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "directionSource": {
+                "type": "string",
+                "minLength": 1
+              },
+              "directionCV": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 3
+              },
+              "directionGroup": {
+                "type": "string",
+                "description": "Samma grupp = samma gemensamma slumpfaktor inom kommunen. Annars används källtexten som grupp."
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "flowMetric": {
+                      "const": "MVD"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "mvdToAadtFactor",
+                    "conversionSource",
+                    "conversionCV"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

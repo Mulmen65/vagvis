@@ -1,0 +1,43 @@
+OK 2024 leap year and 2023 normal year
+OK great circle length, one degree equator
+OK interval clipping preserves two exact half areas
+OK class shares sum to 100 percent without adding buses twice
+OK invalid combined heavy and bus fractions rejected
+OK polygon holes excluded
+OK MultiPolygon supported
+OK boundary road allocated once, lexical rule and warning
+OK unassigned district included instead of dropping traffic
+OK two crossing area systems split independently
+OK motorway one-way count convention halves assumption only
+OK duplicate road IDs rejected
+OK duplicate area IDs rejected
+OK projected coordinates rejected
+OK unclosed polygons rejected
+OK incorrect vehicle mixture rejected
+OK custom share arrays validated
+OK electric vehicle has no TTW but positive life-cycle emissions
+OK battery not included on fossil drivetrain
+OK fuel physical fossil fraction is separate from policy
+OK electricity and charging losses scale correctly
+OK production is allocated over lifetime km
+OK recycling credit never subtracted from headline total
+OK unit conversion gram vehicle-km to tonnes
+OK Malmö source unit is kiloton, not tonnes
+OK Malmö calibrated direct total plus independent bus non-CO2
+OK scenario electrification not recalibrated away
+OK traffic decrease scales whole life cycle
+OK reference year cannot silently migrate
+OK network-only mode does not infer traffic from reference
+OK Monte Carlo city equals sum of both partitions in every draw
+OK paired unchanged scenario has exact zero uncertainty in difference
+OK same seed produces same Monte Carlo result
+OK positive emissions with ordered interval
+OK paired traffic scenario retains exact per-draw relationship
+OK all known areas appear; missing traffic is null not zero
+OK Helsingborg missing start data is not zero
+OK CSV values, decimal comma and UTF8 BOM
+OK CSV protects imported spreadsheet formula
+OK GeoJSON road and SCB-like area normalization
+OK zero measured AADT remains zero, does not become assumed
+
+41 checks passed. External live downloads not tested.

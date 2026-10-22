@@ -1,0 +1,8 @@
+OK reservserver används när första servern inte svarar (Failed to fetch)
+OK 429 och 504 ger nytt försök, servicevägar är frivilliga
+OK ofullständigt svar (remark) underkänns
+OK alla servrar blockerade ger begripligt fel
+OK rutor täcker kommunen och frågorna är små
+OK direktlänk är en GET-fråga till Overpass för kommunens område
+OK importerad OSM-fil: kommun gissas och vägarna godkänns av projektvalideringen
+7 nätverkskontroller passerade (simulerade svar, inga riktiga anrop).

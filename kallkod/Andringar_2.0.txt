@@ -1,0 +1,174 @@
+VÄGVIS 2.0.5 – 22 oktober 2026 (Områdesscenario för en DeSO i modell A och B)
+
+Basfallet är oförändrat: alla resultat i A och B med standardinställningarna är identiska med 2.0.4
+(startresultatet i A, alla 360 resultatposter i B och 2.0.4:s åtgärder och scenario i A, kontrollerat tal för tal).
+
+Nytt: Områdesscenario under Antaganden & scenario (båda modellerna)
+- Välj en DeSO, alla 326 DeSO i Bilmodell v7 (192 i Malmö, 80 i Helsingborg, 54 i Gävle), och pröva ny
+  bebyggelse och mobilitetsåtgärder. Den tidigare vyn finns kvar under fliken "Antaganden och scenario för
+  hela kommunen".
+- De nya hushållens utgångsläge: som området i dag (v7:s flik Befintliga områden, förtätning), som ett annat
+  befintligt område eller med egna värden (v7:s flik Nya områden). Parkeringstal som tak för bilar per hushåll,
+  egna andelar elbilar och laddhybrider för de nya hushållens bilar och invånare per ny bostad.
+- Bilmodell v7:s 14 åtgärder och paket, räknade med v7:s egen kod. Åtgärderna gäller de nya hushållen och, om
+  du väljer det, även de befintliga.
+- Resultat för DeSO:n i dag och i scenariot, uppdelat på befintliga och nya hushåll: hushåll, invånare, bilar,
+  körsträcka, fordonskm, direkt CO2 (som v7) och livscykel, med v7:s 90-procentsintervall. Effekten på
+  stadsdelsområdet och kommunen. Jämförelse med en klimatbudget per person (standard 160 kg, Trivector) och
+  den andel eldriven körning som skulle behövas.
+- Modell A: de boendes ändrade bilkörning (från B) läggs på DeSO:ns vägar med den andel som sker inom
+  DeSO:n. Standardandelen räknas ur DeSO:ns yta och en genomsnittlig reslängd på 25 km (RVU Sverige
+  2011–2014) och kan ändras. Raden är personbilstrafik, gäller bara scenariot, kalibreras inte och dras i
+  scenariots egen slumpström. Genomfart, arbetsplatser, besökare och gods ändras inte.
+- Förval för Jägersro (DeSO 1280C1450, Jägersro öst-Stenkällan) ur Trivectors mobilitetsstrategi
+  (rapport 2025:55): referens utan strategi (4 000 bostäder som Hyllie), strategin som v7-åtgärder med
+  parkeringstal 0,3 och Trivectors målnivå (0,3 bilar per hushåll, 11 000 km per bil). Förvalen jämförs i en
+  tabell, och översättningen till v7:s åtgärder redovisas.
+- Kryssrutan "Ta med områdesscenariot" avgör om scenariot ingår när modellen beräknas (karta, översikt,
+  export). Annars är vyn en förhandsvisning.
+- Kartan: områdespanelen har knappen "Scenario för området".
+- Åtgärderna under Åtgärder & underlag gäller övriga områden när ett områdesscenario är aktivt.
+- Sparat projekt och egen HTML-kopia innehåller områdesscenariot.
+
+Beräkningen
+- households.js: areaSetup, areaDetail och areaMC. Nya hushåll i analog och own räknas som v7:s Nya områden
+  (atgardseffekt med andelNy = 1 och tillampa med parkeringstalet som tak). Deras utgångsläge får en
+  log-normal osäkerhet med CV 0,2, motsvarande v7:s ±25–40 % för nya områden.
+- core.js: areaTraffic, nya rader för de boendes biltrafik; areaKm2; källorna Trivector 2025:55 och RVU Sverige.
+- Nya tester: source/test_omradesscenario.cjs (12 kontroller) och source/test_webblasare_omradesscenario.py.
+
+Källkod i GitHub-arkivet
+- Källkoden ligger i mappen kallkod/ i GitHub-arkivet för Streamlit. node kallkod/bygg_appen.cjs bygger appen och
+  lägger app/Vagvis.html, metodsidan, dataförfrågan och dokumenten där Streamlit läser dem.
+- source/sokvagar.cjs letar upp Bilmodell v7 bredvid source/ (komplett paket) eller i app/Bilmodell_v7 (arkivet).
+  Bygget ger samma Vagvis_2.0.html i båda fallen.
+
+
+VÄGVIS 2.0.4 – 21 oktober 2026 (åtgärder och referenskontroll i B, scenario per område i A)
+
+Basfallet är oförändrat: alla resultat i A och B med standardinställningar är identiska med 2.0.3
+(kontrollerat område för område, inklusive osäkerhetsintervallen).
+
+Modell B
+- Ny vy Åtgärder & underlag med Bilmodell v7:s mobilitetsåtgärder: paket (samma som i v7), enskilda
+  åtgärder med nivåreglage, omfattning (hela kommunen, alla tre kommunerna, ett stadsdelsområde eller en
+  DeSO) och nya bostäder (förtätning). Effekterna räknas med v7:s egen kod: atgarder.js och mc.js som de är,
+  och ordagranna utdrag ur v7:s app.js, klimat.js och kontroll.js (source/v7_berakning.js, genererad av
+  source/v7_utdrag.cjs vid bygget).
+- Åtgärderna ingår i scenariot: fordonskm per hushåll (fV), utsläpp per km för hastighet och körsätt (fC),
+  fler hushåll vid förtätning. Livscykeln följer med: fordonstillverkning och övrigt skalas med körningen.
+- Osäkerheten i åtgärderna dras med v7:s fördelningar i en egen slumpström, så att basfallets dragningar
+  inte ändras. Överföringsosäkerheten från referenskontrollen kan räknas med.
+- Vyn visar v7:s 90-procentsintervall för minskningen (som fliken Klimatpåverkan) och effekten per hushåll
+  (som fliken Befintliga områden), samt bidrag per åtgärd och samverkan i paketet.
+- Vetenskapligt underlag: effekter med spann, evidensgrad, härledning, studier, samverkansregler, åtgärder
+  som inte ingår i modellen och alla referenser.
+- Ny vy Referenskontroll: v7:s 32 kontrollfall, nyckeltal, tolkning, metod och överföringsosäkerhet.
+  Räknas i en egen arbetsprocess (5–15 sekunder) med v7:s kontroll.js.
+
+Modell A
+- Nytt kort Scenario per område och nya vägar under Antaganden & scenario: procentuell ändring av
+  trafikarbetet per DeSO eller stadsdelsområde, och nya vägar med vägtyp, längd och ÅDT.
+- Gäller bara scenariot. Nya vägar har egna rader med trafik bara i scenariot, och deras osäkerhet dras i en
+  egen slumpström. Basfall, kalibrering och startresultat är oförändrade.
+
+Övrigt
+- Menyn visar Åtgärder & underlag och Referenskontroll bara i modell B.
+- Export: ny kolumn scenario_direkt_tCO2 i B.
+- 40 beräkningstester (9 nya) och nya webbläsartester mot Bilmodell v7.
+
+
+VÄGVIS 2.0.3 – 21 oktober 2026 (modell B räknar som Bilmodell v7, och Gävle är med)
+
+- Direkt CO2 i modell B är nu samma beräkning som fliken Klimatpåverkan i Bilmodell v7: samma data,
+  elbilsandelar (startval 2025, Trafikanalys), utsläppsfaktorer 0,15/0,02 kg CO2 per km, 40 % eldrift
+  och samma avrundning. Alla 326 DeSO och 31 stadsdelsområden ger exakt samma tal som v7.
+  Tidigare räknade B med Vägvis egna energifaktorer och visade bara livscykeln, därför skilde sig talen
+  (till exempel 3 501 ton i stället för 1 980 ton för Tygelsjö by omland, 1280C1040).
+- Livscykeln visas bredvid: v7:s direkta CO2 plus bränslets tidigare led, fordon, batteri, underhåll och
+  slutbehandling. Översikten visar hur livscykeln byggs upp från v7:s värde.
+- Gävle ingår i B: 54 DeSO och 9 stadsdelsområden från Bilmodell v7, med samma ungefärliga ytor för fem DeSO.
+- Kommunen väljs med knappar i sidhuvudet (Malmö, Helsingborg, Gävle i B; Malmö, Helsingborg i A).
+- Kartan i B använder v7:s klasser och färger jämfört med kommunens snitt, med val av mått (per invånare,
+  per hushåll, totalt) och av direkt CO2 eller livscykel. Etiketten visar samma rader som i v7.
+- Antaganden i B: elbilsandelar per år (2025, 2023 eller egna värden per kommun), eldrift och
+  utsläppsfaktorer, som i v7. Livscykeltillägg och osäkerhet i egna kort.
+- Osäkerheten i B använder v7:s fördelningar. Översikten visar även v7:s eget 90-procentsintervall för
+  kommunen, räknat med v7:s kod (atgarder.js, osakerhet.js, mc.js följer med i appen).
+- Underlaget byggs med source/bygg_hushallsprojekt.cjs direkt ur Bilmodell_v7/data.js, geo.js, klimat.js och
+  osakerhet.js. Kontrollsummor för v7-filerna sparas i projektet.
+- Export i B: nya kolumner för v7:s direkta CO2, per invånare, per hushåll och 90- och 95-procentsintervall.
+- Äldre sparade B-projekt (2.0.2) kan öppnas; de får v7:s startvärden för elbilsandelar och utsläppsfaktorer.
+- Modell A är oförändrad.
+
+
+VÄGVIS 2.0.2 – 20 oktober 2026 (vägnätet inbyggt)
+
+- Startprojektet har OSM-vägnätet för Malmö och Helsingborg, nedladdat av användaren via direktlänkarna i 2.0.1
+  (Overpass, dataläge 2026-10-20 12:05 respektive 12:03 UTC). Råfilerna och kontrollsummor ligger i underlag/osm/
+  och underlag/Proveniens_2.0.json.
+- 12 598 länkar i Malmö och 9 730 i Helsingborg ligger i kommunens DeSO. 3 406 respektive 10 147 länkar i
+  grannkommuner och på havet togs bort. Geometrin förenklades med 2 m tolerans (längden ändras under 0,11 %).
+- Alla länkar har schablon-ÅDT per vägklass (oförändrade schabloner i source/core.js). Ingen uppmätt trafik.
+- Standardläget är fortfarande kalibrerat: Malmö skalas till kommunreferensen 2024. Helsingborg räknas direkt.
+- Kontroll mot referensen: utan kalibrering ger schablonerna 245,8 kt TTW i Malmö, 8 % under referensens 268,3 kt.
+  Kalibreringsfaktorer: lätta fordon 1,05, tunga lastbilar utan släp 1,74, med släp 0,56.
+- Nytt skript source/lagg_in_osm.py lägger in nya OSM-filer i startprojektet. Bygg sedan med node source/build.cjs.
+- Startresultatet räknas vid bygget (source/startresultat.cjs, cache i source/startresultat.json) och följer med
+  i appen. Appen öppnar därför direkt i stället för att låsa menyn 1–3 minuter. Det används bara när projekt,
+  inställningar och modellversion är oförändrade; annars räknar appen som förut.
+- Texter i appen och metoden beskriver det nya startläget.
+
+
+VÄGVIS 2.0.1 – 20 oktober 2026 (hämtning av vägnät)
+
+Varför hämtningen misslyckades
+"Failed to fetch" betyder att webbläsaren inte fick något svar från Overpass (OpenStreetMaps frågetjänst).
+Version 2.0.0 skickade hela kommunens omslutande rektangel, inklusive alla servicevägar, i ett enda anrop
+till en enda server. Ett så stort anrop avbryts ofta eller nekas när servern är belastad. Felsvaren saknar
+då CORS-huvud, så webbläsaren visar bara "Failed to fetch".
+
+Ändringar
+- Vägnätet hämtas i mindre rutor (cirka 0,16 × 0,10 grader) och i två klasser: gator och vägar, och
+  servicevägar. Rutor utan DeSO hoppas över. Samma väg i flera rutor räknas en gång.
+- Tre Overpass-servrar provas i tur och ordning (overpass-api.de, overpass.kumi.systems,
+  overpass.private.coffee), med nya försök vid 429, 50x och avbrutna anslutningar.
+- Servicevägar är frivilliga: misslyckas de levereras ändå huvudnätet, och loggen säger vad som saknas.
+- Felmeddelandet säger nu om webbläsaren inte fick svar (nätverk eller brandvägg blockerar, eller servern
+  är överbelastad) i stället för bara "Failed to fetch".
+- Direktlänkar per kommun under Trafik & geodata. En nedladdad OSM-fil (Overpass-JSON) kan läsas in som
+  den är med Importera vägnät; kommunen känns igen automatiskt.
+- Nedladdningsskriptet hamta_underlag.py gör samma sak (rutor, flera servrar, nya försök).
+- Nya tester: source/test_network.cjs (7 kontroller med simulerade serversvar) och två nya fall i
+  source/test_downloader.py. Kontrollerat i en riktig webbläsare (Chromium) med simulerade svar.
+
+Oförändrat: beräkningsmotorn, schablonerna, LCA-parametrarna och startprojektet. Vägnätet från OSM har
+schablontrafik (ÅDT per vägklass); det är inte uppmätt trafik.
+
+
+VÄGVIS 2.0 – 20 oktober 2026
+
+Nyheter
+- Två beräkningsmodeller i samma app. Växla med A/B i vänstermenyn.
+- A: trafikarbete på väglänkar inom området, inklusive genomfart. Kommunreferens från 2024, DeSO 2025_v2. Verklig länktrafik saknas fortfarande i startprojektet.
+- B: hushållens bilar och hela deras körning, från bilmodell v7. Aktivitetsår 2023 och DeSO 2018, 192 områden i Malmö och 80 i Helsingborg. Samma komponentbaserade LCA-formler som i A, med separata parametervärden.
+- Båda modellerna redovisar tillverkning, batteri, fordonsunderhåll, slutbehandling och energikedja utöver TTW. Väganläggning ingår inte. Återvinningskredit är fortfarande en separat informationspost.
+- Landklippt kartvisning med v7:s befintliga landytor som mask; originalets administrativa analysgränser bevaras för brotrafik och vägar i kommunens vatten.
+- OpenStreetMap som valbar bakgrund, med synlig attribution och lokal Leaflet-kod. Inga OSM-kartbilder laddas ner i förväg eller paketeras.
+- Dokumenterad MVD→ÅDT, årskorrigering och riktningsfördelning i GeoJSON-importen. Saknad dokumentation stoppar omräkningen.
+- Omräkningsfel med samma grupp behandlas som gemensamma fel i Monte Carlo. Råvärde, faktorer och källor bevaras i sparat projekt.
+- Importerad ÅDT utan uttrycklig kvalitetsmärkning märks imported, inte measured.
+- Årligt trafikarbete på hela länkgeometrin kan importeras som ANNUAL_VKM.
+- Färdig förfrågan till Malmö stads trafikexperter, inklusive E20/Öresundsbron, Trafikverket, MVD-omräkning och inventeringens systemgräns.
+- Originalets kompletta v7-app med åtgärder medföljer i Bilmodell_v7. Dess klimatfaktorer och 90-procentsintervall är oförändrade; Vägvis B använder andra LCA-faktorer och 95-procentsintervall.
+
+Viktiga preciseringar
+Den tidigare Vägvis-leveransen innehöll ingen geografiskt fördelad inventering baserad på verkliga trafikflöden, och inte heller något färdigt DeSO-resultat baserat på vägtäthet. Malmöstartvärdet var en preliminär kommunal referensomräkning. Motorn kunde använda vägklassbaserade ÅDT-schabloner om ett vägnät laddades in. Sådana schabloner är inte uppmätt trafik.
+
+Uppdateringen tillför inte nya uppmätta trafikmängder. Tidigare API-försök blockerades av leveransmiljöns nätverksregler. Väg- och trafikimport samt det befintliga nedladdningsskriptet finns kvar. OSM är en bakgrundskarta/geometrikälla och ger inte i sig ÅDT.
+
+Resultaten från A och B överlappar, svarar på olika frågor och ska inte summeras. År och DeSO-version skiljer sig också i startunderlagen. Ingen automatisk jämförelse, geografisk omräkning eller påstådd observerad skillnad mellan modellerna görs.
+
+De 12/10 stadsdelsområdena är bilmodellens grupperingar. De ska inte beskrivas som verifierade aktuella administrativa stadsdelar. Kustmasken är återanvänd från v7 och har inte kontrollerats mot en ny officiell kustlinje.
+
+All beräkning sker i webbläsaren. En lokal körning använder inga Netlify-resurser. Netlify-versionen är en statisk webbplats; publicering, trafik och bandbredd kan omfattas av ditt Netlify-avtal.

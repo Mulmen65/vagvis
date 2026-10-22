@@ -1,0 +1,129 @@
+VÄGVIS 2.0.5 – TVÅ MODELLER FÖR TRAFIKENS KLIMATAVTRYCK
+22 oktober 2026
+
+KOM IGÅNG
+1. Packa upp hela ZIP-filen till en vanlig mapp på datorn.
+2. Dubbelklicka på Vagvis_2.0.html. Beräkning och kustklippta områden fungerar utan internet, installation, konto eller Netlify.
+3. Välj A eller B i vänstermenyn. Byt kommun med knapparna i sidhuvudet: Malmö och Helsingborg i A,
+   Malmö, Helsingborg och Gävle i B.
+4. För OpenStreetMap lokalt: starta Starta_med_karta_windows.cmd (Windows) eller kör python3 starta_lokalt.py (Mac/Linux). Kräver Python 3, inga extra Pythonpaket. Detta startar en webbserver endast på 127.0.0.1 och öppnar webbläsaren. Behåll terminalfönstret öppet. OpenStreetMap kräver internet; inga beräkningar skickas till en server.
+   Alternativt kan Netlify-versionen användas online. Direkt file://-öppning använder områdeskartan, eftersom OSM:s karttjänst kräver giltig webb-Referer.
+5. Ändra antaganden, beräkna och exportera resultat eller projekt. Varje modell sparar sina egna antaganden och resultat när du växlar under sessionen. Spara projekt/egen HTML-kopia för att behålla ändringar mellan sessioner.
+
+MODELL A – TRAFIK INOM OMRÅDET
+Längd inom området × ÅDT × årets dygn × fordonsandel × livscykelfaktor.
+Genomfart och den del av in-/utresor som körs inom området ingår. 209 DeSO i Malmö och 84 i Helsingborg (2025_v2). Administrativa vattenytor behålls i beräkningsgeometrin, så att brotrafik inte försvinner när kartan klipps till land.
+Startprojektet (2.0.2) har OSM-vägnätet för båda kommunerna: 12 598 länkar i Malmö och 9 730 i Helsingborg
+(dataläge 20 oktober 2026, underlag/osm/). Alla länkar har schablon-ÅDT per vägklass, inte uppmätt trafik.
+Standardläget är kalibrerat: Malmös trafik skalas per fordonsgrupp till kommunreferensen 2024 (268,3 kt TTW),
+så vägnätet bestämmer fördelningen mellan områden och referensen nivån. Helsingborg saknar referens och räknas
+direkt på nätet. Välj "Beräkna direkt från vägnätets trafik" under Antaganden & scenario för att räkna även
+Malmö direkt på schablonerna.
+Startresultatet är förberäknat, så appen öppnar direkt. En ny beräkning med 3 000 simuleringar
+tar 1–3 minuter i webbläsaren.
+268,3 kiloton = 268 300 ton CO2e, inte 268 ton. Den andra kommunserien anger 291 kiloton för 2024; avgränsningen behöver stämmas av.
+
+MODELL B – HUSHÅLLENS BILAR (2.0.3: Malmö, Helsingborg och Gävle)
+Hushåll × modellerade bilar/hushåll × km/bil, för 192 DeSO i Malmö, 80 i Helsingborg och 54 i Gävle
+(2023, DeSO 2018). Hela körningen hänförs till hemområdet, även körning i andra kommuner och länder.
+B omfattar personbilar, inte all vägtrafik.
+Direkt CO2 räknas exakt som fliken Klimatpåverkan i Bilmodell v7, med samma data, elbilsandelar
+(startval 2025 enligt Trafikanalys), utsläppsfaktorer (0,15 och 0,02 kg CO2/km, 40 % eldrift) och avrundning.
+Därför visar B samma tal som v7, till exempel Tygelsjö by omland (1280C1040): 1 980 ton CO2 per år,
+790 kg per invånare och 2 420 kg per hushåll.
+Livscykeln är v7:s direkta CO2 plus bränslets tidigare led, fordons- och batteritillverkning, underhåll och
+slutbehandling (Vägvis LCA-formler, samma som modell A). Exempel 1280C1040: 3 160 ton CO2e per år.
+Kartan färgar områdena jämfört med kommunens snitt, med Bilmodell v7:s klasser och färger. Välj mått
+(per invånare, per hushåll eller totalt) och direkt CO2 eller livscykel.
+Fem DeSO i Gävle saknas i SCB:s gränsfil och har ungefärliga ytor (streckad kant), som i v7.
+Bilmodell v7 med åtgärdspaket finns i Bilmodell_v7/index.html. Originalets källuppgifter har inte
+registerverifierats på nytt.
+A och B ska inte summeras. Startunderlagen har olika år, DeSO-versioner och geografisk allokering. De 12/10 stadsdelsområdena är modellgrupperingar.
+
+SCENARIO PER OMRÅDE I MODELL A (2.0.4)
+Under Antaganden & scenario finns kortet "Scenario per område och nya vägar":
+- Ändra trafiken i en DeSO eller ett stadsdelsområde med en procentsats (till exempel +20 %).
+  Ändringen gäller all befintlig trafik på vägarna i området.
+- Lägg till en ny väg i en DeSO: vägtyp, längd och ÅDT (tomt = vägtypens schablon). Den nya vägen ger
+  längd × ÅDT × årets dygn fordonskm, fördelat på fordonstyper som vägtypens schablon. I kalibrerat
+  läge skalas den med kommunens kalibreringsfaktorer, som all annan trafik.
+Ändringarna gäller bara scenariot och kombineras med den gemensamma trafikförändringen. Basfallet,
+kalibreringen och basfallets osäkerhetsdragningar är oförändrade. Beräkna igen efter ändringar.
+
+ÅTGÄRDER OCH REFERENSKONTROLL I MODELL B (2.0.4)
+Två nya vyer i modell B, med Bilmodell v7:s egen kod och data:
+- Åtgärder & underlag: v7:s 14 mobilitetsåtgärder och paket, för hela kommunen, alla tre kommunerna,
+  ett stadsdelsområde eller en DeSO, och nya bostäder (förtätning). Effekten visas direkt med v7:s
+  90-procentsintervall och tas med i scenariot när du beräknar. Under vyn finns det vetenskapliga
+  underlaget: effekter, evidensgrad, härledning, samverkansregler och alla referenser.
+- Referenskontroll: v7:s 32 kontrollfall mot publicerade studier, med samma modellvärden, intervall
+  och bedömningar som i v7, samt överföringsosäkerheten. Den kan räknas med i åtgärdernas osäkerhet.
+Åtgärderna påverkar bara scenariot. Basfallet är oförändrat.
+
+OMRÅDESSCENARIO FÖR EN DeSO (2.0.5, modell A och B)
+Under Antaganden & scenario, fliken "Områdesscenario för en DeSO":
+1. Välj stadsdelsområde och DeSO. Alla 326 DeSO i Bilmodell v7 finns (Malmö, Helsingborg och Gävle).
+   Eller välj ett förval för Jägersro (DeSO 1280C1450) ur Trivectors mobilitetsstrategi (rapport 2025:55).
+2. Ange nya bostäder och de nya hushållens utgångsläge: som området i dag, som ett annat område eller egna
+   värden. Parkeringstal, elbilsandel och invånare per bostad kan anges.
+3. Välj mobilitetsåtgärder (Bilmodell v7:s åtgärder och paket).
+4. Resultatet för DeSO:n visas direkt: modell B (de boendes bilar, direkt CO2 som v7 och livscykel, med
+   90-procentsintervall) och modell A (den del av de boendes körning som sker på DeSO:ns vägar).
+5. Kryssa i "Ta med områdesscenariot" och klicka Beräkna med osäkerhet för att få scenariot i karta,
+   översikt och export. Modell A tar 1–3 minuter, modell B några sekunder.
+Basfallet ändras inte. Den tidigare vyn finns under fliken "Antaganden och scenario för hela kommunen".
+I modell A syns bara den del av de boendes körning som sker inom DeSO:n, räknat ur DeSO:ns yta och 25 km
+reslängd: för de flesta DeSO 1–6 %, för Jägersro öst-Stenkällan 3,7 %. Andelen kan ändras. Genomfart, arbetsplatser, besökare och gods ändras inte.
+
+OSÄKERHET
+Vägvis visar P2,5–P97,5 från Monte Carlo, ett 95-procentigt modellintervall. Kommunen summeras inom varje simulering; områdenas percentiler ska inte summeras. Basfall och scenario använder gemensamma dragningar.
+I B dras utsläppsfaktorer, eldrift och kommunens fordonskm med Bilmodell v7:s fördelningar. Lokal osäkerhet
+omfördelar körning mellan områden med oförändrat kommunalt trafikarbete. LCA-tilläggets fel dras gemensamt.
+Detta är inte ett empiriskt konfidensintervall. Bilmodell v7 visar 90-procentsintervall; översikten i B visar
+v7:s eget intervall för hela kommunen bredvid, räknat med v7:s egen kod (samma tal som i v7).
+
+VÄGNÄT FRÅN OPENSTREETMAP (version 2.0.1, inbyggt från 2.0.2)
+Vägnätet ligger redan i startprojektet. Ett nyare vägnät läses in med direktlänkarna och Importera vägnät.
+Hämta öppna underlag behåller befintligt vägnät och kompletterar bara det som saknas.
+Gå till Trafik & geodata och klicka Hämta öppna underlag. Webbläsaren hämtar då vägnätet för Malmö och
+Helsingborg i mindre rutor från tre Overpass-servrar, med nya försök vid fel. Det tar några minuter.
+Om det ändå misslyckas (till exempel om nätverket blockerar overpass-api.de):
+1. Klicka på direktlänken för kommunen under knappen, eller högerklicka och välj Spara länk som.
+   Filen blir 10–60 MB och kan ta 1–3 minuter att få.
+2. Klicka Importera vägnät och välj filen. Kommunen känns igen automatiskt.
+3. Klicka Spara komplett projekt, så behövs ingen ny hämtning nästa gång.
+Alternativt: kör Hamta_underlag_windows.cmd (kräver Python), som gör samma hämtning.
+OSM ger väggeometri och vägklass, inte uppmätt trafik. Alla OSM-länkar får schablon-ÅDT per vägklass.
+
+VERKLIG TRAFIKIMPORT
+Börja med Trafikdata_till_Malmo.html eller .txt: färdig beställning till trafikexperterna.
+Importformat: GeoJSON i WGS84/EPSG:4326, longitud före latitud. GeoPackage/SHP/CSV från kommunen behöver vid behov konverteras och länkas först. Mätplatser kopplas inte automatiskt till vägnätet.
+Använd Trafikimport_schema.json och FIKTIV_trafikimport.geojson som formatstöd. Exemplet är påhittat och ska inte användas som verkliga Malmödata.
+- Rå import med flowMetric kräver uttryckligt mätår, source, flowDirection, geometryDirection och countBasis=geometry. ÅDT utan quality märks som imported, inte som uppmätt.
+- AADT: fordon per årsmedeldygn för just geometrin.
+- MVD: kräver mvdToAadtFactor, conversionSource och conversionCV.
+- Annat mätår: kräver yearFactor, yearFactorSource och yearFactorCV.
+- Riktning: forward följer linjens koordinatordning, backward är motsatt riktning och both avser båda.
+- Dubbelriktat flöde på en körbana: kräver directionShare, directionSource och directionCV. Ingen automatisk halvering av uppmätt ÅDT.
+- ANNUAL_VKM: årliga fordonskm på hela importerade länkgeometrin, inte endast den del som råkar ligga inom ett visst DeSO.
+- classShares ska avse årets trafikfördelning och summera till 1 för car, van, rigid, artic, bus, mc och moped. MVD-fördelningen kan kräva klassvis omräkning till årsmedel. heavyShare är tung lastbil EXKLUSIVE buss.
+- Omräkningsgrupper: samma grupp och feltyp inom kommunen får samma osäkerhetsdragning. Om grupp saknas används källtexten. Välj grupper med omsorg; generiska identiska källtexter ger gemensamt fel. CV=0 betyder att faktorn behandlas som fast, inte att den är bevisat felfri.
+- Årsfaktorer avser dygnsflödet/ÅDT. För ANNUAL_VKM omvandlas värdet först med mätårets dygn och länkens hela längd.
+Vid vägnätsimport väljs direkt nätberäkning. Kalibrering mot kommunreferens är ett separat val och får inte användas för att dölja luckor i nätets täckning.
+
+NETLIFY
+I Netlify-mappen finns index.html, hela v7-appen och dokumentationen. Publicera innehållet i denna mapp. Ingen build command, backend eller Netlify Function krävs. Publicering har inte utförts här.
+Lokal körning använder inga Netlify-resurser. Hosting, byggningar och bandbredd vid publicering kan fortfarande omfattas av Netlifys priser/villkor.
+
+KÄLLKOD OCH KONTROLL
+source/ innehåller båda motorerna, gränssnittet, kartmodulen, startdata och tester.
+I GitHub-arkivet för Streamlit ligger källkoden i kallkod/. Där bygger node kallkod/bygg_appen.cjs appen och
+kopierar den till app/. Se kallkod/README.md.
+Bygg om med: node source/build.cjs
+Kontrollera med: node source/test_core.cjs
+                  node source/test_v2.cjs
+                  node source/test_bundle.cjs
+                  VAGVIS_TEST_WORKER=1 node source/test_bundle.cjs (Mac/Linux)
+                  python3 source/test_downloader.py
+                  node source/test_omradesscenario.cjs
+Se Kontrollresultat.txt för vad som faktiskt har verifierats. En riktig webbläsares kartlayout och extern OSM/API-hämtning har inte verifierats i leveransmiljön.
