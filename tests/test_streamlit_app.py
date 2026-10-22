@@ -49,7 +49,8 @@ def test_ny_vagvis_fil_syns_utan_omstart(tmp_path, monkeypatch):
     assert sidor.version() == "9.9.2"
 
 
-def test_vagvis_har_omradesscenario():
+def test_vagvis_har_omradesscenario_och_kartlagen():
     html = sidor.vagvis_html()
-    assert sidor.version() == "2.0.5"
+    assert re.fullmatch(r"\d+\.\d+\.\d+", sidor.version())
     assert "Områdesscenario för en DeSO" in html and "1280C1450" in html
+    assert "Scenariot i korthet" in html and "data-mapshow" in html

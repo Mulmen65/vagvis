@@ -1,4 +1,4 @@
-# Vägvis 2.0.5 på Streamlit
+# Vägvis 2.0.6 på Streamlit
 
 Vägvis beräknar vägtrafikens klimatavtryck per DeSO, stadsdelsområde och kommun i två modeller:
 
@@ -7,6 +7,8 @@ Vägvis beräknar vägtrafikens klimatavtryck per DeSO, stadsdelsområde och kom
   mobilitetsåtgärder och referenskontroll (Malmö, Helsingborg och Gävle).
 - **Områdesscenario (2.0.5):** under *Antaganden & scenario* väljer du en DeSO och prövar ny bebyggelse och
   mobilitetsåtgärder i båda modellerna, med förval för Jägersro ur Trivectors mobilitetsstrategi (2025).
+- **Scenariot i kartan (2.0.6):** efter en beräkning visar kartan basfall, scenario eller förändring, och
+  områdesscenariot sammanfattas i ord.
 
 Det här arkivet publicerar Vägvis som en Streamlit-app. All beräkning sker i besökarens webbläsare.
 Streamlit-servern skickar bara sidorna, så appen klarar sig gott inom Streamlit Community Clouds

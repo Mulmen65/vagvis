@@ -91,3 +91,83 @@ Efter rensa: aktiv False · cfg har områdesscenario: False
 Mobil bredd: [390, 390]
 Offlinekopia: modell household · områdesscenario 1280C1450
 FEL: inga
+
+== kallkod/source/test_webblasare_kartscenario.py (2.0.6) ==
+Sammanfattning (före beräkning): Förutsättningar Jägersro öst-Stenkällan (DeSO 1280C1450) i stadsdelsområdet Husie, Malmö. I dag 602 hushåll och 1 692 invånare med 1,31 bilar per hushåll och 13 100 km per bil (Bilmodell v7, 2023). 4 000 nya bostäder med 2 invånare per bostad, alltså 8 000 nya invånare. De nya hushållen har egna värden: 0,30 bilar per hushåll och 11 000 km per bil. Elbilar är 9,4 % och laddhybrider 8,7 % av de nya hushållens bilar, samma andelar som i Malmö, år 2025 (Trafikanalys). Inga mobilitetsåtgärder. I modell A antas 3,7 % av de boendes bilkörning ske på DeSO:ns vägar, beräknat ur DeSO:ns yta (2,26 km²) och 25 km reslängd. Modell B · de boendes bilar De boendes bilar kör 23,5 miljoner km per år, mot 10,3 miljoner i dag (+128 %). De direkta CO₂-utsläppen ökar från 1 370 till 3 130 ton per år (+1 760 ton; 90 %: +1 230 till +2 480). Med livscykeln ökar de från 2 180 till 4 980 ton CO₂e. Ökningen beror
+Status före: True · rutor: True
+Nedladdad sammanfattning: Vagvis_omradesscenario_1280C1450.txt · rubriker: True
+Status efter beräkning: Beräknat Senaste beräkningen i modell B innehåller scenariot. Kartan kan visa scenariot och förändringen. Visa i kartan → Ladda ner sammanfattningen (.txt)
+Kartläge: diff · mått: totalt
+Färger i förändringskartan (B): {'#e4e7e4': 191, '#952e17': 1}
+Vald DeSO i panelen: 1280C1450 · HUSIE Jägersro öst-Stenkällan 1 370 ton CO₂/år · direkt Scenario: 3 130 ton (+1 760 ton, +128 %) Invånare 1 692 Hushåll 602 Bilar per hushåll 1,31 Körsträcka per bil 13 100 km/år Fordonskm per hushåll 17 100 km/år CO₂ per invånare 810 kg/år (167 % av snittet) CO₂ per hushåll 2 280 kg/år CO₂ totalt 1 370 ton/år (0,8 % av Malmö) 95 % modellintervall 910–2 070 ton CO₂ Livscykel 2 180 ton CO₂e/år 95 % för liv
+Första raden i tabellen (sorterad efter förändring): Jägersro öst-Stenkällan 1280C1450 1 692 1,31 13 100 810 1 370 910–2 070 2 180 3 130 +1 760 (+128 %)
+Scenarioläge, rubrik: DeSO 2018 · Malmö · scenario
+Basläge, notis: Modell B · hushållens bilar. Hela bilkörningen hänförs till hemområdet, även körning utanför kommunen. Direkt CO₂ är sam
+A beräknad på 98 s
+A-sammanfattning:  På DeSO:ns vägar tillkommer 0,49 miljoner fordonskm per år, 3,7 % av de boendes ändrade körning. Livscykelutsläppen från trafiken i DeSO:n ökar med 110 ton CO₂e per år, från 6 290 till 6 400 ton (+2 %). Avgasutsläppen ändras med +71 ton CO₂. Resten av de boendes körning sker på vägar i andra områden och kommuner och syns inte i DeSO:n. Genomfartstrafik, arbetsplatser, besökare och godstransporter ändras inte. Beräkn
+Färger i förändringskartan (A): {'#e4e7e4': 208, '#f0a868': 1}
+A-panel: 1280C1450 1280C1450 6 289 ton CO₂e/år Scenario: 6 401 ton (+2 %) 95 % modellintervall 2 491–14 291 ton Scenario 6 401 ton Förändring +112 ton (+2 %) 95 % för förändringen 25 till 336 ton Trafikarbete 20 885 941 fordonskm Direktutsläpp 4 073 ton CO₂e Gränsversion 2025 Osäkerheten innehåller gemensamma stads- och vägklassfaktorer.
+Mobil bredd: [390, 390]
+FEL: inga
+
+== kallkod/source/test_webblasare_omradesscenario.py (2.0.6) ==
+Start: A-resultat från startresultatet: True
+Flikar: ['Områdesscenario för en DeSO *', 'Antaganden och scenario för hela kommunen']
+Förvald DeSO: 1280C1450 · aktiv: False · dirty: False
+Efter förval: aktiv True · dirty True
+B live: Jägersro öst-Stenkällan (1280C1450), 4 000 nya bostäder. Nya hushåll som Hyllie. DIREKT CO₂ PER ÅR I DESO:N 1 370 → 2 920 ton +1 550 ton (90 %: +990 till +2 080) LIVSCYKEL PER ÅR I DESO:N 2 180 → 4 650 ton CO₂e +2 470 ton FORDONSKM PER ÅR 10,3 → 21,9 miljoner km +113 % BILAR PER HUSHÅLL, NYA HUSHÅLL 0,56 → 0,30 −47 %, begränsat av parkeringstalet (90 %: 0,21 till 0,40) KÖRSTRÄCKA PER BIL, NYA HUSHÅLL 12 400 → 9 700 km −22 % DIREKT CO₂ PER NY INVÅNARE 190 kg per år Över budgeten 160 kg (90 %: 120 till 260) I dag Befintliga hushåll Nya hushåll Scenario, hela DeSO:n Förändring, hela DeSO:n Hushåll 602 602 4 000 4 602 +4 000 Invånare 1 692 1 692 8 000 9 692 +8 000 Bilar 786 786 1 200 1 986 +1 20
+A live: DE BOENDES BILKÖRNING (MODELL B) +11,65 miljoner km per år +113 % mot i dag VARAV PÅ DESO:NS VÄGAR +0,43 miljoner km 3,7 % av körningen LIVSCYKEL I DESO:N (MODELL A) 6 290 → 6 390 ton CO₂e +99 ton (+2 %) DIREKT (AVGASER) I DESO:N +62 ton CO₂ +2 % av avgasutsläppen STADSDELSOMRÅDET HUSIE 93 500 → 93 600 ton CO₂e +0,1 % MALMÖ, HELA KOMMUNEN 414 300 → 414 400 ton CO₂e 0 % Livscykel per personbilskm i modell A: 228 g CO₂e, varav avgaser 144 g. Utgångsläget är modell A:s basfall för DeSO:n (senast be
+Jämförelse: Scenario Hushåll Bilar per hushåll (nya) Km per bil (nya) Fordonskm, milj. Direkt CO₂, ton kg per ny invånare Livscykel, ton Modell A, ton I dag 602 1,31 13 100 10,3 1 370 — 2 180 0 Referens utan strategi 4 602 0,56 12 400 38,3 5 110 470 8 140 +240 Strategin som åtgärder 4 602 0,30 9 700 21,9 2 920 190 4 650 +99 Trivectors målnivå 4 602 0,30 11 000 23,5 3 130 220 4 980 +110 Bilar per hushåll och km per bil avser de nya hushållen. Elbilsandel som kommunen (9,4 % elbilar, 8,7 % laddhybrider) om inget annat anges.
+A cfg areaTraffic: [{'city': '1280', 'deso': '1280C1450', 'carVkm': 434344.4851233118, 'label': 'Områdesscenario 1280C1450'}]
+Fokus kvar i fältet: as-nya · förval: egen
+Åtgärd av ändrar resultatet: True
+A beräknad på 99 s; DeSO bas 6289.3 t, scenario 6388.2 t, skillnad 95 %: 22.0 till 296.7
+A live efter beräkning: DE BOENDES BILKÖRNING (MODELL B) +11,65 miljoner km per år +113 % mot i dag VARAV PÅ DESO:NS VÄGAR +0,43 miljoner km 3,7 % av körningen LIVSCYKEL I DESO:N (MODELL A) 6 290 → 6 390 ton CO₂e +99 ton (+2 %) DIREKT (AVGASER) I DESO:N +62 ton CO₂ +2 % av avgasutsläppen STADSDELSOMRÅDET HUSIE 93 500 → 93 600 ton CO₂e +0,1 % MALMÖ, HELA KOMMUNEN 414 300 → 414 400 ton CO₂e 0 % Livscykel per personbilskm i
+B: DeSO direkt bas 1371, scenario 2924 t, livscykel scenario 4653; metrics {'city': '1280', 'deso': '1280C1450', 'mode': 'analog', 'newDwellings': 4000, 'persons': 2, 'presetId': 'egen', 'newBph': 0.3, 'newKm': 9704.275584431814, 'parking': 0.3}
+B-panel: Jägersro öst-Stenkällan (1280C1450), 4 000 nya bostäder. Nya hushåll som Hyllie. DIREKT CO₂ PER ÅR I DESO:N 1 370 → 2 920 ton +1 550 ton (90 %: +990 till +2 080) LIVSCYKEL PER ÅR I DESO:N 2 180 → 4 650 ton CO₂e +2 470 ton FORDONSKM PER ÅR 
+Kartpanelens knapp: True
+Sparat projekt har områdesscenario: 1280C1450
+Gävle: notis om aktivt scenario i Malmö: True
+Gävle A-kort: Modell A · trafiken på DeSO:ns vägar Modell A har inget vägnät för Gävle. Områdesscenariot räknas bara i modell B här.
+Gävle B live: Holmsund-Sjöäng-Sörby Urfjäll (2180C1240), 500 nya bostäder. Nya hushåll som Bomhus–Sörby Urfjäll. DIREKT CO₂ PER ÅR I DESO:N 1 310 → 1 510 ton +190 ton (90 %: +120 till +260) LIVSCYKEL PER ÅR I DESO:N 2 070 → 2 370 ton CO₂e +300 ton FORDONSKM PER ÅR 9,4 → 10,8 miljoner km +15 % BILAR PER HUSHÅLL, N
+Efter rensa: aktiv False · cfg har områdesscenario: False
+Mobil bredd: [390, 390]
+Offlinekopia: modell household · områdesscenario 1280C1450
+FEL: inga
+
+== kallkod/source/test_webblasare_atgarder.py (2.0.6) ==
+Paket i hela staden: jämförda DeSO 326 · avvikelser mot v7: 0 []
+Basfallet oförändrat med åtgärder: True
+IVL-paket + 200 bostäder i 1280C1040: v7 −320 ton · Vägvis −320 ton · lika
+Referenskontroll: kontrollfall 32 · avvikelser mot v7: 0 []
+Nyckeltal v7: ['32 kontroller', '4 av 9', '3 av 9', '+50 %'] · Vägvis: ['32 kontroller', '4 av 9', '3 av 9', '+50 %'] · lika
+FEL: inga
+
+== kallkod/source/test_webblasare_hushall.py (2.0.6) ==
+Jämförda områden: 357 · DeSO per stad: {'Malmö': 192, 'Helsingborg': 80, 'Gävle': 54}
+Avvikelser mot Bilmodell v7 (kg/inv, kg/hushåll, ton): 0 []
+Malmö: 90 % i v7 159 000–204 700 ton · i Vägvis B 159 000–204 700 ton · lika
+Helsingborg: 90 % i v7 89 600–119 500 ton · i Vägvis B 89 600–119 500 ton · lika
+Gävle: 90 % i v7 65 500–88 300 ton · i Vägvis B 65 500–88 300 ton · lika
+1280C1040 i v7: ('790', '2\xa0420', '1\xa0980') · i Vägvis B: ['790', '2\xa0420', '1\xa0980']
+Kartetikett: Oxie norr
+1280C1110 · Oxie
+720 kg CO₂ per invånare
+1 690 kg CO₂ per hushåll
+1 820 ton CO₂ per år
+Livscykel 2 900 ton CO₂e per år
+FEL: inga
+
+== kallkod/source/test_webblasare_start.py (2.0.6) ==
+Laddning: 2.4 s
+Status: Modellskattning
+Startresultat använt: True nav låst: False
+Inbäddat: [['city|1280', 268313.0201891988, 414268.55849628366, 325656.39995373663, 525078.0448288114], ['city|1283', 220453.03427467166, 342175.9463076334, 215429.01840502053, 528530.6059750611]]
+Översikt vid start: Screening utifrån importerat nät. Trafik på länkar utan ÅDT uppskattas med öppna schabloner. Nuvarande vägnät kan avvika från nätet år 2024. En områdeskarta gör inte i sig skattningen statistiskt validerad. LIVSCYKEL · BASFALL 2024 414 269 ton CO₂e/år 95 % modellintervall: 325 656–525 078 ton. DIREKTUTSLÄPP · TTW 268 313 ton Utsläpp från fordonens användning. El- och bränsleproduktion ingår i livs
+Väglänkar: ['315 områdesgeometrier totalt', '22 328 väglänkar totalt']
+Beräkning: 92 s
+Omräknat i webbläsaren lika med inbäddat (relativ skillnad under 1e-9): True [['city|1280', 268313.0201891988, 414268.55849628366, 325656.3999537366, 525078.0448288114], ['city|1283', 220453.03427467166, 342175.9463076334, 215429.01840502053, 528530.6059750611]]
+Översikt Malmö: Screening utifrån importerat nät. Trafik på länkar utan ÅDT uppskattas med öppna schabloner. Nuvarande vägnät kan avvika från nätet år 2024. En områdeskarta gör inte i sig skattningen statistiskt validerad. LIVSCYKEL · BASFALL 2024 414 269 ton CO₂e/år 95 % modellintervall: 325 656–525 078 ton. DIREKTUTSLÄPP · TTW 268 313 ton Utsläpp från fordonens användning. El- och bränsleproduktion ingår i livscykeln. DITT SCENARIO · FÖRÄNDRING 0,0 % 95 % intervall för skillnaden: 0–0 ton. Vad består klimatavtrycket av? BASFALL Ett års trafik, med tillverkning och slutbehandling fördelad per fordonskilometer. Direkt från fordon (TTW) 268,3 Energi i tidigare led 87,6 Fordonstillverkning 39,5 Batteritillver
+1280C1050 vald: True 1280C1050 1280C1050 4 306 ton CO₂e/år 95 % modellintervall 1 745–9 434 ton Scenario 4 306 ton Trafikarbete 16 112 784 fordonskm Direktutsläpp 2 747 ton CO₂e Gränsversion 2025 Osäkerheten innehåller gemensamma stads- och vägklassfaktorer. Scenario för området →
+Översikt Helsingborg: Screening utifrån importerat nät. Trafik på länkar utan ÅDT uppskattas med öppna schabloner. Nuvarande vägnät kan avvika från nätet år 2024. En områdeskarta gör inte i sig skattningen statistiskt validerad. LIVSCYKEL · BASFALL 2024 342 176 ton CO₂e/år 95 % modellintervall: 215 429–528 531 ton. DIREKTUTSLÄPP · TTW 220 453 ton Utsläpp från fordonens användning. El- och bränsleproduktion ingår i livscykeln. DITT SCENARIO · FÖRÄNDRING 0,0 % 95 % intervall för skillnaden: 0–0 ton. Vad består klimatav
+FEL: inga

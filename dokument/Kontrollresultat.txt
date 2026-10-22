@@ -1,3 +1,19 @@
+VÄGVIS 2.0.6 – TILLÄGG 22 OKTOBER 2026 (scenariot i korthet och scenariot i kartan)
+
+Basfallet är oförändrat mot 2.0.5: startresultatet i A (1 605 fält) är identiskt; beräkningsmotorerna är
+oförändrade utom versionsnumret. Alla beräkningstester ger samma utfall som i 2.0.5.
+
+Riktig webbläsare (Chromium, source/test_webblasare_kartscenario.py), förvalet Trivectors målnivå i 1280C1450:
+- Sammanfattningen beskriver förutsättningarna och resultatet: B 1 370 → 3 130 ton direkt CO2 (+1 760 ton;
+  90 %: +1 230 till +2 480), 220 kg per ny invånare mot budgeten 160 kg; A +110 ton CO2e på DeSO:ns vägar.
+  Status "Inte beräknat än" före och "Beräknat" efter Beräkna med osäkerhet. Nedladdad textfil har alla delar.
+- Modell B, Förändring: 1280C1450 i klassen "ökar mer än 100 %", övriga 191 DeSO oförändrade. Tabellen sorteras
+  med 1280C1450 först (+1 760 ton, +128 %).
+- Modell A, Förändring: 1280C1450 i klassen "ökar 1–20 %" (+112 ton, +2 %; 95 %: +25 till +336 ton), övriga
+  208 DeSO oförändrade.
+- Mobil (390 px) utan sidledsrullning, inga fel i konsolen.
+
+
 VÄGVIS 2.0.5 – TILLÄGG 22 OKTOBER 2026 (Områdesscenario för en DeSO)
 
 Basfallet är oförändrat mot 2.0.4:

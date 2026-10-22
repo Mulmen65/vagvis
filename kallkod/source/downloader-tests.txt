@@ -249,6 +249,6 @@
    overpass.private.coffee: HTTP Error 429: Too Many Requests – försöker igen
 ..
 ----------------------------------------------------------------------
-Ran 8 tests in 0.005s
+Ran 8 tests in 0.004s
 
 OK

@@ -1,4 +1,4 @@
-VÄGVIS 2.0.5 – TVÅ MODELLER FÖR TRAFIKENS KLIMATAVTRYCK
+VÄGVIS 2.0.6 – TVÅ MODELLER FÖR TRAFIKENS KLIMATAVTRYCK
 22 oktober 2026
 
 KOM IGÅNG
@@ -72,6 +72,14 @@ Under Antaganden & scenario, fliken "Områdesscenario för en DeSO":
 5. Kryssa i "Ta med områdesscenariot" och klicka Beräkna med osäkerhet för att få scenariot i karta,
    översikt och export. Modell A tar 1–3 minuter, modell B några sekunder.
 Basfallet ändras inte. Den tidigare vyn finns under fliken "Antaganden och scenario för hela kommunen".
+Kortet "Scenariot i korthet" beskriver förutsättningar och resultat i ord och kan laddas ner som textfil.
+
+SCENARIOT I KARTAN (2.0.6)
+Kartan visar basfallet tills du väljer något annat. Efter Beräkna med osäkerhet kan du under Karta & områden
+välja Basfall, Scenario eller Förändring. Förändringen färgas i procent av basfallet. Tabellen och
+områdespanelen följer samma val. Knappen Visa i kartan i områdesscenariot öppnar kartan med förändringen.
+Har du ändrat indata efter beräkningen visar kartan den senaste beräkningen tills du beräknar igen.
+
 I modell A syns bara den del av de boendes körning som sker inom DeSO:n, räknat ur DeSO:ns yta och 25 km
 reslängd: för de flesta DeSO 1–6 %, för Jägersro öst-Stenkällan 3,7 %. Andelen kan ändras. Genomfart, arbetsplatser, besökare och gods ändras inte.
 

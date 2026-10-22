@@ -2,13 +2,9 @@ OK both calculation engines, geography, Leaflet and styles are inline
 OK Netlify bundle includes the source app, data request and documentation
 OK SHA256 receipts match the current code, data and HTML
 OK OSM attribution and hosted referrer policy are present
-Vägvis 2.0 körs på din dator: http://127.0.0.1:45649/Vagvis_2.0.html
+Vägvis 2.0 körs på din dator: http://127.0.0.1:45665/Vagvis_2.0.html
 Behåll detta fönster öppet. Avsluta med Ctrl+C.
 Beräkningen sker lokalt. OpenStreetMap behöver internet.
-127.0.0.1 - - [22/Oct/2026 10:00:24] "GET /Vagvis_2.0.html HTTP/1.1" 200 -
 OK local launcher serves the complete app on loopback and a free port
-127.0.0.1 - - [22/Oct/2026 10:00:24] "GET /Trafikdata_till_Malmo.html HTTP/1.1" 200 -
-127.0.0.1 - - [22/Oct/2026 10:00:24] "GET /Bilmodell_v7/index.html HTTP/1.1" 200 -
-127.0.0.1 - - [22/Oct/2026 10:00:24] "GET /Bilmodell_v7/lib/leaflet/leaflet.js HTTP/1.1" 200 -
 OK local server delivers the detailed v7 app and data request
 6 package checks passed. No graphical browser or external tiles tested.

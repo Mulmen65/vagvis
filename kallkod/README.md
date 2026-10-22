@@ -55,7 +55,7 @@ python -m pytest tests
 ```
 
 Webbläsartesterna (`kallkod/source/test_webblasare*.py`) kräver Playwright med Chromium och körs mot
-`kallkod/Netlify`, till exempel `python kallkod/source/test_webblasare_omradesscenario.py kallkod/Netlify bilder`.
+`kallkod/Netlify`, till exempel `python kallkod/source/test_webblasare_kartscenario.py kallkod/Netlify bilder`.
 
 ## Licenser
 

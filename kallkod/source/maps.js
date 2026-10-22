@@ -51,5 +51,5 @@ function drawSVG(areas,land,index,max,onSelect,fill,dashed){
  if($('map-status'))$('map-status').textContent='Lokal områdeskarta · bakgrundskartan kunde inte startas.';
 }
 function select(id){for(const [key,l]of Object.entries(layers))l.setStyle({weight:key===id?2.5:.8,color:key===id?'#123d36':'#fff'});}
-window.VagvisMaps={draw,dispose,select,masks};
+window.VagvisMaps={draw,dispose,select,masks,color};
 })();

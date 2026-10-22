@@ -1,3 +1,31 @@
+VÄGVIS 2.0.6 – 22 oktober 2026 (tydligare scenario och scenariot i kartan)
+
+Basfallet är oförändrat: startresultatet i A är identiskt med 2.0.5 tal för tal, och beräkningen i A och B är
+densamma. Ändringarna gäller hur resultaten visas.
+
+Scenariot i korthet (Antaganden & scenario, Områdesscenario)
+- Nytt kort överst med förutsättningarna och resultatet i ord för vald DeSO: område och dagens läge, ny
+  bebyggelse, de nya hushållens bilar och elbilsandel, åtgärder, andelen i modell A; resultat för modell B
+  (fordonskm, direkt CO2 med 90-procentsintervall, livscykel, per invånare, nya invånare mot budgeten,
+  stadsdelsområdet och kommunen) och modell A (fordonskm och utsläpp på DeSO:ns vägar).
+- Status som visar om senaste beräkningen innehåller scenariot, knappen Visa i kartan och nedladdning av
+  sammanfattningen som textfil (med en tabell för DeSO:n).
+- Tydligare rutor: när de nya hushållens värden inte ändras av åtgärder står "Egna värden, inga åtgärder" i
+  stället för en ändring på 0 %. Tabellen förklarar att snitten per hushåll och invånare väger ihop befintliga
+  och nya hushåll.
+
+Scenariot i kartan (Karta & områden, modell A och B)
+- Kartan kan visa Basfall, Scenario eller Förändring från senaste beräkningen. Förändringen färgas i procent av
+  basfallet: grönt minskar, grått oförändrat (±1 %), orange och rött ökar.
+- Tabellen har kolumnen Förändring och sorteras efter valt läge. Områdespanelen visar scenario, förändring och
+  95-procentsintervallet för förändringen.
+- Med ett aktivt områdesscenario är dess DeSO vald när kartan öppnas. En notis säger när kartan visar en äldre
+  beräkning än indata.
+- I modell B byts måttet till totalt när Förändring väljs, eftersom snitt per invånare kan sjunka när totalen ökar.
+
+Nytt test: source/test_webblasare_kartscenario.py.
+
+
 VÄGVIS 2.0.5 – 22 oktober 2026 (Områdesscenario för en DeSO i modell A och B)
 
 Basfallet är oförändrat: alla resultat i A och B med standardinställningarna är identiska med 2.0.4
