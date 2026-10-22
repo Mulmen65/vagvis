@@ -1,3 +1,49 @@
+VÄGVIS 2.0.5 – 22 oktober 2026 (Områdesscenario för en DeSO i modell A och B)
+
+Basfallet är oförändrat: alla resultat i A och B med standardinställningarna är identiska med 2.0.4
+(startresultatet i A, alla 360 resultatposter i B och 2.0.4:s åtgärder och scenario i A, kontrollerat tal för tal).
+
+Nytt: Områdesscenario under Antaganden & scenario (båda modellerna)
+- Välj en DeSO, alla 326 DeSO i Bilmodell v7 (192 i Malmö, 80 i Helsingborg, 54 i Gävle), och pröva ny
+  bebyggelse och mobilitetsåtgärder. Den tidigare vyn finns kvar under fliken "Antaganden och scenario för
+  hela kommunen".
+- De nya hushållens utgångsläge: som området i dag (v7:s flik Befintliga områden, förtätning), som ett annat
+  befintligt område eller med egna värden (v7:s flik Nya områden). Parkeringstal som tak för bilar per hushåll,
+  egna andelar elbilar och laddhybrider för de nya hushållens bilar och invånare per ny bostad.
+- Bilmodell v7:s 14 åtgärder och paket, räknade med v7:s egen kod. Åtgärderna gäller de nya hushållen och, om
+  du väljer det, även de befintliga.
+- Resultat för DeSO:n i dag och i scenariot, uppdelat på befintliga och nya hushåll: hushåll, invånare, bilar,
+  körsträcka, fordonskm, direkt CO2 (som v7) och livscykel, med v7:s 90-procentsintervall. Effekten på
+  stadsdelsområdet och kommunen. Jämförelse med en klimatbudget per person (standard 160 kg, Trivector) och
+  den andel eldriven körning som skulle behövas.
+- Modell A: de boendes ändrade bilkörning (från B) läggs på DeSO:ns vägar med den andel som sker inom
+  DeSO:n. Standardandelen räknas ur DeSO:ns yta och en genomsnittlig reslängd på 25 km (RVU Sverige
+  2011–2014) och kan ändras. Raden är personbilstrafik, gäller bara scenariot, kalibreras inte och dras i
+  scenariots egen slumpström. Genomfart, arbetsplatser, besökare och gods ändras inte.
+- Förval för Jägersro (DeSO 1280C1450, Jägersro öst-Stenkällan) ur Trivectors mobilitetsstrategi
+  (rapport 2025:55): referens utan strategi (4 000 bostäder som Hyllie), strategin som v7-åtgärder med
+  parkeringstal 0,3 och Trivectors målnivå (0,3 bilar per hushåll, 11 000 km per bil). Förvalen jämförs i en
+  tabell, och översättningen till v7:s åtgärder redovisas.
+- Kryssrutan "Ta med områdesscenariot" avgör om scenariot ingår när modellen beräknas (karta, översikt,
+  export). Annars är vyn en förhandsvisning.
+- Kartan: områdespanelen har knappen "Scenario för området".
+- Åtgärderna under Åtgärder & underlag gäller övriga områden när ett områdesscenario är aktivt.
+- Sparat projekt och egen HTML-kopia innehåller områdesscenariot.
+
+Beräkningen
+- households.js: areaSetup, areaDetail och areaMC. Nya hushåll i analog och own räknas som v7:s Nya områden
+  (atgardseffekt med andelNy = 1 och tillampa med parkeringstalet som tak). Deras utgångsläge får en
+  log-normal osäkerhet med CV 0,2, motsvarande v7:s ±25–40 % för nya områden.
+- core.js: areaTraffic, nya rader för de boendes biltrafik; areaKm2; källorna Trivector 2025:55 och RVU Sverige.
+- Nya tester: source/test_omradesscenario.cjs (12 kontroller) och source/test_webblasare_omradesscenario.py.
+
+Källkod i GitHub-arkivet
+- Källkoden ligger i mappen kallkod/ i GitHub-arkivet för Streamlit. node kallkod/bygg_appen.cjs bygger appen och
+  lägger app/Vagvis.html, metodsidan, dataförfrågan och dokumenten där Streamlit läser dem.
+- source/sokvagar.cjs letar upp Bilmodell v7 bredvid source/ (komplett paket) eller i app/Bilmodell_v7 (arkivet).
+  Bygget ger samma Vagvis_2.0.html i båda fallen.
+
+
 VÄGVIS 2.0.4 – 21 oktober 2026 (åtgärder och referenskontroll i B, scenario per område i A)
 
 Basfallet är oförändrat: alla resultat i A och B med standardinställningar är identiska med 2.0.3

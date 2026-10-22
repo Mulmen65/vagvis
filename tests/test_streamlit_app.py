@@ -35,3 +35,21 @@ def test_ovriga_sidor_har_inga_trasiga_lokala_lankar():
     for html in (sidor.metod_html(), sidor.trafikdata_html()):
         assert not LOKAL.findall(sidor.markup_only(html))
     assert 'download="Trafikdata_till_Malmo.txt"' in sidor.trafikdata_html()
+
+
+def test_ny_vagvis_fil_syns_utan_omstart(tmp_path, monkeypatch):
+    """En uppdaterad app/Vagvis.html ska visas direkt, inte en gammal kopia ur minnet."""
+    (tmp_path / "Vagvis.html").write_text("<footer>Vägvis 9.9.1 · ton per kalenderår</footer>", encoding="utf-8")
+    monkeypatch.setattr(sidor, "APP", tmp_path)
+    assert sidor.version() == "9.9.1"
+    import os, time
+    f = tmp_path / "Vagvis.html"
+    f.write_text("<footer>Vägvis 9.9.2 · ton per kalenderår</footer>", encoding="utf-8")
+    os.utime(f, ns=(time.time_ns() + 10**9, time.time_ns() + 10**9))
+    assert sidor.version() == "9.9.2"
+
+
+def test_vagvis_har_omradesscenario():
+    html = sidor.vagvis_html()
+    assert sidor.version() == "2.0.5"
+    assert "Områdesscenario för en DeSO" in html and "1280C1450" in html

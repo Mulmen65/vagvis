@@ -3,7 +3,7 @@
 Vägvis är en fristående webbapp (HTML och JavaScript). All beräkning sker i besökarens
 webbläsare; Streamlit-servern skickar bara sidorna. Appen har fyra sidor:
 
-  /vagvis        Vägvis 2.0.4 (modell A och B), startsida
+  /vagvis        Vägvis 2.0.5 (modell A och B), startsida
   /bilmodell_v7  Bilmodell v7 (bilar och körsträcka per område, åtgärder, referenskontroll)
   /metod         Metod och användning
   /trafikdata    Dataförfrågan till Malmö stad
@@ -15,8 +15,9 @@ import streamlit as st
 import vagvis_sidor as sidor
 
 
-@st.cache_resource(show_spinner=False)
 def html(namn: str) -> str:
+    # vagvis_sidor håller sidorna i minnet så länge filerna i mappen app är oförändrade.
+    # En ny app/Vagvis.html på GitHub syns därför direkt, utan att appen behöver startas om.
     return {"vagvis": sidor.vagvis_html, "bilmodell": sidor.bilmodell_html,
             "metod": sidor.metod_html, "trafikdata": sidor.trafikdata_html}[namn]()
 

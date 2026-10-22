@@ -1,3 +1,42 @@
+VÄGVIS 2.0.5 – TILLÄGG 22 OKTOBER 2026 (Områdesscenario för en DeSO)
+
+Basfallet är oförändrat mot 2.0.4:
+- Modell A: startresultatet (alla områden, centrala värden, intervall och dragningar för kommunerna) är
+  identiskt med 2.0.4. A med 2.0.4:s områdesändringar och nya vägar ger identiska resultat.
+- Modell B: alla 360 resultatposter med standardinställningar är identiska med 2.0.4, liksom resultaten med
+  2.0.4:s åtgärder (paket för hela staden, en DeSO med nya bostäder och ett stadsdelsområde).
+
+Beräkningstester (source/test_omradesscenario.cjs, 12 kontroller):
+- Utgångsläget "som området" ger samma scenario som 2.0.4:s åtgärder för en DeSO (v7 Befintliga områden).
+- Nya hushåll från ett motsvarande område ger samma bilar per hushåll, km per bil och fordonskm som v7:s
+  Nya områden (atgardseffekt och tillampa ur v7:s egen kod), med och utan parkeringstal.
+- Vyns tal summerar till samma DeSO-, stadsdels- och kommunvärden som beräkningen; kommunen är summan av DeSO.
+- Basfallets dragningar är identiska med och utan områdesscenario; övriga DeSO påverkas inte.
+- I A läggs de boendes trafik till personbilstrafiken i scenariot utan kalibreringsfaktor; basfallets dragningar
+  är identiska; ogiltiga indata stoppas.
+
+Riktig webbläsare (Chromium, source/test_webblasare_omradesscenario.py):
+- Förvalet "Jägersro: mobilitetsstrategin som åtgärder" i DeSO 1280C1450 ger i vyn modell B 1 370 → 2 920 ton
+  direkt CO2 och modell A +99 ton CO2e på DeSO:ns vägar (andel 3,7 %, 0,43 miljoner fordonskm).
+  Full beräkning: A +98,9 ton (95 %: +22 till +297 ton), B scenario 2 924 ton direkt CO2. Vyn och beräkningen
+  stämmer överens.
+- Jämförelse i DeSO 1280C1450 (centrala värden, kommunens elbilsandel 2025):
+  referens utan strategi 0,56 bilar per hushåll och 470 kg direkt CO2 per ny invånare;
+  strategin som åtgärder 0,30 och 190 kg (90 %: 120–260 kg);
+  Trivectors målnivå 0,30 och 220 kg. Budgeten 160 kg nås med ungefär 41 % eldriven körning i målnivån.
+- Textfält behåller fokus, åtgärder ändrar resultatet direkt, kartans knapp öppnar områdesscenariot, Gävle
+  räknas i B, sparat projekt och egen HTML-kopia innehåller scenariot, Rensa tar bort det, mobil (390 px) utan
+  sidledsrullning, inga fel i konsolen.
+- Alla tidigare webbläsartester (A, B mot v7, åtgärder och referenskontroll mot v7, områdesval, startresultat)
+  ger samma utfall som i 2.0.4.
+
+INTE VERIFIERAT I 2.0.5
+- Andelen av de boendes körning som sker inom DeSO:n är en geometrisk uppskattning, inte uppmätt.
+- Översättningen av Trivectors principer till v7:s åtgärder är en tolkning. Bilpool för 70 % av hushållen ligger
+  utanför v7:s underlag (högst 60 %).
+- Arbetsplatser, besökare, godstransporter och byggtrafik i ett nytt område ingår inte.
+
+
 VÄGVIS 2.0.4 – TILLÄGG 21 OKTOBER 2026 (åtgärder, referenskontroll och scenario per område)
 
 Basfallet är oförändrat mot 2.0.3:

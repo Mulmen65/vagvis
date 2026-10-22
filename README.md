@@ -1,10 +1,12 @@
-# Vägvis 2.0.4 på Streamlit
+# Vägvis 2.0.5 på Streamlit
 
 Vägvis beräknar vägtrafikens klimatavtryck per DeSO, stadsdelsområde och kommun i två modeller:
 
 - **A – Trafik inom området:** vägnät × trafikmängd × livscykel (Malmö och Helsingborg).
 - **B – Hushållens bilar:** bilinnehav × körsträcka, samma beräkning som Bilmodell v7 plus livscykel,
   mobilitetsåtgärder och referenskontroll (Malmö, Helsingborg och Gävle).
+- **Områdesscenario (2.0.5):** under *Antaganden & scenario* väljer du en DeSO och prövar ny bebyggelse och
+  mobilitetsåtgärder i båda modellerna, med förval för Jägersro ur Trivectors mobilitetsstrategi (2025).
 
 Det här arkivet publicerar Vägvis som en Streamlit-app. All beräkning sker i besökarens webbläsare.
 Streamlit-servern skickar bara sidorna, så appen klarar sig gott inom Streamlit Community Clouds
@@ -24,11 +26,15 @@ streamlit_app.py        Streamlit-appen (sidorna och layouten)
 vagvis_sidor.py         Bygger varje sida som en enda HTML-text
 requirements.txt        Python-paket: bara Streamlit
 .streamlit/config.toml  Frivilliga inställningar (komprimering, ljust tema)
-app/                    Vägvis, Bilmodell v7 och dokumentationssidor, oförändrade
-dokument/               Läs mig först, ändringslogg och kontrollresultat
-tests/                  Kontroller som kan köras lokalt
+app/                    Det appen visar: Vägvis (byggd ur kallkod/), Bilmodell v7 och dokumentationssidor
+dokument/               Läs mig först, ändringslogg och kontrollresultat (kopior ur kallkod/)
+kallkod/                Källkoden till Vägvis: beräkning, gränssnitt, data, byggskript och tester
+tests/                  Kontroller av Streamlit-appen
 LICENSE.txt             Licenser
 ```
+
+`app/Vagvis.html` byggs ur `kallkod/` med `node kallkod/bygg_appen.cjs`. Ändra den inte för hand.
+Se `kallkod/README.md`.
 
 Varför inte bara lägga HTML-filen i Streamlits statiska mapp? Streamlit skickar sådana HTML-filer
 som ren text. Därför visar appen varje sida i en ram (`st.iframe`). Länkarna mellan sidorna leder
@@ -103,27 +109,68 @@ git push -u origin main
 > för spridning*, och Vägvis modell B bygger på dess data. Ska modellen inte spridas ännu, använd ett
 > privat arkiv och en privat app med inbjudna läsare.
 
-### Del 4. Uppdatera appen
+### Del 4. Gå live med en ny version
 
-Byt filerna i GitHub-arkivet. Välj **Add file → Upload files**, dra in de nya filerna och klicka
-**Commit changes**. Appen uppdateras automatiskt inom någon minut. Om inte: klicka **Manage app**
-nere till höger i appen och välj **Reboot app**.
+Appen på Streamlit visar alltid det som ligger på grenen `main` i GitHub-arkivet. En ny version går
+live när den hamnar på `main`: Streamlit märker det och uppdaterar appen inom någon minut. Det finns
+tre sätt att få dit den.
 
-Från ett nytt Vägvis-paket (till exempel `Vagvis_2.0.x_komplett.zip`):
+**A. Ladda upp en uppdatering (zip-fil)**
 
-| Fil i Vägvis-paketet | Plats i det här arkivet |
-|---|---|
-| `Vagvis_2.0.html` | `app/Vagvis.html` (byt namn) |
-| `Bilmodell_v7/` | `app/Bilmodell_v7/` |
-| `Metod_och_anvandning.html` | `app/Metod_och_anvandning.html` |
-| `Trafikdata_till_Malmo.html` och `.txt` | `app/` |
+1. Packa upp zip-filen, till exempel `vagvis-uppdatering-2.0.5.zip`. Du får en mapp med till exempel
+   `app`, `dokument`, `kallkod` och `README.md`.
+2. Öppna arkivet på GitHub och klicka **Add file** → **Upload files**.
+3. Öppna den uppackade mappen, markera **allt innehåll i mappen** (inte själva mappen) och dra det till
+   webbläsarfönstret. En fil med samma namn i samma mapp ersätts; övriga filer påverkas inte.
+4. Vänta tills alla filer syns i listan. Skriv ett meddelande, till exempel `Vägvis 2.0.5`, låt
+   **Commit directly to the main branch** vara valt och klicka **Commit changes**.
+
+**B. Godkänn en pull request**
+
+Om Claude har tillgång till arkivet läggs en ny version upp som en *pull request*: ett förslag på en
+egen gren, som inte syns i appen än.
+
+1. Öppna arkivet på GitHub och klicka **Pull requests**. Öppna förslaget.
+2. Under **Files changed** ser du vilka filer som ändras.
+3. Klicka **Merge pull request** och **Confirm merge**. Då hamnar ändringen på `main` och går live.
+   Vill du inte ha ändringen klickar du **Close pull request** i stället.
+
+**C. Bygg själv** (kräver Node.js och git): ändra i `kallkod/`, kör `node kallkod/bygg_appen.cjs`,
+kontrollera enligt `kallkod/README.md` och lägg in `kallkod/`, `app/` och `dokument/` på `main`.
+
+**Kontrollera att den nya versionen är live**
+
+1. Vänta en minut efter att ändringen hamnat på `main` och ladda om appen. Versionen står längst ned
+   i Vägvis, till exempel *Vägvis 2.0.5 · ton per kalenderår*.
+2. Visas fortfarande den gamla versionen: klicka **Manage app** nere till höger och välj **Reboot app**.
+   Ändras `requirements.txt` startar Streamlit om appen själv, vilket tar några minuter.
+
+Från version 2.0.5 läser appen om en ny `app/Vagvis.html` direkt, utan omstart.
+
+Vill du pröva en version innan den går live kan du skapa en andra app i Streamlit från grenen i
+pull requesten (**Create app**, samma arkiv, grenens namn). Ett privat arkiv ger en privat app, och
+gratiskontot tillåter bara en privat app i taget.
+
+Bra att veta om GitHub:
+
+- **Historik:** varje *Commit changes* sparas. Klicka på **Commits** (klocksymbolen ovanför fillistan) för att se
+  tidigare versioner. Öppna en äldre version av en fil och ladda ner den om du vill gå tillbaka.
+- **Ta bort en fil:** öppna filen, klicka **…** uppe till höger och välj **Delete file**, sedan
+  **Commit changes**.
+- **Ändra en textfil direkt:** öppna filen och klicka på pennan (**Edit this file**). Använd det för
+  små ändringar, till exempel i den här README-filen, inte för `app/Vagvis.html` (11 MB).
+- **Storlek:** GitHub tar emot högst 100 filer och 25 MB per fil åt gången i webbläsaren. En uppdatering
+  med hela `kallkod/` är cirka 80 filer.
+
+- **Ångra:** öppna en pull request som slagits ihop och klicka **Revert**. GitHub skapar då en ny
+  pull request som tar tillbaka den förra versionen; slå ihop den för att gå tillbaka.
 
 ### Del 5. Bra att veta
 
 - **Viloläge:** en app utan besökare på 12 timmar somnar. Nästa besökare klickar
   *Yes, get this app back up!* och väntar en kort stund.
 - **Beräkningstid:** en ny beräkning i modell A tar 1–3 minuter i besökarens webbläsare. Modell B tar
-  några sekunder. Startresultatet visas direkt.
+  några sekunder. Startresultatet visas direkt. Områdesscenariots förhandsvisning räknas direkt.
 - **Nedladdningar:** CSV, projektfiler och egen HTML-kopia fungerar som i den fristående versionen.
   I en egen kopia sparad från Streamlit pekar länken till Bilmodell v7 på Streamlit-appen.
 - **Bakgrundskarta:** OpenStreetMap visas när besökaren har internet. Områdeskartan fungerar ändå.

@@ -3,6 +3,9 @@
 Streamlit visar HTML-filer i sin statiska mapp som ren text. Därför byggs varje sida om till en
 enda HTML-text: länkar mellan sidorna pekar på Streamlit-sidorna, och Bilmodell v7:s skript,
 stilmallar, typsnitt och bilder bäddas in i sidan. Filerna i mappen app ändras inte.
+
+Sidorna sparas i minnet, men bara så länge filerna i mappen app är oförändrade. Byter du ut till
+exempel app/Vagvis.html på GitHub visar appen den nya filen direkt, utan omstart.
 """
 from __future__ import annotations
 
@@ -13,7 +16,6 @@ from functools import lru_cache
 from pathlib import Path
 
 APP = Path(__file__).resolve().parent / "app"
-V7 = APP / "Bilmodell_v7"
 
 # Länkar i Vägvis-filerna som pekar på andra filer i paketet -> Streamlit-sidor.
 LINKS = {
@@ -22,6 +24,10 @@ LINKS = {
     'href="Trafikdata_till_Malmo.html"': 'href="/trafikdata"',
     'href="Metod_och_anvandning.html"': 'href="/metod"',
 }
+
+
+def _v7() -> Path:
+    return APP / "Bilmodell_v7"
 
 
 def _read(path: Path) -> str:
@@ -39,6 +45,14 @@ def _relink(html: str) -> str:
     return html
 
 
+def _stamp(*paths: Path) -> tuple:
+    """Ändringstid och storlek för filerna. Ändras en fil byggs sidan om."""
+    files = []
+    for p in paths:
+        files.extend(sorted(x for x in p.rglob("*") if x.is_file()) if p.is_dir() else [p])
+    return tuple((str(f), f.stat().st_mtime_ns, f.stat().st_size) for f in files if f.exists())
+
+
 def markup_only(html: str) -> str:
     """HTML utan innehållet i script- och style-taggar (för kontroll av lokala länkar)."""
     return re.sub(r"<(script|style)>.*?</\1>", "", html, flags=re.S)
@@ -48,27 +62,44 @@ def _inline_script(js: str) -> str:
     return "<script>" + js.replace("</script", "<\\/script") + "</script>"
 
 
-@lru_cache(maxsize=None)
 def vagvis_html() -> str:
-    return _relink(_read(APP / "Vagvis.html"))
+    return _vagvis(APP, _stamp(APP / "Vagvis.html"))
 
 
-@lru_cache(maxsize=None)
 def metod_html() -> str:
-    return _relink(_read(APP / "Metod_och_anvandning.html"))
+    return _metod(APP, _stamp(APP / "Metod_och_anvandning.html"))
 
 
-@lru_cache(maxsize=None)
 def trafikdata_html() -> str:
-    html = _read(APP / "Trafikdata_till_Malmo.html")
-    uri = _data_uri(APP / "Trafikdata_till_Malmo.txt", "text/plain;charset=utf-8")
+    return _trafikdata(APP, _stamp(APP / "Trafikdata_till_Malmo.html", APP / "Trafikdata_till_Malmo.txt"))
+
+
+def bilmodell_html() -> str:
+    """Bilmodell v7 som en enda HTML-text: skript, stilar, typsnitt och bilder inbäddade."""
+    return _bilmodell(APP, _stamp(_v7()))
+
+
+@lru_cache(maxsize=4)
+def _vagvis(app: Path, stamp: tuple) -> str:
+    return _relink(_read(app / "Vagvis.html"))
+
+
+@lru_cache(maxsize=4)
+def _metod(app: Path, stamp: tuple) -> str:
+    return _relink(_read(app / "Metod_och_anvandning.html"))
+
+
+@lru_cache(maxsize=4)
+def _trafikdata(app: Path, stamp: tuple) -> str:
+    html = _read(app / "Trafikdata_till_Malmo.html")
+    uri = _data_uri(app / "Trafikdata_till_Malmo.txt", "text/plain;charset=utf-8")
     return html.replace('href="Trafikdata_till_Malmo.txt"', 'href="' + uri + '" download="Trafikdata_till_Malmo.txt"')
 
 
-@lru_cache(maxsize=None)
-def bilmodell_html() -> str:
-    """Bilmodell v7 som en enda HTML-text: skript, stilar, typsnitt och bilder inbäddade."""
-    html = _read(V7 / "index.html")
+@lru_cache(maxsize=4)
+def _bilmodell(app: Path, stamp: tuple) -> str:
+    v7 = app / "Bilmodell_v7"
+    html = _read(v7 / "index.html")
 
     def css(path: Path) -> str:
         text = _read(path)
@@ -81,15 +112,15 @@ def bilmodell_html() -> str:
         return re.sub(r"url\((['\"]?)([^'\")]+)\1\)", repl, text)
 
     def link(m: re.Match) -> str:
-        return "<style>" + css(V7 / m.group(1)) + "</style>"
+        return "<style>" + css(v7 / m.group(1)) + "</style>"
 
     def script(m: re.Match) -> str:
-        return _inline_script(_read(V7 / m.group(1)))
+        return _inline_script(_read(v7 / m.group(1)))
 
     html = re.sub(r'<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"[^>]*>', link, html)
     html = re.sub(r'<link[^>]+href="([^"]+\.css)"[^>]+rel="stylesheet"[^>]*>', link, html)
     html = re.sub(r'<script src="([^"]+)"></script>', script, html)
-    csv = V7 / "data" / "deso_resultat.csv"
+    csv = v7 / "data" / "deso_resultat.csv"
     if csv.exists():
         html = html.replace('href="data/deso_resultat.csv"', 'href="' + _data_uri(csv, "text/csv;charset=utf-8") + '"')
     markup = markup_only(html)
@@ -97,3 +128,9 @@ def bilmodell_html() -> str:
     if leftovers:  # en ny fil i v7 som inte bäddats in syns direkt i loggen
         print("Bilmodell v7: lokala referenser som inte bäddats in:", leftovers)
     return html
+
+
+def version() -> str:
+    """Vägvis-versionen enligt app/Vagvis.html, till exempel 2.0.5 (tom om den inte hittas)."""
+    m = re.search(r"Vägvis (\d+\.\d+\.\d+) · ton per kalenderår", vagvis_html())
+    return m.group(1) if m else ""
