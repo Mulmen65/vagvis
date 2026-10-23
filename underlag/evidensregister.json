@@ -1,0 +1,2163 @@
+{
+  "version": "2.0.9",
+  "reviewDate": "2026-10-23",
+  "release": {
+    "baseline": "2.0.8",
+    "newEmpiricalFit": false,
+    "newMeasuredRoadFlows": false,
+    "numericalDefaultsChanged": false
+  },
+  "sources": [
+    {
+      "id": "SCB_CARS_2018",
+      "short": "SCB TAB6091",
+      "title": "SCB och Trafikanalys. Personbilar registrerade på folkbokförda personer 31 december. År 2015 till 2023. TAB6091.",
+      "url": "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__TK__TK1001__TK1001Z/PersBilarDeso/",
+      "use": "Registerdefinition och äldre DeSO 2018. Privatleasing och enskild firma ingår, förmånsbil via jobbet ingår inte.",
+      "verification": "Definition och tabell verifierade på källsidan 2026-10-23. Nya rådata har inte hämtats.",
+      "locator": "Viktiga fotnoter. Tabellens sista referensår är 2023."
+    },
+    {
+      "id": "SCB_CARS_2025",
+      "short": "SCB TAB6589",
+      "title": "SCB och Trafikanalys. Personbilar registrerade på folkbokförda personer 31 december. År 2024 till 2025. TAB6589.",
+      "url": "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__TK__TK1001__TK1001Z/PersBilarDesoN/",
+      "use": "Kandidatunderlag för 2024 med DeSO 2025. Får inte kopplas till B:s DeSO 2018 utan kontrollerad geografisk nyckel.",
+      "verification": "Tabell och registerdefinition verifierade på källsidan 2026-10-23. Inte aktiverad i modellen.",
+      "locator": "Viktiga fotnoter och metadata."
+    },
+    {
+      "id": "SCB_HH",
+      "short": "SCB TAB6568",
+      "title": "SCB. Antal hushåll per region efter hushållstyp. TAB6568.",
+      "url": "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101Y/HushallDesoTyp/",
+      "use": "Hushåll och hushållssammansättning. Från referensår 2024 används DeSO 2025. Från 2025 påverkar röjandeskyddet CKM hur delar summerar till totaler.",
+      "verification": "Tabell, referenstid och geografibyte verifierade 2026-10-23. Nya rådata har inte hämtats.",
+      "locator": "Viktiga fotnoter. Referenstid 31 december."
+    },
+    {
+      "id": "SCB_GEO",
+      "short": "SCB DeSO",
+      "title": "SCB. DeSO i Statistikdatabasen.",
+      "url": "https://www.scb.se/hitta-statistik/regional-statistik-och-kartor/regionala-indelningar/demografiska-statistikomraden-deso/deso-tabellerna-i-ssd--information-och-instruktioner/",
+      "use": "Beskriver DeSO 2018 och 2025. Äldre årgångar räknas inte automatiskt om till den nya indelningen.",
+      "verification": "Källbeskrivningen verifierad 2026-10-23.",
+      "locator": "Avsnitt om ny version av DeSO."
+    },
+    {
+      "id": "TRAFA_KM",
+      "short": "Trafikanalys körsträckor",
+      "title": "Trafikanalys. Körsträckor med svenskregistrerade fordon och tillhörande kvalitetsdeklarationer.",
+      "url": "https://www.trafa.se/vagtrafik/korstrackor/",
+      "use": "Årlig körning baserad på besiktningsuppgifter och fordonsregister. Anger inte var körningen skett. Kräver förenlig fordons- och ägarkategori vid kalibrering av B.",
+      "verification": "Metodbeskrivning verifierad 2026-10-23. Befintliga kommunvärdens exakta härledning är fortfarande ofullständigt verifierad.",
+      "locator": "Metodbeskrivning och tabellverk för valt referensår."
+    },
+    {
+      "id": "TRAFA_API",
+      "short": "Trafikanalys API",
+      "title": "Trafikanalys. Statistik som öppen data API.",
+      "url": "https://prod.trafa.se/sidor/oppen-data-api/",
+      "use": "API för metadata och statistik. Råuttag och anrop behöver versionssparas eftersom statistik kan korrigeras.",
+      "verification": "Dokumentationen verifierad 2026-10-23; direkta API-uttag blockerades i leveransmiljön.",
+      "locator": "API data och structure, avsnitt om korrigeringar."
+    },
+    {
+      "id": "RVU_SKANE",
+      "short": "Region Skåne RVU 2023",
+      "title": "Region Skåne och Malmö stad (2024). Resvaneundersökning i Skåne 2023 med kommunrapporter och metodrapport.",
+      "url": "https://utveckling.skane.se/publikationer/publikationer/resvaneundersokning-i-skane/",
+      "use": "Underlag för viktade skillnader i resande. Kommunrapporter finns för Malmö och Helsingborg. Ingen ny RVU-skattning har gjorts i denna version.",
+      "verification": "Förekomst av rapporter och metodrapport verifierad 2026-10-23. Tillgång till mikrodata och finare tabeller måste klarläggas.",
+      "locator": "Kommunrapporter 2023 och Metodrapport 2023."
+    },
+    {
+      "id": "RVU_METHOD",
+      "short": "RVU metodrapport",
+      "title": "Region Skåne. Metodrapport Skånes resvaneundersökning 2023.",
+      "url": "https://utveckling.skane.se/siteassets/publikationer/metodrapport---skanes-resvaneundersokning-2023.pdf",
+      "use": "Behövs för urval, vikter, bortfall, målpopulation och mätperiod. Underlag för senare harmonisering och osäkerhetsanalys.",
+      "verification": "Offentlig metodrapport identifierad. Inga nya koefficienter har skattats från rapporten.",
+      "locator": "Målpopulation, urval, datainsamling och viktning ska kontrolleras före dataaktivering."
+    },
+    {
+      "id": "GAVLE_RVU",
+      "short": "Gävle teknisk handbok",
+      "title": "Gävle kommun (utan år). Teknisk handbok 2.2.2 Trafikmängder.",
+      "url": "https://tekniskhandbok.gavle.se/2-forutsattningar/trafikdata-och-dimensioneringsforutsattningar/trafikmangder/",
+      "use": "Handboken anger senaste övergripande RVU som 2018. Exakt regional undersökning för Gävleborg, population och tillgängligt tabellverk återstår att identifiera.",
+      "verification": "Källsidans uppgift verifierad 2026-10-23. Utgör inte belägg för att andra regionala undersökningar saknas.",
+      "locator": "Avsnitt Resvaneundersökning."
+    },
+    {
+      "id": "MALMO_CARS",
+      "short": "Malmö bilar i trafik",
+      "title": "Malmö stad. Bilar i trafik statistisk data för Malmös områden.",
+      "url": "https://opendata.malmo.se/@malmo/bilar_i_trafik",
+      "use": "Kandidat till lokal registerkontroll. Definitioner, områdesnyckel och referensår kontrolleras i hämtade metadata innan användning.",
+      "verification": "Officiell datakatalog identifierad. Nya datauttag är inte verifierade i leveransen.",
+      "locator": "Resursmetadata och API-dokumentation på datasetets sida."
+    },
+    {
+      "id": "IVL_C444",
+      "short": "IVL C 444",
+      "title": "Emilsson och Dahllöf (2019). Lithium Ion Vehicle Battery Production status 2019. IVL C 444.",
+      "url": "https://ivl.se/appresource/5.3caf9fbe174fee4974b8e17/12.19b39e311838a550c3c3031d/accept",
+      "use": "Litteraturintervall för batteritillverkning 61 till 106 kg CO2e per kWh. Modellens 75 är ett valt representativt värde inom intervallet, inte ett uppmätt medelvärde för bilparken.",
+      "verification": "Intervall behandlat i föregående källgranskning. Teknik, år och geografisk överförbarhet behöver beaktas.",
+      "locator": "Rapportens sammanfattning."
+    }
+  ],
+  "parameters": [
+    {
+      "id": "B_PHI",
+      "name": "Förhållande mellan modellerat och registrerat bilantal",
+      "model": "B",
+      "unit": "",
+      "status": "model_assumption",
+      "rationale": "V7:s ursprungliga påslag är 1,05. Tabellen räknar modellens totala bilar dividerat med underlagets registerbilar. Förmånsbilar saknas i registertabellen, men ett generellt påslag på 5 procent har inte verifierats empiriskt.",
+      "sources": [
+        "SCB_CARS_2018"
+      ],
+      "rangeNote": "Inget statistiskt styrkt spann för påslaget. Ändring kräver omräknat hushållsunderlag.",
+      "value": 1.05,
+      "binding": "car_ratio"
+    },
+    {
+      "id": "B_EPS",
+      "name": "Avståndsexponent härledd ur underlagets körsträckor",
+      "model": "B",
+      "unit": "",
+      "status": "model_assumption",
+      "rationale": "V7 använder exponent 0,10 och minst 0,5 km till centrum. Tabellen visar härledd lutning per kommun efter logaritmering; den är en kodkontroll och inte en empirisk RVU-skattning.",
+      "sources": [
+        "RVU_SKANE"
+      ],
+      "rangeNote": "Ingen verifierad skattning av exponent eller statistiskt intervall finns i leveransen.",
+      "value": 0.1,
+      "binding": "distance_exponent"
+    },
+    {
+      "id": "B_RHO",
+      "name": "Nationell privatkorrektion i v7:s underlagsmetadata",
+      "model": "B",
+      "unit": "",
+      "status": "derived_unverified",
+      "rationale": "Exakt täljare, nämnare, år och ägarkategori bakom 0,9596844873 har inte verifierats från originaluttaget.",
+      "sources": [
+        "TRAFA_KM"
+      ],
+      "rangeNote": "",
+      "value": 0.9596844872918493
+    },
+    {
+      "id": "B_efIce",
+      "name": "Driftfaktor för förbränningsdrift",
+      "model": "B",
+      "unit": "kg CO2/km",
+      "status": "model_assumption",
+      "rationale": "Ärvt standardvärde från v7 eller Vägvis. Det exakta värdet är en modellbedömning. Elproduktion är ett tidigare energiled och ska inte betecknas som avgasutsläpp.",
+      "sources": [],
+      "rangeNote": "V7:s kodade spann finns i konfigurationen och granskningen. De är bedömda modellspann.",
+      "path": "household.efIce"
+    },
+    {
+      "id": "B_efEv",
+      "name": "Elproduktion vid eldrift uttryckt per kilometer",
+      "model": "B",
+      "unit": "kg CO2/km",
+      "status": "model_assumption",
+      "rationale": "Ärvt standardvärde från v7 eller Vägvis. Det exakta värdet är en modellbedömning. Elproduktion är ett tidigare energiled och ska inte betecknas som avgasutsläpp.",
+      "sources": [],
+      "rangeNote": "V7:s kodade spann finns i konfigurationen och granskningen. De är bedömda modellspann.",
+      "path": "household.efEv"
+    },
+    {
+      "id": "B_eldrift",
+      "name": "Laddhybridernas andel körning med el",
+      "model": "B",
+      "unit": "andel",
+      "status": "model_assumption",
+      "rationale": "Ärvt standardvärde från v7 eller Vägvis. Det exakta värdet är en modellbedömning. Elproduktion är ett tidigare energiled och ska inte betecknas som avgasutsläpp.",
+      "sources": [],
+      "rangeNote": "V7:s kodade spann finns i konfigurationen och granskningen. De är bedömda modellspann.",
+      "path": "household.eldrift"
+    },
+    {
+      "id": "B_spatialCV",
+      "name": "Osäkerhet i fördelning mellan hemområden",
+      "model": "B",
+      "unit": "CV",
+      "status": "model_assumption",
+      "rationale": "Ärvt standardvärde från v7 eller Vägvis. Det exakta värdet är en modellbedömning. Elproduktion är ett tidigare energiled och ska inte betecknas som avgasutsläpp.",
+      "sources": [],
+      "rangeNote": "V7:s kodade spann finns i konfigurationen och granskningen. De är bedömda modellspann.",
+      "path": "household.spatialCV"
+    },
+    {
+      "id": "B_FLEET",
+      "name": "Vald årgång för bilparkens andelar",
+      "model": "B",
+      "unit": "",
+      "status": "model_assumption",
+      "rationale": "Årgången ändrar bilparksandelar men skriver inte automatiskt fram hushålls- och körsträckeunderlaget.",
+      "sources": [
+        "TRAFA_KM"
+      ],
+      "rangeNote": "",
+      "path": "household.shareYear"
+    },
+    {
+      "id": "B_KM_1280",
+      "name": "Bilvägd årlig körsträcka kommun 1280",
+      "model": "B",
+      "unit": "km/bil och år",
+      "status": "derived_unverified",
+      "rationale": "Räknas från aktuella hushållsrader som fordonskilometer dividerat med modellerat bilantal. Exakta underliggande kommunuttag och målpopulation behöver verifieras.",
+      "sources": [
+        "TRAFA_KM"
+      ],
+      "rangeNote": "",
+      "binding": "mean_km:1280"
+    },
+    {
+      "id": "B_KM_1283",
+      "name": "Bilvägd årlig körsträcka kommun 1283",
+      "model": "B",
+      "unit": "km/bil och år",
+      "status": "derived_unverified",
+      "rationale": "Räknas från aktuella hushållsrader som fordonskilometer dividerat med modellerat bilantal. Exakta underliggande kommunuttag och målpopulation behöver verifieras.",
+      "sources": [
+        "TRAFA_KM"
+      ],
+      "rangeNote": "",
+      "binding": "mean_km:1283"
+    },
+    {
+      "id": "B_KM_2180",
+      "name": "Bilvägd årlig körsträcka kommun 2180",
+      "model": "B",
+      "unit": "km/bil och år",
+      "status": "derived_unverified",
+      "rationale": "Räknas från aktuella hushållsrader som fordonskilometer dividerat med modellerat bilantal. Exakta underliggande kommunuttag och målpopulation behöver verifieras.",
+      "sources": [
+        "TRAFA_KM"
+      ],
+      "rangeNote": "",
+      "binding": "mean_km:2180"
+    },
+    {
+      "id": "LCA_electricity",
+      "name": "Elens livscykelfaktor",
+      "model": "A",
+      "unit": "g CO2e/kWh",
+      "status": "model_assumption",
+      "rationale": "Generisk elfaktor. År, elmix och användningsperspektiv måste väljas uttryckligen.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "electricity"
+    },
+    {
+      "id": "LCA_batteryEF",
+      "name": "Batteritillverkning",
+      "model": "both",
+      "unit": "kg CO2e/kWh batteri",
+      "status": "literature_range",
+      "rationale": "Valt värde inom ett litteraturintervall. Ingen automatisk teknik- eller årsuppdatering.",
+      "sources": [
+        "IVL_C444"
+      ],
+      "rangeNote": "",
+      "path": "batteryEF"
+    },
+    {
+      "id": "LCA_chargeEfficiency",
+      "name": "Laddverkningsgrad",
+      "model": "A",
+      "unit": "andel",
+      "status": "model_assumption",
+      "rationale": "Förlustantagande, inte lokalt uppmätt värde.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "chargeEfficiency"
+    },
+    {
+      "id": "LCA_phevElectric",
+      "name": "Laddhybridernas eldrift i A",
+      "model": "A",
+      "unit": "andel",
+      "status": "model_assumption",
+      "rationale": "A och B har separata standardvärden. Dessa är inte automatiskt harmoniserade.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "phevElectric"
+    },
+    {
+      "id": "PROFILE_car_life",
+      "name": "Personbil Livslängd",
+      "model": "both",
+      "unit": "km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.0.life"
+    },
+    {
+      "id": "PROFILE_car_body",
+      "name": "Personbil Fordonstillverkning exklusive batteri",
+      "model": "both",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.0.body"
+    },
+    {
+      "id": "PROFILE_car_battery",
+      "name": "Personbil Batterikapacitet",
+      "model": "both",
+      "unit": "kWh",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.0.battery"
+    },
+    {
+      "id": "PROFILE_car_maint",
+      "name": "Personbil Underhåll",
+      "model": "both",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.0.maint"
+    },
+    {
+      "id": "PROFILE_car_eol",
+      "name": "Personbil Slutbehandling",
+      "model": "both",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.0.eol"
+    },
+    {
+      "id": "PROFILE_car_credit",
+      "name": "Personbil Potentiell återvinningskredit",
+      "model": "both",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.0.credit"
+    },
+    {
+      "id": "PROFILE_car_mj",
+      "name": "Personbil Energiåtgång förbränningsdrift",
+      "model": "A",
+      "unit": "MJ/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.0.mj"
+    },
+    {
+      "id": "PROFILE_car_kwh",
+      "name": "Personbil Elåtgång",
+      "model": "A",
+      "unit": "kWh/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.0.kwh"
+    },
+    {
+      "id": "PROFILE_car_other",
+      "name": "Personbil Övriga klimatgaser vid drift",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.0.other"
+    },
+    {
+      "id": "PROFILE_van_life",
+      "name": "Lätt lastbil Livslängd",
+      "model": "A",
+      "unit": "km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.1.life"
+    },
+    {
+      "id": "PROFILE_van_body",
+      "name": "Lätt lastbil Fordonstillverkning exklusive batteri",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.1.body"
+    },
+    {
+      "id": "PROFILE_van_battery",
+      "name": "Lätt lastbil Batterikapacitet",
+      "model": "A",
+      "unit": "kWh",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.1.battery"
+    },
+    {
+      "id": "PROFILE_van_maint",
+      "name": "Lätt lastbil Underhåll",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.1.maint"
+    },
+    {
+      "id": "PROFILE_van_eol",
+      "name": "Lätt lastbil Slutbehandling",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.1.eol"
+    },
+    {
+      "id": "PROFILE_van_credit",
+      "name": "Lätt lastbil Potentiell återvinningskredit",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.1.credit"
+    },
+    {
+      "id": "PROFILE_van_mj",
+      "name": "Lätt lastbil Energiåtgång förbränningsdrift",
+      "model": "A",
+      "unit": "MJ/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.1.mj"
+    },
+    {
+      "id": "PROFILE_van_kwh",
+      "name": "Lätt lastbil Elåtgång",
+      "model": "A",
+      "unit": "kWh/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.1.kwh"
+    },
+    {
+      "id": "PROFILE_van_other",
+      "name": "Lätt lastbil Övriga klimatgaser vid drift",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.1.other"
+    },
+    {
+      "id": "PROFILE_rigid_life",
+      "name": "Tung lastbil utan släp Livslängd",
+      "model": "A",
+      "unit": "km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.2.life"
+    },
+    {
+      "id": "PROFILE_rigid_body",
+      "name": "Tung lastbil utan släp Fordonstillverkning exklusive batteri",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.2.body"
+    },
+    {
+      "id": "PROFILE_rigid_battery",
+      "name": "Tung lastbil utan släp Batterikapacitet",
+      "model": "A",
+      "unit": "kWh",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.2.battery"
+    },
+    {
+      "id": "PROFILE_rigid_maint",
+      "name": "Tung lastbil utan släp Underhåll",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.2.maint"
+    },
+    {
+      "id": "PROFILE_rigid_eol",
+      "name": "Tung lastbil utan släp Slutbehandling",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.2.eol"
+    },
+    {
+      "id": "PROFILE_rigid_credit",
+      "name": "Tung lastbil utan släp Potentiell återvinningskredit",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.2.credit"
+    },
+    {
+      "id": "PROFILE_rigid_mj",
+      "name": "Tung lastbil utan släp Energiåtgång förbränningsdrift",
+      "model": "A",
+      "unit": "MJ/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.2.mj"
+    },
+    {
+      "id": "PROFILE_rigid_kwh",
+      "name": "Tung lastbil utan släp Elåtgång",
+      "model": "A",
+      "unit": "kWh/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.2.kwh"
+    },
+    {
+      "id": "PROFILE_rigid_other",
+      "name": "Tung lastbil utan släp Övriga klimatgaser vid drift",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.2.other"
+    },
+    {
+      "id": "PROFILE_artic_life",
+      "name": "Tung lastbil med släp Livslängd",
+      "model": "A",
+      "unit": "km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.3.life"
+    },
+    {
+      "id": "PROFILE_artic_body",
+      "name": "Tung lastbil med släp Fordonstillverkning exklusive batteri",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.3.body"
+    },
+    {
+      "id": "PROFILE_artic_battery",
+      "name": "Tung lastbil med släp Batterikapacitet",
+      "model": "A",
+      "unit": "kWh",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.3.battery"
+    },
+    {
+      "id": "PROFILE_artic_maint",
+      "name": "Tung lastbil med släp Underhåll",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.3.maint"
+    },
+    {
+      "id": "PROFILE_artic_eol",
+      "name": "Tung lastbil med släp Slutbehandling",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.3.eol"
+    },
+    {
+      "id": "PROFILE_artic_credit",
+      "name": "Tung lastbil med släp Potentiell återvinningskredit",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.3.credit"
+    },
+    {
+      "id": "PROFILE_artic_mj",
+      "name": "Tung lastbil med släp Energiåtgång förbränningsdrift",
+      "model": "A",
+      "unit": "MJ/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.3.mj"
+    },
+    {
+      "id": "PROFILE_artic_kwh",
+      "name": "Tung lastbil med släp Elåtgång",
+      "model": "A",
+      "unit": "kWh/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.3.kwh"
+    },
+    {
+      "id": "PROFILE_artic_other",
+      "name": "Tung lastbil med släp Övriga klimatgaser vid drift",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.3.other"
+    },
+    {
+      "id": "PROFILE_bus_life",
+      "name": "Buss, även region- och turistbuss Livslängd",
+      "model": "A",
+      "unit": "km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.4.life"
+    },
+    {
+      "id": "PROFILE_bus_body",
+      "name": "Buss, även region- och turistbuss Fordonstillverkning exklusive batteri",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.4.body"
+    },
+    {
+      "id": "PROFILE_bus_battery",
+      "name": "Buss, även region- och turistbuss Batterikapacitet",
+      "model": "A",
+      "unit": "kWh",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.4.battery"
+    },
+    {
+      "id": "PROFILE_bus_maint",
+      "name": "Buss, även region- och turistbuss Underhåll",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.4.maint"
+    },
+    {
+      "id": "PROFILE_bus_eol",
+      "name": "Buss, även region- och turistbuss Slutbehandling",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.4.eol"
+    },
+    {
+      "id": "PROFILE_bus_credit",
+      "name": "Buss, även region- och turistbuss Potentiell återvinningskredit",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.4.credit"
+    },
+    {
+      "id": "PROFILE_bus_mj",
+      "name": "Buss, även region- och turistbuss Energiåtgång förbränningsdrift",
+      "model": "A",
+      "unit": "MJ/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.4.mj"
+    },
+    {
+      "id": "PROFILE_bus_kwh",
+      "name": "Buss, även region- och turistbuss Elåtgång",
+      "model": "A",
+      "unit": "kWh/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.4.kwh"
+    },
+    {
+      "id": "PROFILE_bus_other",
+      "name": "Buss, även region- och turistbuss Övriga klimatgaser vid drift",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.4.other"
+    },
+    {
+      "id": "PROFILE_mc_life",
+      "name": "Motorcykel Livslängd",
+      "model": "A",
+      "unit": "km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.5.life"
+    },
+    {
+      "id": "PROFILE_mc_body",
+      "name": "Motorcykel Fordonstillverkning exklusive batteri",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.5.body"
+    },
+    {
+      "id": "PROFILE_mc_battery",
+      "name": "Motorcykel Batterikapacitet",
+      "model": "A",
+      "unit": "kWh",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.5.battery"
+    },
+    {
+      "id": "PROFILE_mc_maint",
+      "name": "Motorcykel Underhåll",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.5.maint"
+    },
+    {
+      "id": "PROFILE_mc_eol",
+      "name": "Motorcykel Slutbehandling",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.5.eol"
+    },
+    {
+      "id": "PROFILE_mc_credit",
+      "name": "Motorcykel Potentiell återvinningskredit",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.5.credit"
+    },
+    {
+      "id": "PROFILE_mc_mj",
+      "name": "Motorcykel Energiåtgång förbränningsdrift",
+      "model": "A",
+      "unit": "MJ/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.5.mj"
+    },
+    {
+      "id": "PROFILE_mc_kwh",
+      "name": "Motorcykel Elåtgång",
+      "model": "A",
+      "unit": "kWh/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.5.kwh"
+    },
+    {
+      "id": "PROFILE_mc_other",
+      "name": "Motorcykel Övriga klimatgaser vid drift",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.5.other"
+    },
+    {
+      "id": "PROFILE_moped_life",
+      "name": "Moped Livslängd",
+      "model": "A",
+      "unit": "km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.6.life"
+    },
+    {
+      "id": "PROFILE_moped_body",
+      "name": "Moped Fordonstillverkning exklusive batteri",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.6.body"
+    },
+    {
+      "id": "PROFILE_moped_battery",
+      "name": "Moped Batterikapacitet",
+      "model": "A",
+      "unit": "kWh",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.6.battery"
+    },
+    {
+      "id": "PROFILE_moped_maint",
+      "name": "Moped Underhåll",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.6.maint"
+    },
+    {
+      "id": "PROFILE_moped_eol",
+      "name": "Moped Slutbehandling",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.6.eol"
+    },
+    {
+      "id": "PROFILE_moped_credit",
+      "name": "Moped Potentiell återvinningskredit",
+      "model": "A",
+      "unit": "kg CO2e/fordon",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.6.credit"
+    },
+    {
+      "id": "PROFILE_moped_mj",
+      "name": "Moped Energiåtgång förbränningsdrift",
+      "model": "A",
+      "unit": "MJ/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.6.mj"
+    },
+    {
+      "id": "PROFILE_moped_kwh",
+      "name": "Moped Elåtgång",
+      "model": "A",
+      "unit": "kWh/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.6.kwh"
+    },
+    {
+      "id": "PROFILE_moped_other",
+      "name": "Moped Övriga klimatgaser vid drift",
+      "model": "A",
+      "unit": "g CO2e/km",
+      "status": "model_assumption",
+      "rationale": "Screeningschablon i Vägvis. Ingen komplett fordonsparksvägd LCA har verifierats för exakt detta värde. Återvinningskredit redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "profiles.6.other"
+    },
+    {
+      "id": "B_RANGE_efIce",
+      "name": "B kodad fördelning efIce",
+      "model": "B",
+      "unit": "[centralvärde, min, max] enligt v7",
+      "status": "model_assumption",
+      "rationale": "Bedömt triangulärt parameterintervall i v7. Det är inte ett statistiskt skattat konfidensintervall.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "household.ranges.efIce"
+    },
+    {
+      "id": "B_RANGE_efEv",
+      "name": "B kodad fördelning efEv",
+      "model": "B",
+      "unit": "[centralvärde, min, max] enligt v7",
+      "status": "model_assumption",
+      "rationale": "Bedömt triangulärt parameterintervall i v7. Det är inte ett statistiskt skattat konfidensintervall.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "household.ranges.efEv"
+    },
+    {
+      "id": "B_RANGE_eldrift",
+      "name": "B kodad fördelning eldrift",
+      "model": "B",
+      "unit": "[centralvärde, min, max] enligt v7",
+      "status": "model_assumption",
+      "rationale": "Bedömt triangulärt parameterintervall i v7. Det är inte ett statistiskt skattat konfidensintervall.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "household.ranges.eldrift"
+    },
+    {
+      "id": "B_ACTIVITY_1280_p5",
+      "name": "Kommunens aktivitetsfaktor 1280 p5",
+      "model": "B",
+      "unit": "faktor",
+      "status": "model_assumption",
+      "rationale": "Ärvd osäkerhet i v7:s sammanlagda fordonskilometer. Exakta statistiska egenskaper har inte verifierats från originalunderlaget.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "household.activity.1280.p5"
+    },
+    {
+      "id": "B_ACTIVITY_1280_p95",
+      "name": "Kommunens aktivitetsfaktor 1280 p95",
+      "model": "B",
+      "unit": "faktor",
+      "status": "model_assumption",
+      "rationale": "Ärvd osäkerhet i v7:s sammanlagda fordonskilometer. Exakta statistiska egenskaper har inte verifierats från originalunderlaget.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "household.activity.1280.p95"
+    },
+    {
+      "id": "B_ACTIVITY_1283_p5",
+      "name": "Kommunens aktivitetsfaktor 1283 p5",
+      "model": "B",
+      "unit": "faktor",
+      "status": "model_assumption",
+      "rationale": "Ärvd osäkerhet i v7:s sammanlagda fordonskilometer. Exakta statistiska egenskaper har inte verifierats från originalunderlaget.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "household.activity.1283.p5"
+    },
+    {
+      "id": "B_ACTIVITY_1283_p95",
+      "name": "Kommunens aktivitetsfaktor 1283 p95",
+      "model": "B",
+      "unit": "faktor",
+      "status": "model_assumption",
+      "rationale": "Ärvd osäkerhet i v7:s sammanlagda fordonskilometer. Exakta statistiska egenskaper har inte verifierats från originalunderlaget.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "household.activity.1283.p95"
+    },
+    {
+      "id": "B_ACTIVITY_2180_p5",
+      "name": "Kommunens aktivitetsfaktor 2180 p5",
+      "model": "B",
+      "unit": "faktor",
+      "status": "model_assumption",
+      "rationale": "Ärvd osäkerhet i v7:s sammanlagda fordonskilometer. Exakta statistiska egenskaper har inte verifierats från originalunderlaget.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "household.activity.2180.p5"
+    },
+    {
+      "id": "B_ACTIVITY_2180_p95",
+      "name": "Kommunens aktivitetsfaktor 2180 p95",
+      "model": "B",
+      "unit": "faktor",
+      "status": "model_assumption",
+      "rationale": "Ärvd osäkerhet i v7:s sammanlagda fordonskilometer. Exakta statistiska egenskaper har inte verifierats från originalunderlaget.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "household.activity.2180.p95"
+    },
+    {
+      "id": "U_city",
+      "name": "Osäkerhetsparameter city",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.city"
+    },
+    {
+      "id": "U_class",
+      "name": "Osäkerhetsparameter class",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.class"
+    },
+    {
+      "id": "U_localAssumed",
+      "name": "Osäkerhetsparameter localAssumed",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.localAssumed"
+    },
+    {
+      "id": "U_localMeasured",
+      "name": "Osäkerhetsparameter localMeasured",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.localMeasured"
+    },
+    {
+      "id": "U_spatial",
+      "name": "Osäkerhetsparameter spatial",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.spatial"
+    },
+    {
+      "id": "U_energy",
+      "name": "Osäkerhetsparameter energy",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.energy"
+    },
+    {
+      "id": "U_production",
+      "name": "Osäkerhetsparameter production",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.production"
+    },
+    {
+      "id": "U_life",
+      "name": "Osäkerhetsparameter life",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.life"
+    },
+    {
+      "id": "U_electricity",
+      "name": "Osäkerhetsparameter electricity",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.electricity"
+    },
+    {
+      "id": "U_upstream",
+      "name": "Osäkerhetsparameter upstream",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.upstream"
+    },
+    {
+      "id": "U_reference",
+      "name": "Osäkerhetsparameter reference",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.reference"
+    },
+    {
+      "id": "U_mixConcentration",
+      "name": "Osäkerhetsparameter mixConcentration",
+      "model": "both",
+      "unit": "CV eller kodad koncentration",
+      "status": "model_assumption",
+      "rationale": "Bedömd fördelningsparameter. Simulering gör inte parametern statistiskt skattad. Gemensamma parametrar ska vara korrelerade mellan områden.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "uncertainty.mixConcentration"
+    },
+    {
+      "id": "AADT_motorway",
+      "name": "Vägklass motorway schabloner",
+      "model": "A",
+      "unit": "kodade klassvärden",
+      "status": "model_assumption",
+      "rationale": "OSM-klassning anger vägnätets typ. Den ger inte uppmätt ÅDT, tungandel eller körriktning. Här visas basversionens antagna värden.",
+      "sources": [],
+      "rangeNote": "",
+      "value": {
+        "aadt": 30000,
+        "heavy": 0.13,
+        "bus": 0.004
+      }
+    },
+    {
+      "id": "AADT_trunk",
+      "name": "Vägklass trunk schabloner",
+      "model": "A",
+      "unit": "kodade klassvärden",
+      "status": "model_assumption",
+      "rationale": "OSM-klassning anger vägnätets typ. Den ger inte uppmätt ÅDT, tungandel eller körriktning. Här visas basversionens antagna värden.",
+      "sources": [],
+      "rangeNote": "",
+      "value": {
+        "aadt": 18000,
+        "heavy": 0.11,
+        "bus": 0.006
+      }
+    },
+    {
+      "id": "AADT_primary",
+      "name": "Vägklass primary schabloner",
+      "model": "A",
+      "unit": "kodade klassvärden",
+      "status": "model_assumption",
+      "rationale": "OSM-klassning anger vägnätets typ. Den ger inte uppmätt ÅDT, tungandel eller körriktning. Här visas basversionens antagna värden.",
+      "sources": [],
+      "rangeNote": "",
+      "value": {
+        "aadt": 10000,
+        "heavy": 0.07,
+        "bus": 0.012
+      }
+    },
+    {
+      "id": "AADT_secondary",
+      "name": "Vägklass secondary schabloner",
+      "model": "A",
+      "unit": "kodade klassvärden",
+      "status": "model_assumption",
+      "rationale": "OSM-klassning anger vägnätets typ. Den ger inte uppmätt ÅDT, tungandel eller körriktning. Här visas basversionens antagna värden.",
+      "sources": [],
+      "rangeNote": "",
+      "value": {
+        "aadt": 6000,
+        "heavy": 0.055,
+        "bus": 0.018
+      }
+    },
+    {
+      "id": "AADT_tertiary",
+      "name": "Vägklass tertiary schabloner",
+      "model": "A",
+      "unit": "kodade klassvärden",
+      "status": "model_assumption",
+      "rationale": "OSM-klassning anger vägnätets typ. Den ger inte uppmätt ÅDT, tungandel eller körriktning. Här visas basversionens antagna värden.",
+      "sources": [],
+      "rangeNote": "",
+      "value": {
+        "aadt": 3000,
+        "heavy": 0.04,
+        "bus": 0.02
+      }
+    },
+    {
+      "id": "AADT_residential",
+      "name": "Vägklass residential schabloner",
+      "model": "A",
+      "unit": "kodade klassvärden",
+      "status": "model_assumption",
+      "rationale": "OSM-klassning anger vägnätets typ. Den ger inte uppmätt ÅDT, tungandel eller körriktning. Här visas basversionens antagna värden.",
+      "sources": [],
+      "rangeNote": "",
+      "value": {
+        "aadt": 750,
+        "heavy": 0.02,
+        "bus": 0.005
+      }
+    },
+    {
+      "id": "AADT_service",
+      "name": "Vägklass service schabloner",
+      "model": "A",
+      "unit": "kodade klassvärden",
+      "status": "model_assumption",
+      "rationale": "OSM-klassning anger vägnätets typ. Den ger inte uppmätt ÅDT, tungandel eller körriktning. Här visas basversionens antagna värden.",
+      "sources": [],
+      "rangeNote": "",
+      "value": {
+        "aadt": 150,
+        "heavy": 0.03,
+        "bus": 0.002
+      }
+    },
+    {
+      "id": "AADT_living_street",
+      "name": "Vägklass living_street schabloner",
+      "model": "A",
+      "unit": "kodade klassvärden",
+      "status": "model_assumption",
+      "rationale": "OSM-klassning anger vägnätets typ. Den ger inte uppmätt ÅDT, tungandel eller körriktning. Här visas basversionens antagna värden.",
+      "sources": [],
+      "rangeNote": "",
+      "value": {
+        "aadt": 150,
+        "heavy": 0.01,
+        "bus": 0
+      }
+    },
+    {
+      "id": "AADT_unclassified",
+      "name": "Vägklass unclassified schabloner",
+      "model": "A",
+      "unit": "kodade klassvärden",
+      "status": "model_assumption",
+      "rationale": "OSM-klassning anger vägnätets typ. Den ger inte uppmätt ÅDT, tungandel eller körriktning. Här visas basversionens antagna värden.",
+      "sources": [],
+      "rangeNote": "",
+      "value": {
+        "aadt": 500,
+        "heavy": 0.04,
+        "bus": 0.005
+      }
+    },
+    {
+      "id": "FUEL_petrol_fossil",
+      "name": "Bränsle petrol fossil",
+      "model": "both",
+      "unit": "andel",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.petrol.fossil"
+    },
+    {
+      "id": "FUEL_petrol_ttw",
+      "name": "Bränsle petrol ttw",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.petrol.ttw"
+    },
+    {
+      "id": "FUEL_petrol_wtt",
+      "name": "Bränsle petrol wtt",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.petrol.wtt"
+    },
+    {
+      "id": "FUEL_petrol_bio",
+      "name": "Bränsle petrol bio",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.petrol.bio"
+    },
+    {
+      "id": "FUEL_petrol_bioCO2",
+      "name": "Bränsle petrol bioCO2",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.petrol.bioCO2"
+    },
+    {
+      "id": "FUEL_diesel_fossil",
+      "name": "Bränsle diesel fossil",
+      "model": "both",
+      "unit": "andel",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.diesel.fossil"
+    },
+    {
+      "id": "FUEL_diesel_ttw",
+      "name": "Bränsle diesel ttw",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.diesel.ttw"
+    },
+    {
+      "id": "FUEL_diesel_wtt",
+      "name": "Bränsle diesel wtt",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.diesel.wtt"
+    },
+    {
+      "id": "FUEL_diesel_bio",
+      "name": "Bränsle diesel bio",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.diesel.bio"
+    },
+    {
+      "id": "FUEL_diesel_bioCO2",
+      "name": "Bränsle diesel bioCO2",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.diesel.bioCO2"
+    },
+    {
+      "id": "FUEL_hvo_fossil",
+      "name": "Bränsle hvo fossil",
+      "model": "both",
+      "unit": "andel",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.hvo.fossil"
+    },
+    {
+      "id": "FUEL_hvo_ttw",
+      "name": "Bränsle hvo ttw",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.hvo.ttw"
+    },
+    {
+      "id": "FUEL_hvo_wtt",
+      "name": "Bränsle hvo wtt",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.hvo.wtt"
+    },
+    {
+      "id": "FUEL_hvo_bio",
+      "name": "Bränsle hvo bio",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.hvo.bio"
+    },
+    {
+      "id": "FUEL_hvo_bioCO2",
+      "name": "Bränsle hvo bioCO2",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.hvo.bioCO2"
+    },
+    {
+      "id": "FUEL_biogas_fossil",
+      "name": "Bränsle biogas fossil",
+      "model": "both",
+      "unit": "andel",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.biogas.fossil"
+    },
+    {
+      "id": "FUEL_biogas_ttw",
+      "name": "Bränsle biogas ttw",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.biogas.ttw"
+    },
+    {
+      "id": "FUEL_biogas_wtt",
+      "name": "Bränsle biogas wtt",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.biogas.wtt"
+    },
+    {
+      "id": "FUEL_biogas_bio",
+      "name": "Bränsle biogas bio",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.biogas.bio"
+    },
+    {
+      "id": "FUEL_biogas_bioCO2",
+      "name": "Bränsle biogas bioCO2",
+      "model": "both",
+      "unit": "g/MJ enligt modell",
+      "status": "model_assumption",
+      "rationale": "Ärvd bränsleschablon. Blandning, år, fossil andel och växthusgasomfattning behöver verifieras. Reduktionsplikt är inte samma sak som volymandel biodrivmedel.",
+      "sources": [],
+      "rangeNote": "",
+      "path": "fuels.biogas.bioCO2"
+    }
+  ],
+  "actions": [
+    {
+      "id": "parkeringspris",
+      "name": "Parkering prissätts separat och marknadsmässigt",
+      "B": [
+        -0.1,
+        -0.05,
+        -0.15
+      ],
+      "V": [
+        -0.12,
+        -0.05,
+        -0.25
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "degroote2015",
+        "toi1425",
+        "christiansen2017",
+        "ivl2024"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "parkeringsutbud",
+      "name": "Färre parkeringsplatser i befintliga områden",
+      "B": [
+        -0.05,
+        -0.02,
+        -0.1
+      ],
+      "V": [
+        -0.06,
+        -0.02,
+        -0.13
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "ivl2024",
+        "hagen2021",
+        "toi1425"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "mobilitetshus",
+      "name": "Samlad parkering i mobilitetshus",
+      "B": [
+        -0.05,
+        0,
+        -0.1
+      ],
+      "V": [
+        -0.1,
+        -0.05,
+        -0.15
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "christiansen2017",
+        "toi1425",
+        "grybb2023"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "gatuutrymme",
+      "name": "Omfördelat gatuutrymme, cirkulationsplan eller lågtrafikområde",
+      "B": [
+        -0.02,
+        0,
+        -0.05
+      ],
+      "V": [
+        -0.1,
+        -0.04,
+        -0.2
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "ivl2024",
+        "cairns2002",
+        "hagen2021",
+        "ivlgent"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "trangselskatt",
+      "name": "Trängselskatt",
+      "B": [
+        0,
+        0,
+        -0.02
+      ],
+      "V": [
+        -0.05,
+        -0.02,
+        -0.1
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "borjessonitf",
+        "borjesson2012",
+        "borjesson2015",
+        "borjesson2017",
+        "ivl2024"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "kollektivtrafik",
+      "name": "Spårväg, BRT eller stomlinje med hög turtäthet",
+      "B": [
+        -0.03,
+        0,
+        -0.06
+      ],
+      "V": [
+        -0.08,
+        -0.03,
+        -0.15
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "engebretsen2017",
+        "toibergen",
+        "ivl2024",
+        "norheim2016"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "elcykel",
+      "name": "Elcykel till hushållen",
+      "B": [
+        0,
+        0,
+        -0.03
+      ],
+      "V": [
+        -0.15,
+        -0.05,
+        -0.25
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "sundfor2024",
+        "fyhri2015",
+        "nv2019"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "cykelnat",
+      "name": "Snabbcykelväg och sammanhängande cykelnät",
+      "B": [
+        0,
+        0,
+        -0.02
+      ],
+      "V": [
+        -0.03,
+        -0.01,
+        -0.07
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "farum2015",
+        "ivl2024",
+        "preston2016",
+        "brand2021"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "bilpool",
+      "name": "Bilpool i fastigheten",
+      "B": [
+        -0.25,
+        -0.11,
+        -0.4
+      ],
+      "V": [
+        -0.2,
+        -0.06,
+        -0.4
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "nijland2015",
+        "steorn2017",
+        "ivl2024",
+        "grybb2023"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "grontransportplan",
+      "name": "Grön transportplan på arbetsplatsen",
+      "B": [
+        0,
+        0,
+        -0.02
+      ],
+      "V": [
+        -0.05,
+        -0.02,
+        -0.1
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "ivl2024",
+        "cairns2004",
+        "trivector2016"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "distansarbete",
+      "name": "Distansarbete tre dagar i veckan",
+      "B": [
+        0,
+        0,
+        0
+      ],
+      "V": [
+        -0.08,
+        -0.03,
+        -0.15
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "ivl2024",
+        "caldarola2022"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "radgivning",
+      "name": "Mobilitetsrådgivning, testresenär och testcyklist",
+      "B": [
+        0,
+        0,
+        0
+      ],
+      "V": [
+        -0.06,
+        -0.03,
+        -0.12
+      ],
+      "C": [
+        0,
+        0,
+        0
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "cairns2004",
+        "ivl2024",
+        "cairnsjones2016",
+        "helsingborg2023"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "hastighet70",
+      "name": "Sänkt hastighet till 70 km/h på motorleder och bättre efterlevnad",
+      "B": [
+        0,
+        0,
+        0
+      ],
+      "V": [
+        0,
+        0,
+        0
+      ],
+      "C": [
+        -0.03,
+        -0.01,
+        -0.05
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "ivl2024",
+        "asensio2014"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    },
+    {
+      "id": "sparsamkorning",
+      "name": "Kampanj för sparsam körning och rätt däcktryck",
+      "B": [
+        0,
+        0,
+        0
+      ],
+      "V": [
+        0,
+        0,
+        0
+      ],
+      "C": [
+        -0.008,
+        -0.004,
+        -0.015
+      ],
+      "status": "scenario_assumption",
+      "references": [
+        "ivl2024"
+      ],
+      "rationale": "Ärvd bedömning i Bilmodell v7. Originalstudiernas relevans måste bedömas för målpopulation, åtgärdsnivå och effektmått. RVU-samband ensamt visar inte kausal åtgärdseffekt."
+    }
+  ],
+  "actionReferences": {
+    "degroote2015": {
+      "text": "de Groote, J., van Ommeren, J. & Koster, H. R. A. (2015). Car ownership and residential parking subsidies: Evidence from Amsterdam. Tinbergen Institute Discussion Paper TI 2015-116.",
+      "fynd": "Ett års längre väntetid på boendeparkeringstillstånd minskar bilinnehavet med 2 procentenheter, vilket motsvarar en priselasticitet på −0,8.",
+      "land": "Nederländerna",
+      "url": "https://papers.tinbergen.nl/15116.pdf"
+    },
+    "toi1425": {
+      "text": "Christiansen, P., Hanssen, J. U. & Skollerud, K. (2015). Effekt av parkeringstilbud. TØI-rapport 1425/2015. Transportøkonomisk institutt, Oslo.",
+      "fynd": "80 % av hushållen med minst två bilar har parkering på egen tomt, mot 29 % av hushållen utan bil. 15 % av hushållen utan bil skulle skaffa bil om parkeringen var bättre. De som parkerar mer än 200 meter bort använder bilen mindre.",
+      "land": "Norge",
+      "url": "https://jernbanedirektoratet.no/content/uploads/sites/4/2021/12/effekt-av-parkeringstilbud-toi-rapport-1425-2015.pdf"
+    },
+    "christiansen2017": {
+      "text": "Christiansen, P. m.fl. (2017). Parking facilities and the built environment: Impacts on travel behaviour. Transportation Research Part A 95, 198–206.",
+      "fynd": "Viljan att ta bilen minskar med gångavståndet till parkeringen, särskilt i tät bebyggelse. Begränsad parkering både vid bostaden och vid målet ger mycket låg sannolikhet att resan görs med bil (norska resvaneundersökningen 2013/14).",
+      "land": "Norge",
+      "url": "https://toi.brage.unit.no/toi-xmlui/handle/11250/2603968"
+    },
+    "nijland2015": {
+      "text": "Nijland, H., van Meerkerk, J. & Hoen, A. (2015). Impact of car sharing on mobility and CO2 emissions. PBL Planbureau voor de Leefomgeving, Haag.",
+      "fynd": "Bildelare äger över 30 % färre bilar och kör 15–20 % färre kilometer med bil än innan de började dela bil.",
+      "land": "Nederländerna",
+      "url": "https://pbl.nl/en/node/4727"
+    },
+    "steorn2017": {
+      "text": "Steorn, N. & Goldmann, M. (2017). Bilpoolsboom. 2030-sekretariatet, Stockholm. (Sammanställer bl.a. Trivector 2014 och Trafikanalys 2016:15.)",
+      "fynd": "En poolbil ersätter i genomsnitt ungefär fem privatbilar. Upp till en tredjedel av nya medlemmar säljer eller avstår från en bil. Sunfleets medlemmar minskade sin bilkörning med 20 %, och medlemmar i bilpooler minskar bilresandet med 30–60 % enligt Trafikanalys.",
+      "land": "Sverige och Norden",
+      "url": "https://www.nordicenergy.org/wordpress/wp-content/uploads/2017/05/BILPOOLSBOOM_Online1.pdf"
+    },
+    "engebretsen2017": {
+      "text": "Engebretsen, Ø., Christiansen, P. & Strand, A. (2017). Bergen light rail – effects on travel behaviour. Journal of Transport Geography 62, 111–121.",
+      "fynd": "Införandet av Bybanen var den viktigaste drivkraften bakom ökat kollektivresande i Bergen, och kollektivresandet var högst i områden som trafikeras av banan.",
+      "land": "Norge",
+      "url": "https://www.toi.no/articles-9000/bergen-light-rail-effects-on-travel-behaviour-article34425-814.html"
+    },
+    "toibergen": {
+      "text": "Transportøkonomisk institutt. Bergen: åpning av bybane og forsterket busstilbud. Databas över kollektivtrafikåtgärder (sammanfattning av Engebretsen m.fl. 2017).",
+      "fynd": "Bilens andel av resorna sjönk från 58,8 % (2008) till 50,7 % (2014). Kollektivtrafikens andel ökade från 27,3 % till 31,9 %, och antalet kollektivresor per invånare ökade med 20 % 2008–2013.",
+      "land": "Norge",
+      "url": "https://toi.no/getfile.php/1371753-1637603838/mmarkiv/Forskningsprogram/ByBy/Database%20for%20kollektivtiltak/12%20-%20Bergen_%C3%85pning%20av%20bybane%20og%20forsterket%20busstilbud.pdf"
+    },
+    "naess2012": {
+      "text": "Næss, P. (2012). Urban form and travel behavior: Experience from a Nordic context. Journal of Transport and Land Use 5(2), 21–45.",
+      "fynd": "Boende i Köpenhamnsregionens ytterkant kör i genomsnitt nästan fyra gånger så långt med bil på vardagar som boende nära centrum. Stadsövergripande täthet och läge i förhållande till centrum betyder mer än lokal täthet.",
+      "land": "Danmark, Norge, Sverige",
+      "url": "https://jtlu.org/index.php/jtlu/article/view/314"
+    },
+    "ewing2010": {
+      "text": "Ewing, R. & Cervero, R. (2010). Travel and the built environment: A meta-analysis. Journal of the American Planning Association 76(3), 265–294.",
+      "fynd": "Elasticiteten för fordonskm är −0,04 mot befolkningstäthet, −0,09 mot funktionsblandning och −0,20 mot tillgänglighet till målpunkter. Underlaget är främst nordamerikanskt och används här som komplement till nordiska studier.",
+      "land": "Internationellt (främst Nordamerika)",
+      "url": "https://planning.org/knowledgebase/resource/9149498"
+    },
+    "sundfor2024": {
+      "text": "Sundfør, H. B., Berntsen, S., Bere, E. & Fyhri, A. (2024). The effects of subsidising e-bikes on mode share and physical activity – A natural experiment. Journal of Transport & Health 35.",
+      "fynd": "Bland dem som fått elcykelstöd i Oslo ökade cykelns andel av resorna med 12,6 procentenheter och bilens andel minskade med 10,1 procentenheter, jämfört med en kontrollgrupp.",
+      "land": "Norge",
+      "url": "https://uia.brage.unit.no/uia-xmlui/handle/11250/3131022"
+    },
+    "fyhri2015": {
+      "text": "Fyhri, A. & Fearnley, N. (2015). Effects of e-bikes on bicycle use and mode share. Transportation Research Part D: Transport and Environment.",
+      "fynd": "Deltagare som fick låna elcykel ökade sin cykling från 0,9 till 1,4 resor och från 4,8 till 10,3 km per dag. Cykelns andel av deras resor ökade från 28 % till 48 %. Ingen motsvarande ökning i kontrollgruppen.",
+      "land": "Norge",
+      "url": "https://toi.brage.unit.no/toi-xmlui/handle/11250/2602177"
+    },
+    "nv2019": {
+      "text": "Naturvårdsverket (2019). Elcykling – vem, hur och varför? En utvärdering med elfordonspremien som utgångspunkt.",
+      "fynd": "Ungefär hälften av elcykelresandet ersätter resor som annars hade gjorts med bil. I storstäderna ersatte elcykeln mindre än en tredjedel av arbetspendlingen med bil, i mindre orter nästan två tredjedelar.",
+      "land": "Sverige",
+      "url": "https://www.naturvardsverket.se/publikationer/6800/elcykling--vem-hur-och-varfor/"
+    },
+    "farum2015": {
+      "text": "Ingeniøren (2015). Supercykelsti lokker pendlere ud af bilerne. Om utvärderingen av Farumruten 2012–2014.",
+      "fynd": "Antalet cyklister på Farumruten ökade med 52 % på två år, och 25 % av de nya cyklisterna var tidigare bilister.",
+      "land": "Danmark",
+      "url": "https://ing.dk/artikel/supercykelsti-lokker-pendlere-ud-af-bilerne"
+    },
+    "borjessonitf": {
+      "text": "Börjesson, M. Swedish congestion charges: long-term effects. Presentation, International Transport Forum (OECD).",
+      "fynd": "Trafiken över betalsnittet minskade på kort sikt med 22 % i Stockholm och 12 % i Göteborg. I Stockholm har effekten ökat över tid, i Göteborg minskat något.",
+      "land": "Sverige",
+      "url": "https://www.itf-oecd.org/sites/default/files/docs/swedish-congestion-charges-long-term-effects.pdf"
+    },
+    "borjesson2012": {
+      "text": "Börjesson, M., Eliasson, J., Hugosson, M. B. & Brundell-Freij, K. (2012). The Stockholm congestion charges – 5 years on. Effects, acceptability and lessons learnt. Transport Policy 20, 1–12.",
+      "fynd": "Trafikminskningen av trängselskatten i Stockholm har ökat något över tid när yttre faktorer kontrolleras.",
+      "land": "Sverige",
+      "url": "https://swopec.hhs.se/ctswps/abs/ctswps2012_003.htm"
+    },
+    "borjesson2015": {
+      "text": "Börjesson, M. & Kristoffersson, I. (2015). The Gothenburg congestion charge. Effects, design and politics. Transportation Research Part A 75, 134–146.",
+      "fynd": "Trängselskattens effekter och anpassningar i Göteborg liknar dem i Stockholm.",
+      "land": "Sverige",
+      "url": "https://swopec.hhs.se/ctswps/abs/ctswps2014_025.htm"
+    },
+    "borjesson2017": {
+      "text": "Börjesson, M. & Kristoffersson, I. (2017). The Swedish congestion charges: ten years on – and effects of increasing charging levels. CTS Working Paper 2017:2.",
+      "fynd": "Den långsiktiga priselasticiteten har ökat i Stockholm men minskat i Göteborg.",
+      "land": "Sverige",
+      "url": "https://swopec.hhs.se/ctswps/abs/ctswps2017_002.htm"
+    },
+    "cairns2004": {
+      "text": "Cairns, S., Sloman, L., Newson, C., Anable, J., Kirkbride, A. & Goodwin, P. (2004). Smarter Choices – Changing the Way We Travel. Department for Transport, London.",
+      "fynd": "Med hög intensitet bedömdes mjuka åtgärder kunna minska tätortstrafiken i rusningstid med cirka 21 % och den totala trafiken med cirka 11 %. Med låg intensitet blev minskningen 2–3 %. Gröna transportplaner minskade bilpendlingen med i genomsnitt cirka 15 %.",
+      "land": "Storbritannien",
+      "url": "https://discovery.ucl.ac.uk/id/eprint/1224/"
+    },
+    "sprei2020": {
+      "text": "Sprei, F., Hult, C., Hult, Å. & Roth, A. (2020). Review of the effects of developments with low parking requirements. Sustainability 12(5), 1744.",
+      "fynd": "I 16 projekt med låga parkeringstal i Sverige, Österrike, Tyskland, Schweiz och Storbritannien var resandet mer hållbart än i närliggande områden. Självselektion och svaga utvärderingar gör orsakssambandet osäkert.",
+      "land": "Sverige och Västeuropa",
+      "url": "https://research.chalmers.se/publication/517938"
+    },
+    "roth2018": {
+      "text": "Roth, A., Hult, C., Hult, Å., Vikengren, T. & Koucky, M. (2018). Sänkt p-tal som drivkraft för attraktiv stadsbyggnad och hållbar mobilitet. IVL rapport C 276.",
+      "fynd": "Kvillebäcken (Göteborg): 0,42 bilar per lägenhet och 217 bilar per 1 000 invånare mot 285 i hela Göteborg. Hammarby Sjöstad: 210 bilar per 1 000 invånare (2011). Projekt med lågt p-tal och mobilitetstjänster har typiskt 0,4–0,6 bilar per hushåll.",
+      "land": "Sverige",
+      "url": "https://ozonmatnatet.ivl.se/download/18.34244ba71728fcb3f3fa47/1591705757570/C276.pdf"
+    },
+    "ivl2024": {
+      "text": "Dickinson, J., Hult, C., Lundström, H. & Roth, A. (2024). Snabb omställning av vägtrafiken för minskad klimatpåverkan. En internationell litteraturöversikt av åtgärder för att minska trafikarbetet i större städer. IVL Svenska Miljöinstitutet, rapport C820, på uppdrag av Naturvårdsverket.",
+      "fynd": "Paket med både push- och pull-åtgärder minskar biltrafikarbetet med 10–30 %, paket med bara positiva incitament med 5–15 %. Omfördelat gatuutrymme minskar biltrafiken i berörda områden med i storleksordningen 10 % eller mer. Marknadsmässiga parkeringsavgifter och färre platser minskar bilinnehavet med 5–15 % och bilresorna med 10–30 %. Effekterna av olika åtgärder kan inte adderas.",
+      "land": "Internationell översikt med svenska beräkningar",
+      "url": "https://ivl.diva-portal.org/smash/get/diva2:1840739/FULLTEXT01.pdf"
+    },
+    "cairns2002": {
+      "text": "Cairns, S., Atkins, S. & Goodwin, P. (2002). Disappearing traffic? The story so far. Proceedings of the Institution of Civil Engineers – Municipal Engineer 151(1), 13–22.",
+      "fynd": "I ett 70-tal fall i 11 länder där bilarnas utrymme minskades minskade biltrafiken med i medel 21,9 % och i median 10,6 %; trafiken flyttade bara delvis till andra gator. Refererad i IVL C820 (2024).",
+      "land": "11 länder",
+      "url": "https://ivl.diva-portal.org/smash/get/diva2:1840739/FULLTEXT01.pdf"
+    },
+    "hagen2021": {
+      "text": "Hagen, O. H. & Tennøy, A. (2021). Street-space reallocation in the Oslo city center: Adaptations, effects, and consequences. Transportation Research Part D 97, 102944.",
+      "fynd": "Gatuparkeringen i Oslos centrum minskade från 1 450 till 690 platser och genomfarten begränsades. Biltrafiken minskade med 11 % 2016–2018 och 19 % 2018–2019, utan negativa effekter på handelns omsättning.",
+      "land": "Norge",
+      "url": "https://doi.org/10.1016/j.trd.2021.102944"
+    },
+    "ivlgent": {
+      "text": "Gustavsson Binder, T., Dickinson, J. & Lundström, H. (2023). ”Att göra en Gent”. Nya tag för attraktiva städer med mindre biltrafik. IVL Svenska Miljöinstitutet, rapport C793.",
+      "fynd": "Gents cirkulationsplan delar staden i zoner som inte kan passeras med bil. Bilens andel av resorna sjönk från 45 till 38 % (2015–2018), cykelns andel ökade från 30 till 35 %, och kostnaden för införandet var cirka 5 miljoner euro. Refererad i IVL C820 (2024).",
+      "land": "Belgien",
+      "url": "https://www.mynewsdesk.com/se/ivl_svenska_miljoinstitutet_ab__/pressreleases/saa-kan-biltrafiken-minska-sju-laerdomar-foer-svenska-staeder-3288265"
+    },
+    "norheim2016": {
+      "text": "Norheim, B. m.fl. (2016). Hållbara urbana transporter (HUT). Komparativa analyser Stockholm, Göteborg, Malmö och Uppsala. Urbanet Analyse, rapport 90/2016.",
+      "fynd": "Stomlinjenät för buss med full framkomlighet tillsammans med fördubblade parkeringsavgifter i de centrala delarna ger en överflyttning av 10–20 % av bilresorna, beroende på stad. Refererad i IVL C820 (2024).",
+      "land": "Sverige (bl.a. Malmö)",
+      "url": "https://ivl.diva-portal.org/smash/get/diva2:1840739/FULLTEXT01.pdf"
+    },
+    "preston2016": {
+      "text": "Preston, J. m.fl. (2016). Local Sustainable Transport Fund Evaluation: A Case Study Evaluation of Carbon Impacts and Congestion Relief. Department for Transport.",
+      "fynd": "Bilkörningen minskade med upp till 7 % i orter som fick stöd för gång, cykel och kollektivtrafik jämfört med orter utan stöd. Refererad i IVL C820 (2024).",
+      "land": "Storbritannien",
+      "url": "https://ivl.diva-portal.org/smash/get/diva2:1840739/FULLTEXT01.pdf"
+    },
+    "brand2021": {
+      "text": "Brand, C. m.fl. (2021). The climate change mitigation impacts of active travel: Evidence from a longitudinal panel study in seven European cities. Global Environmental Change 67, 102224.",
+      "fynd": "Den som byter en bilresa om dagen mot cykel minskar sitt klimatavtryck med ungefär 0,5 ton per år. Om 10 % av befolkningen byter bilen mot cykel minskar livscykelutsläppen från bilresor med 4 %.",
+      "land": "Sju europeiska städer",
+      "url": "https://doi.org/10.1016/j.gloenvcha.2021.102224"
+    },
+    "grybb2023": {
+      "text": "Grybb, M. m.fl. (2023). Effekter av mobilitetsåtgärder för boende. Vinnova steg 1-projekt. Tyréns Sverige AB.",
+      "fynd": "I fastigheter i Malmö där de boende hade tillgång till bilpool eller cykelpool var efterfrågan på parkering 25–50 % lägre än i fastigheter utan sådana tjänster. Kontinuerlig information om tjänsterna behövs för att de ska användas. Refererad i IVL C820 (2024).",
+      "land": "Sverige (Malmö)",
+      "url": "https://ivl.diva-portal.org/smash/get/diva2:1840739/FULLTEXT01.pdf"
+    },
+    "trivector2016": {
+      "text": "Trivector Traffic (2016). Grön resplan 2020 för Region Östergötland. Inklusive uppföljning av Grön resplan från år 2013. Trivector rapport 2016:08.",
+      "fynd": "Region Östergötlands gröna resplan (prova-på-kort, bom vid sjukhusparkeringen, cykelservice, resfria möten) minskade klimatpåverkan med cirka 13 %, rensat för teknikutveckling. Refererad i IVL C820 (2024).",
+      "land": "Sverige",
+      "url": "https://ivl.diva-portal.org/smash/get/diva2:1840739/FULLTEXT01.pdf"
+    },
+    "caldarola2022": {
+      "text": "Caldarola, B. & Sorrell, S. (2022). Do teleworkers travel less? Evidence from the English National Travel Survey. Transportation Research Part A 159, 282–303.",
+      "fynd": "De som arbetar hemifrån reser totalt sett längre per vecka, men vid distansarbete tre dagar eller mer i veckan minskar både pendlingen och de övriga resorna. Refererad i IVL C820 (2024).",
+      "land": "Storbritannien",
+      "url": "https://ivl.diva-portal.org/smash/get/diva2:1840739/FULLTEXT01.pdf"
+    },
+    "cairnsjones2016": {
+      "text": "Cairns, S. & Jones, M. (2016). Sustainable Travel Towns: An evaluation of the longer term impacts. Main report. Department for Transport, PPR776.",
+      "fynd": "Mobilitetsrådgivning till hushåll, skolor och arbetsplatser tillsammans med bättre kollektivtrafik i tre städer med 100 000–180 000 invånare minskade bilkörningen per person med 6–10 %.",
+      "land": "Storbritannien",
+      "url": "https://assets.publishing.service.gov.uk/media/5b8fb003ed915d1ec02ff273/ppr776-sustainable-travel-towns-final-report.pdf"
+    },
+    "helsingborg2023": {
+      "text": "Helsingborgs stad (2023). Från bilist till cyklist på 6 veckor. En metodguide. Samt Johansson, M. (2023). 300 testcyklister. Lunds universitet.",
+      "fynd": "Drygt 300 bilpendlare testade att cykelpendla i sex veckor. Ett år senare gjorde 79 % mer än hälften av sina arbetsresor med cykel. 10 km cykelpendling om dagen motsvarar drygt 300 kg CO₂ per person och år. Refererad i IVL C820 (2024).",
+      "land": "Sverige (Helsingborg)",
+      "url": "https://ivl.diva-portal.org/smash/get/diva2:1840739/FULLTEXT01.pdf"
+    },
+    "asensio2014": {
+      "text": "Asensio, J., Gómez-Lobo, A. & Matas, A. (2014). How effective are policies to reduce gasoline consumption? Evaluating a set of measures in Spain. Energy Economics 42, 34–42.",
+      "fynd": "När hastighetsgränsen på spanska motorvägar sänktes från 120 till 110 km/h minskade vägtrafikens bränsleförbrukning med 2–3 %.",
+      "land": "Spanien",
+      "url": "https://doi.org/10.1016/j.eneco.2013.11.011"
+    },
+    "kuss2022": {
+      "text": "Kuss, P. & Nicholas, K. A. (2022). A dozen effective interventions to reduce car use in European cities: Lessons learned from a meta-analysis and transition management. Case Studies on Transport Policy 10(3), 1494–1513.",
+      "fynd": "Begränsad framkomlighet för bilen, som bilfria gator och zoner eller borttagna körfält och parkeringsplatser, kombinerat med satsningar på kollektiv-, gång- och cykeltrafik är en framgångsrik kombination. Personlig mobilitetsrådgivning till boende minskade andelen bilresor med 5–10 % i europeiska städer. Refererad i IVL C820 (2024).",
+      "land": "Europeiska städer",
+      "url": "https://lucsus.lu.se/kimberly-nicholas/publication/b75dc8e8-9ded-41e2-97e4-6e1c2fedeaa0"
+    },
+    "litman2023a": {
+      "text": "Litman, T. (2023). Are Vehicle Travel Reduction Targets Justified? Why and How to Reduce Excessive Automobile Travel. Victoria Transport Policy Institute.",
+      "fynd": "Paket med både positiva incitament och högre kostnader för bilen minskar biltrafiken med 10–30 %, paket med bara positiva incitament med 5–15 %. Boende i täta, tillgängliga stadsdelar kör 20–60 % kortare med bil. Refererad i IVL C820 (2024).",
+      "land": "Internationellt (främst Nordamerika)",
+      "url": "https://vtpi.org/vmt_red.pdf"
+    }
+  },
+  "apiStatus": {
+    "state": "blocked_in_delivery_environment",
+    "note": "Direkta API-anrop mot SCB, Trafikanalys och Malmö blockerades med HTTP 403 i leveransmiljön. Inga nya rådata har ersatt basversionens data. Hämtningsskript och uttagsplan medföljer.",
+    "receiptFile": "underlag/leveranskontroll/20261023T091520811768Z/hamtningskvitto.json",
+    "failedRequests": 6
+  }
+}

@@ -1,0 +1,66 @@
+{
+ "kommun": "2180 Gävle",
+ "reference": {
+  "year": 2024,
+  "source": "GAVLE_NEDB",
+  "groups": {
+   "light": 132362,
+   "heavy": 44608
+  },
+  "busVkm": 0,
+  "busStatus": "bussar kalibreras inte",
+  "method": "framskriven",
+  "description": "Nationella emissionsdatabasen 2022 för Gävle (per invånare × invånare), framskriven till 2024 med rikets förändring per fordonsslag (Trafikverket). Inte kommunens egen redovisning."
+ },
+ "harledning": {
+  "kalla_per_invanare": "2030-sekretariatet, Indikatorer för fossiloberoende transporter K4_KH (Nationella emissionsdatabasen/RUS, SCB), Gävle 2022, ton CO2e per invånare",
+  "per_invanare_2022": {
+   "personbilar": 0.94,
+   "latta_lastbilar": 0.149,
+   "tunga_lastbilar": 0.338,
+   "bussar": 0.018
+  },
+  "invanare": 103532,
+  "invanare_kalla": "SCB 2023 (folkmängd per DeSO i Bilmodell v7); 2022 års folkmängd skiljer sig mindre än 1 %",
+  "utslapp_2022_ton": {
+   "personbilar": 97320,
+   "latta_lastbilar": 15426,
+   "tunga_lastbilar": 34994,
+   "bussar": 1864
+  },
+  "riket_miljoner_ton_2022_2024": {
+   "personbilar": [
+    8.27,
+    9.49
+   ],
+   "latta_lastbilar": [
+    1.32,
+    1.77
+   ],
+   "tunga_lastbilar": [
+    2.73,
+    3.48
+   ],
+   "bussar": [
+    0.16,
+    0.2
+   ]
+  },
+  "riket_kalla": "Trafikverket, Vägtrafikens utsläpp 2023 (tabell 1, år 2022) och 2024 (tabell 1, år 2024, preliminärt)",
+  "faktor_2022_till_2024": {
+   "personbilar": 1.1475,
+   "latta_lastbilar": 1.3409,
+   "tunga_lastbilar": 1.2747,
+   "bussar": 1.25
+  },
+  "utslapp_2024_ton": {
+   "personbilar": 111677,
+   "latta_lastbilar": 20685,
+   "tunga_lastbilar": 44608,
+   "bussar": 2329
+  },
+  "grupper": "light = personbilar + lätta lastbilar; heavy = tunga lastbilar (med och utan släp, kalibreras som en grupp). Bussar kalibreras inte.",
+  "motivering": "Utan kalibrering ger schablon-ÅDT per vägklass cirka 2,1 gånger så höga direktutsläpp som referensen i Gävle, främst på landsbygdens större vägar (motortrafikleder, sekundära vägar och övriga mindre vägar).",
+  "provning_av_metoden": "Samma framskrivning för Malmö (0,40 + 0,063 + 0,081 ton per invånare 2022) ger 234 kton 2024, mot kommunens egen redovisning 268 kton (−13 %). Referensen är alltså osäker med storleksordningen ±15–20 %."
+ }
+}

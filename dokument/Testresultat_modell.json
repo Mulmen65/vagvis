@@ -1,0 +1,7 @@
+{
+  "passed": 13,
+  "failed": 0,
+  "modelVersion": "2.0.9",
+  "baselineVersion": "2.0.8",
+  "checks": "Numerisk regression, Monte Carlo, geografi, källstatus, exportkoppling och skriptparsning. Ingen körning av Streamlit-server eller grafisk webbläsare i denna miljö."
+}

@@ -1,0 +1,62 @@
+Ämne: Begäran om trafikunderlag för klimatmodell – Malmö 2024, väglänkar och fordonsfördelning
+
+Hej,
+
+Jag utvecklar en öppen modell för klimatpåverkan från vägtrafik. Huvudfrågan är trafiken som faktiskt körs inom Malmö kommun, inklusive genomfart. Trafiken ska fördelas på DeSO och stadsdels-/modellområden. Fordonens och energins livscykel räknas per fordonskilometer; byggande och underhåll av vägar ingår inte.
+
+Det viktigaste underlaget vore ett kvalitetssäkrat uttag av det trafikbelagda vägnät som användes för Malmös utsläppsberäkning för kalenderåret 2024, gärna från ENVIMAN eller den trafikmodell som levererar till inventeringen. En sådan länkmodell är mer användbar än enbart mätpunkter.
+
+1. Vägnät och trafik per avsnitt
+Kan ni leverera en rad per homogen väglänk och, där möjligt, per körriktning, med:
+- stabilt länk-ID, från-/tillnod, geometri, längd i meter och koordinatsystem/EPSG;
+- vägnamn/vägnummer, väghållare, vägklass och nätets giltighetsdatum;
+- trafikmängd och enhet: ÅDT, MVD, dygns-/timräkning eller årligt trafikarbete i fordonskm;
+- exakt referensår och mätperiod, mätplats-ID och koppling mellan mätning och de väglänkar värdet representerar;
+- definition av riktning och körbana: båda riktningar tillsammans, en körriktning eller ett körfält. För separata körbanor behövs flödet för respektive geometri, alternativt dokumenterad riktningsfördelning;
+- markering av uppmätt, modellerat, interpolerat och schablonsatt flöde, med källa, modellversion, bortfall och kvalitetsmått;
+- helst fordonskm per länk och fordonsklass för hela 2024 som kontrollsumma.
+
+2. MVD till ÅDT – rådata och dokumenterad omräkning
+Den öppna datamängdens MVD avser vardagsdygn och båda riktningarna under en viss mätperiod. Finns dygns-/timdata med datum och fordonsklass, alternativt den omräkningsmetod ni använder till ÅDT?
+Vi behöver veta hur helger, röda dagar, lov, årstid, mätveckor, bortfall och tillfälliga avstängningar hanteras. Ange gärna faktorn ÅDT/MVD per trafikmiljö, fordonsklass och relevant period samt osäkerhet och vilka mätplatser som ligger till grund för faktorn. En universell omräkningsfaktor bör inte användas utan underlag. Om en äldre mätning räknas fram till 2024 behövs också årsfaktor, källa och osäkerhet.
+För helårsdata är ÅDT = summan av årets dygnsflöden / 366 år 2024. För delårsdata behövs en dokumenterad årsprofil. Veckodagsfördelningen ensam korrigerar inte en säsongsbegränsad mätning.
+
+3. Fordonsfördelning och drift
+Önskad uppdelning är personbil, lätt lastbil, tung lastbil utan släp, tung lastbil med släp, buss, motorcykel och moped. Om bara lätt/tung trafik finns: hur skiljs lätt lastbil, buss och lastbil med släp åt? Ingår buss i andel_tung? Hur definieras klassgränserna?
+Finns lokala andelar av trafikarbetet för el, laddhybrid, bensin, diesel, HVO och biogas, inklusive utlandsregistrerade och genomresande fordon? Registrerade bilar i kommunen beskriver inte hela den territoriella trafikmixen. Om möjligt önskas även hastighet, trafikmiljö/köbildning, kallstarter samt bussarnas fordonskm och drivmedel från Skånetrafiken/operatörerna. En fordonsandel är inte automatiskt en andel av körsträckan.
+
+4. E20 efter Öresundsbron och övriga stora vägar – högsta prioritet
+Kan ni särskilt hjälpa till att få fram 2024-flöden på E20 från den del av Öresundsförbindelsen som ligger inom Malmö kommun, genom broanslutningen och Yttre Ringvägen, inklusive trafikplatser och ramper? Vi önskar också kommunens delar av E6/E20, E22 och övriga huvudleder, exempelvis Inre Ringvägen, Trelleborgsvägen, Pildammsvägen och Lundavägen.
+För varje avsnitt behövs flöde före och efter av-/påfarter, körriktning och fordonsklass. Broöverfarter får inte läggas som extra trafik ovanpå samma E20-trafik. Ett kontrollsnitt över bron kan heller inte läggas oförändrat på alla efterföljande avsnitt.
+Om ni saknar statliga vägdata: vilket 2024-uttag från Trafikverket bör användas, och kan ni förmedla länknycklar eller kontakt med rätt dataägare? För själva broförbindelsen behövs motsvarande underlag från Øresundsbro Konsortiet och en tydlig gräns mot de svenska anslutningarna. Vi vill räkna endast den del av vägtrafiken som ligger inom kommunen, även på bro över vatten; dansk trafik utanför kommungränsen ska inte följa med.
+
+5. Avstämning mot kommunens utsläppsredovisning
+I den ena kommunala serien anges 268,3 kiloton CO2e för vägtrafik 2024, medan en annan serie anger 291 kiloton. Vilken avgränsning, dataversion och trafikmodell gäller för respektive värde? Bekräfta om siffrorna avser direktutsläpp/TTW, vilka växthusgaser som ingår, hur biogen CO2 hanteras och hur bussar, lätta lastbilar, motorcyklar och turistbussar kategoriseras. Ingår statliga vägar, genomfart och brotrafik? Finns totalsummor per fordonsklass och vägtyp som kan användas för oberoende kontroll?
+
+6. Osäkerhet, geografi och leverans
+Vi önskar CV/standardfel eller intervall med angiven konfidensnivå där det finns, samt dokumentation om gemensamma fel mellan länkar, samma mätstation, MVD-omräkningsprofiler och modellområden. Saknade uppgifter bör markeras som saknade och inte som nolltrafik.
+För geografier önskas officiella områdesgränser med giltighetsår, eventuell nyckel mellan DeSO 2018 och 2025 samt mellan DeSO och önskade stadsdelsområden. För kartvisningen vore en aktuell land-/kustmask värdefull; administrativa vattenområden behålls i själva trafikberäkningen.
+Helst önskas GeoPackage med länkgeometri och trafiktabell, alternativt GeoJSON i EPSG:4326 eller CSV med stabil länknyckel till separat geometri. Även Shapefile med DBF/PRJ och metadata går bra som råunderlag. Vägvis importerar för närvarande GeoJSON i EPSG:4326; andra format behöver konverteras. Bifoga fältbeskrivning, licens, versionsdatum och villkor för vidarepublicering.
+
+Som komplement för hushållsmodellen önskas, om tillgängligt, aggregerade hushålls-, bilinnehavs- och körsträckedata för 2024 i samma geografi. Förmånsbilar, privatägda bilar och verksamhetsfordon behöver kunna skiljas åt. Vi behöver inte uppgifter som identifierar enskilda hushåll eller fordon.
+
+Prioritering om ett fullständigt uttag är svårt:
+1) Det färdiga 2024-länknätet bakom utsläppsinventeringen.
+2) Statliga huvudvägar/E20 och kommunala huvudleder med ÅDT, riktning och tung/buss-fördelning.
+3) Dokumenterade MVD→ÅDT-faktorer och osäkerhet för kommunens mätningar.
+
+Tack för hjälp med att identifiera rätt underlag och dataansvariga.
+
+Källor som förklarar utgångspunkterna, kontrollerade 20 oktober 2026:
+Malmö, trafikmätningar och öppna data:
+https://malmo.se/trafikmangder
+https://opendata.malmo.se/@malmo/trafikmatning-for-biltrafik
+Trafikverket, avsnittsvisa fordonsflöden, mätår och osäkerhet:
+https://bransch.trafikverket.se/tjanster/trafiktjanster/Vagtrafik--och-hastighetsdata/fordonsfloden-och-hastigheter/
+Trafikverket, trafikarbete:
+https://bransch.trafikverket.se/tjanster/trafiktjanster/Vagtrafik--och-hastighetsdata/Trafikarbete/
+Øresundsbron, statistik och rapporter:
+https://www.oresundsbron.com/sv/om-oresundsbron/statistik-och-rapporter
+Malmö, de två kommunala utsläppsserierna:
+https://miljobarometern.malmo.se/miljomal/mal-7/utslapp-fran-vagtrafik/vaxthusgasutslapp-per-trafikslag/table/
+https://malmo2.miljobarometern.se/miljomal/mal-1/totala-territoriella-vaxthusgasutslapp-i-malmo/totala-territoriella-vaxthusgasutslapp/table

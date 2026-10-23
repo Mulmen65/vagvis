@@ -1,0 +1,21 @@
+{
+  "baselineVersion": "2.0.8",
+  "releaseVersion": "2.0.9",
+  "baselineHtmlSha256": "0149c5a33231859fd9031abc3da3317d6d632d88bf1ef59481c2730d11e6d0f9",
+  "changesNumericalDefaults": false,
+  "newRvuFit": false,
+  "newMeasuredTraffic": false,
+  "releaseDate": "2026-10-23",
+  "baselineModules": {
+    "leaflet.js": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a",
+    "core.js": "ebfb76512001bf384800f7181a6abe82990ceae4111a2e102901630933f45e38",
+    "households.js": "ad589d46fab64df26323f3fe1ed1a09169f015147e7a564c49994623adc94e83",
+    "v7-atgarder.js": "95953d6fcc4818cf4f6ec9da0077097ea7e7001170bae360ec79db741b7d6dc6",
+    "v7-osakerhet.js": "60544e4abc0e3cc3975f64e505b07904e46d0304f01aee072860dfa4662aec0b",
+    "v7-mc.js": "ca7dbb20f33255261c942f8252f1d597696a4d9af4612d5a32118ce65d84784f",
+    "v7-berakning.js": "58005f98bdcacac6e486bafc0c0dab108697e710b293c6aeb34b4694823c2e8b",
+    "maps.js": "3012723f96d16aca4379f92b49824afe84bafed0362500f60ea94b4e436402ef",
+    "network.js": "38a9e7aafda2a83a64929cf73de5ab77888242f276dd1c22a371a42872e1f98a"
+  },
+  "baselineStyleSha256": "f15aa4c16adae2fd0741411822955bf4ee65c49b8c3a4595df8807341cb98ae7"
+}

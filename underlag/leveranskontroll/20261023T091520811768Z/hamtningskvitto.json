@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "2.0.9",
+  "createdAt": "2026-10-23T09:15:43.130436+00:00",
+  "complete": false,
+  "failed": 6,
+  "activatedInApp": false,
+  "note": "Rådata för granskning. Inga saknade värden har ersatts med noll. Källor med skilda år eller områdesindelningar har inte slagits samman.",
+  "entries": [
+    {
+      "id": "scb_bilar_2023_deso2018_metadata",
+      "url": "https://api.scb.se/OV0104/v1/doris/sv/ssd/START/TK/TK1001/TK1001Z/PersBilarDeso",
+      "method": "GET",
+      "request": null,
+      "fetchedAt": "2026-10-23T09:15:20.811990+00:00",
+      "activatedInApp": false,
+      "status": "failed",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "scb_bilar_2024_deso2025_metadata",
+      "url": "https://api.scb.se/OV0104/v1/doris/sv/ssd/START/TK/TK1001/TK1001Z/PersBilarDesoN",
+      "method": "GET",
+      "request": null,
+      "fetchedAt": "2026-10-23T09:15:26.000106+00:00",
+      "activatedInApp": false,
+      "status": "failed",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "scb_hushall_2023_2024_metadata",
+      "url": "https://api.scb.se/OV0104/v1/doris/sv/ssd/START/BE/BE0101/BE0101Y/HushallDesoTyp",
+      "method": "GET",
+      "request": null,
+      "fetchedAt": "2026-10-23T09:15:29.507680+00:00",
+      "activatedInApp": false,
+      "status": "failed",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "malmo_resurskatalog",
+      "url": "https://opendata-api.malmo.se/api/3/action/resource_search?query=description%3Amalm%C3%B6+statistik&limit=1000&offset=0",
+      "method": "GET",
+      "request": null,
+      "fetchedAt": "2026-10-23T09:15:32.547311+00:00",
+      "activatedInApp": false,
+      "status": "failed",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "trafa_korstrackor_metadata",
+      "url": "https://api.trafa.se/api/structure?query=t10094",
+      "method": "GET",
+      "request": null,
+      "fetchedAt": "2026-10-23T09:15:35.575748+00:00",
+      "activatedInApp": false,
+      "status": "failed",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "trafa_korstrackor_2024",
+      "url": "https://api.trafa.se/api/data?query=t10094%7Car%3A2024%7Ckorstr%7Canttrf%7CMkorstr%7Cgdkor%7Cfordalder",
+      "method": "GET",
+      "request": null,
+      "fetchedAt": "2026-10-23T09:15:39.200209+00:00",
+      "activatedInApp": false,
+      "status": "failed",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+Vägvis 2.0.9 kontrollresultat 23 oktober 2026
+
+GENOMFÖRT OCH GODKÄNT
+
+13 modellkontroller med Node:
+1. Data och numeriska motorer från 2.0.8 bevarade. Samma kart- och nätmoduler och samma grundläggande stilmall.
+2. Förberäknat A-resultat har giltigt versionsfingeravtryck och bevarad kommunreferens.
+3. B:s tre kommunresultat matchar den reproducerade granskningen.
+4. DeSO och stadsdelsområden summerar till kommunresultatet i B.
+5. Avgaser, elproduktion, livscykeldelar och separat återvinningskredit är aritmetiskt konsistenta.
+6. Källregistret följer ändrade inställningar och ändrar inte indata.
+7. Bilpåslag och avståndsexponent klassas som modellbedömningar.
+8. Alla 14 åtgärder klassas som bedömda scenarioeffekter; referenslistan följer med exportkvittot.
+9. Saknade registerfält i importerade data får inte falsk källstatus.
+10. Befintliga vyer, OSM-karta, exportkopplingar och ny metodknapp finns i den färdiga appen.
+11. MVDT accepteras inte som ÅDT utan dokumenterad omräkning.
+12. Alla JavaScript-moduler och den färdigbyggda appens körbara skript kan parsas.
+13. B:s Monte Carlo ger samma dragningar som 2.0.8 för samma indata och frö. Kontroll med 100 dragningar och frö 42, för alla resultatnivåer.
+
+6 Pythonkontroller:
+1. SCB-uttag avgränsas till begärda DeSO och referensår.
+2. Saknade värden bevaras och avvikande datadimensioner avvisas.
+3. Ett blockerat uttag dokumenteras utan att tidigare filer ändras.
+4. Malmös datalager hämtas över flera sidor utan att rader tappas i den simulerade kontrollen.
+5. Alla fyra HTML-sidor finns och okänd sidnyckel avvisas.
+6. Streamlits normala drift innehåller ingen automatisk API-hämtning.
+
+Även kontrollerat: Python-syntax, YAML-filer och byggning av samtliga medföljande HTML-sidor.
+
+API-STATUS
+
+Sex direkta anrop mot SCB, Trafikanalys och Malmö gav HTTP 403 i leveransmiljön. Det är inte ett belägg för att API:erna saknas. Inga nya rådata aktiverades. Fullständigt kvitto finns i underlag/leveranskontroll/.
+
+KVARSTÅENDE VALIDERING
+
+Streamlit-installation och serverstart kunde inte köras eftersom paketinstallationen var otillgänglig i leveransmiljön. Grafisk körning i en riktig webbläsare kunde inte genomföras. Ett GitHub-arbetsflöde kontrollerar installation, serverns hälsosvar och Streamlits entrypoint när paketet laddas upp. Gränssnittskontrollerna i denna leverans avser bevarad källkod, stilmall, skriptparsning och kopplingar; de ersätter inte en visuell kontroll efter publicering.
+
+Numerisk överensstämmelse med 2.0.8 är regressionskontroll, inte empirisk validering av trafikarbete, LCA-faktorer eller åtgärdseffekter.

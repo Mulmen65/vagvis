@@ -1,0 +1,7 @@
+Vägvis 2.0.9 23 oktober 2026
+
+Komplett paket för GitHub och Streamlit. HTML-gränssnittet, geodata, standardvärden och beräkningsformler från 2.0.8 är bevarade. Startfiler för Streamlit har återställts eftersom de saknades i det uppladdade ändringspaketet.
+
+Tillagt: källregister, aktuell parameterredovisning, evidensstatus, källkvitto i projektets JSON-export, metodknapp i nederkant, datahämtningsskript, manuellt GitHub-arbetsflöde och regressionskontroller. Den befintliga metodvyn och räkneexemplen har kompletterats.
+
+Ingen ny empirisk RVU-anpassning, geografisk omräkning mellan DeSO-versioner eller nya uppmätta vägflöden har aktiverats. Direkta API-anrop gav HTTP 403. Resultaten är därför fortsatt villkorade av 2.0.8:s data och antaganden.

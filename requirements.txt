@@ -1,3 +1,2 @@
-# Testad med Streamlit 1.66.0 (oktober 2026). Vägvis räknar i besökarens webbläsare,
-# så inga andra Python-paket behövs.
-streamlit==1.66.0
+# Pinned to retain the iframe interface used by Vägvis 2.0.8.
+streamlit==1.50.0

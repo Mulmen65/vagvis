@@ -2,7 +2,7 @@
    Scientific status: screening model; defaults labelled assumptions, not measured fleet data. */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.Vagvis=factory();})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
-const VERSION='2.0.8', KEYS=['ttw','wtt','vehicle','battery','maintenance','endoflife'];
+const VERSION='2.0.9', KEYS=['ttw','wtt','vehicle','battery','maintenance','endoflife'];
 const clone=x=>JSON.parse(JSON.stringify(x));
 const fail=m=>{throw new Error(m);};
 const sum=a=>a.reduce((x,y)=>x+y,0);
