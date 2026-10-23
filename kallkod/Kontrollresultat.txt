@@ -1,3 +1,25 @@
+VÄGVIS 2.0.8 – TILLÄGG 22 OKTOBER 2026 (Gävle i modell A)
+
+Malmö och Helsingborg är oförändrade mot 2.0.7: startresultatets alla värden för de två kommunerna
+(10 914 värden, kalibreringsfaktorer och kommunernas dragningar) är identiska.
+
+source/test_gavle.cjs:
+- Gävle: 55 DeSO 2025, 9 stadsdelsområden, 9946 OSM-länkar med schablon-ÅDT, egen slumpström, referens enligt underlag/Referens_Gavle_2024.json.
+- Kalibrering: lätt trafik 132362 ton och tunga lastbilar 44608 ton = referensen. Faktorer: lätt 0.487, tunga 0.439.
+- Malmö och Helsingborg: 7383 värden identiska med och utan Gävle (centralvärden och intervall, 300 simuleringar).
+- Gävle 2024: 177.0 kton direkt, 276.2 kton livscykel.
+Alla kontroller godkända (68 s).
+
+Inläsningsskriptet provat på Helsingborg: när Helsingborg togs bort och lades in igen med
+lagg_till_kommun.py blev alla 9 730 vägar och 84 DeSO desamma. OSM-filer i PBF-format gav samma 19 877 vägar
+som Overpass-svaret.
+
+Rimlighet: utan kalibrering gav vägnätet 373 kton direktutsläpp i Gävle mot referensens 177 kton (+111 %), med
+störst bidrag från motortrafikleder (560 miljoner fordonskm), motorvägar (437) och sekundära vägar (334).
+Referensen: framskrivningen ger för Malmö 234 kton mot kommunens 268 kton (−13 %) och för Helsingborg 192 kton,
+där modellen utan kalibrering ger 220 kton (+15 %).
+
+
 VÄGVIS 2.0.7 – TILLÄGG 22 OKTOBER 2026 (CO2 per hektar och Så räknas resultatet)
 
 Basfallet är oförändrat mot 2.0.6:

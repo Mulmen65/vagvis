@@ -1,0 +1,5 @@
+OK  Gävle: 55 DeSO 2025, 9 stadsdelsområden, 9946 OSM-länkar med schablon-ÅDT, egen slumpström, referens enligt underlag/Referens_Gavle_2024.json.
+OK  Kalibrering: lätt trafik 132362 ton och tunga lastbilar 44608 ton = referensen. Faktorer: lätt 0.487, tunga 0.439.
+OK  Malmö och Helsingborg: 7383 värden identiska med och utan Gävle (centralvärden och intervall, 300 simuleringar).
+OK  Gävle 2024: 177.0 kton direkt, 276.2 kton livscykel.
+Alla kontroller godkända (70 s).

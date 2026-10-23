@@ -17,6 +17,8 @@ source/                Beräkning, gränssnitt, startdata, byggskript och tester
   startresultat.json   Förberäknat startresultat för A (byggs om när motorn ändras)
   omradesytor.json     Yta och landyta per område (från berakna_ytor.py)
   berakna_ytor.py      Räknar ytorna i SWEREF 99 TM (kräver shapely och pyproj)
+  lagg_till_kommun.py  Lägger till en kommun i modell A (DeSO, stadsdelsområden, landmask, vägnät, referens)
+  lagg_in_osm.py       Läser in OSM-vägnät (Overpass-svar, GeoJSON från Overpass Turbo eller .osm.pbf)
   test_*.cjs, test_*.py  Kontroller, *-tests.txt är senaste utfall
 underlag/              OSM-vägnät, DeSO-gränser, hushållsunderlag och proveniens
 bygg_appen.cjs         Bygger och kopierar till app/ och dokument/
@@ -53,6 +55,7 @@ node kallkod/source/test_core.cjs
 node kallkod/source/test_v2.cjs
 node kallkod/source/test_omradesscenario.cjs
 node kallkod/source/test_rakneexempel.cjs
+node kallkod/source/test_gavle.cjs
 node kallkod/source/test_bundle.cjs
 node kallkod/source/test_network.cjs
 python kallkod/source/test_package.py

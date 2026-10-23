@@ -64,6 +64,17 @@ with sync_playwright() as pw:
     s3 = ren(pg.inner_text(".calc-step >> nth=2")); krav("ingen kommunreferens" in s3, "A Helsingborg: inget kalibreringssteg (faktor 1)")
     krav("Stämmer med kartan" in pg.inner_text(".calc-result"), "A Helsingborg: summan stämmer med kartan")
     pg.click("[data-calc-map='city|1283']"); pg.wait_for_selector("#map-surface path"); krav(pg.evaluate("() => document.querySelector('[data-city].active').dataset.city") == "1283", "Visa i kartan går till kartan")
+    # ---- A: Gävle (2.0.8) ----
+    pg.click("[data-city='2180']"); pg.wait_for_selector("#map-surface path", timeout=30000); pg.wait_for_timeout(1200)
+    antal = pg.evaluate("() => document.querySelectorAll('#map-surface path.leaflet-interactive').length"); krav(antal == 55, "Gävle i modell A: 55 DeSO i kartan (%d)" % antal)
+    pg.click("[data-select-area='deso|2180|2180C1010']"); pg.wait_for_timeout(500); gp = ren(pg.inner_text("#area-detail")); print("Gävle-panel:", gp[:300])
+    krav("ton CO₂e/ha · per hektar landyta" in gp, "Gävle: panelen visar total och per hektar")
+    pg.screenshot(path=str(UT / "6_A_gavle_karta.png"))
+    pg.click("[data-view=calc]"); pg.wait_for_selector(".calc-step"); pg.select_option("#calc-area", "city|2180"); pg.wait_for_timeout(500)
+    s3 = ren(pg.inner_text(".calc-step >> nth=2")); print("Gävle steg 3:", s3[:260]); krav("framskriven" in s3 or "Nationella emissionsdatabasen" in s3, "Gävle kalibreras mot den framskrivna referensen")
+    krav("Stämmer med kartan" in pg.inner_text(".calc-result"), "Gävle: räkneexemplet stämmer med kartan")
+    kg = ren(pg.inner_text(".calc-wrap >> nth=1")); krav("Gävle: vägnätets direktutsläpp före kalibrering" in kg and "prövad på Malmö" in kg, "Gävle: kontrollerna visar nätet före kalibrering och prövningen av framskrivningen")
+    pg.screenshot(path=str(UT / "7_A_gavle_rakneexempel.png"), full_page=True)
     # ---- B ----
     pg.click("[data-model=household]"); pg.wait_for_function("() => window.VagvisApp.getModel()==='household' && " + klar[6:], timeout=120000)
     pg.click("[data-city='1280']"); pg.click("[data-view=map]"); pg.wait_for_selector("#map-surface path", timeout=30000); pg.wait_for_timeout(800)
