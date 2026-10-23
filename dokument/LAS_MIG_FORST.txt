@@ -1,10 +1,10 @@
-VÄGVIS 2.0.7 – TVÅ MODELLER FÖR TRAFIKENS KLIMATAVTRYCK
+VÄGVIS 2.0.8 – TVÅ MODELLER FÖR TRAFIKENS KLIMATAVTRYCK
 22 oktober 2026
 
 KOM IGÅNG
 1. Packa upp hela ZIP-filen till en vanlig mapp på datorn.
 2. Dubbelklicka på Vagvis_2.0.html. Beräkning och kustklippta områden fungerar utan internet, installation, konto eller Netlify.
-3. Välj A eller B i vänstermenyn. Byt kommun med knapparna i sidhuvudet: Malmö och Helsingborg i A,
+3. Välj A eller B i vänstermenyn. Byt kommun med knapparna i sidhuvudet: Malmö, Helsingborg och Gävle i A,
    Malmö, Helsingborg och Gävle i B.
 4. För OpenStreetMap lokalt: starta Starta_med_karta_windows.cmd (Windows) eller kör python3 starta_lokalt.py (Mac/Linux). Kräver Python 3, inga extra Pythonpaket. Detta startar en webbserver endast på 127.0.0.1 och öppnar webbläsaren. Behåll terminalfönstret öppet. OpenStreetMap kräver internet; inga beräkningar skickas till en server.
    Alternativt kan Netlify-versionen användas online. Direkt file://-öppning använder områdeskartan, eftersom OSM:s karttjänst kräver giltig webb-Referer.
@@ -80,6 +80,12 @@ välja Basfall, Scenario eller Förändring. Förändringen färgas i procent av
 områdespanelen följer samma val. Knappen Visa i kartan i områdesscenariot öppnar kartan med förändringen.
 Har du ändrat indata efter beräkningen visar kartan den senaste beräkningen tills du beräknar igen.
 
+GÄVLE I MODELL A (2.0.8)
+55 DeSO 2025 och OSM-vägnätet (9 946 länkar, dataläge 22 oktober 2026) med schablon-ÅDT per vägklass.
+Gävle kalibreras mot en referens för 2024 som är framskriven från Nationella emissionsdatabasen 2022
+(se underlag/Referens_Gavle_2024.json), eftersom schablonerna annars ger cirka dubbelt så höga utsläpp på
+landsbygdens vägar. Malmö och Helsingborg är oförändrade.
+
 CO2 PER HEKTAR OCH SÅ RÄKNAS RESULTATET (2.0.7)
 Kartan och områdespanelen visar både totalen och utsläppen per hektar. I A väljer du Totalt eller Per hektar
 ovanför kartan; per hektar avser landytan (DeSO-gränsen klippt mot land). I B väljer du måttet
@@ -142,4 +148,5 @@ Kontrollera med: node source/test_core.cjs
                   python3 source/test_downloader.py
                   node source/test_omradesscenario.cjs
                   node source/test_rakneexempel.cjs
+                  node source/test_gavle.cjs
 Se Kontrollresultat.txt för vad som faktiskt har verifierats. En riktig webbläsares kartlayout och extern OSM/API-hämtning har inte verifierats i leveransmiljön.

@@ -1,3 +1,34 @@
+VÄGVIS 2.0.8 – 22 oktober 2026 (Gävle i modell A)
+
+Malmö och Helsingborg är oförändrade: alla resultat, intervall och dragningar i startresultatet är identiska
+med 2.0.7 (10 914 värden). Gävle har en egen slumpström, så att de andra kommunernas dragningar inte påverkas.
+
+Gävle i modell A (Trafik inom området)
+- 55 DeSO 2025 från SCB (underlag/DeSO_2025_2180.geojson, utsnitt ur användarens DeSO_2025.gpkg).
+- 9 stadsdelsområden, desamma som i Bilmodell v7. Varje DeSO 2025 hör till det stadsdelsområde den överlappar
+  mest; alla 53 DeSO med samma kod som i v7 hamnar i samma stadsdelsområde som där.
+- Vägnätet från OpenStreetMap (Overpass Turbo, dataläge 22 oktober 2026): 9 946 länkar, 2 671 km inom
+  kommunens DeSO, med schablon-ÅDT per vägklass som i Malmö och Helsingborg.
+- Landyta för måttet per hektar: DeSO-gränsen klippt mot land (geo-maps earth-lands-100m), 160 942 ha.
+- Kalibrering: utan kalibrering ger schablonerna cirka 2,1 gånger så höga direktutsläpp som kommunens statistik,
+  främst på landsbygdens större vägar. Gävle skalas därför, som Malmö, till en referens för 2024:
+  Nationella emissionsdatabasens utsläpp per invånare 2022 (2030-sekretariatet) × 103 532 invånare,
+  framskrivet med rikets förändring per fordonsslag 2022–2024 (Trafikverket). Lätt trafik 132 362 ton och
+  tunga lastbilar 44 608 ton (underlag/Referens_Gavle_2024.json). Bussar kalibreras inte.
+  Samma framskrivning ger för Malmö 13 % lägre än kommunens egen redovisning; referensen är alltså osäker
+  med 15–20 %. Den ska ersättas med kommunens egen siffra för 2024 när den finns.
+- Resultat 2024: 177,0 kton direkt (TTW) och 276,2 kton livscykel (95 %: 221–352 kton).
+- Så räknas resultatet visar kalibreringen och kontrollerna för Gävle. Helsingborg jämförs nu också med
+  samma källa (Nationella emissionsdatabasen, framskriven): modellen ligger 15 % högre.
+
+Teknik
+- source/lagg_till_kommun.py lägger till en kommun i modell A (DeSO, stadsdelsområden, landmask, vägnät,
+  valfri referens). source/lagg_in_osm.py läser nu även GeoJSON-export från Overpass Turbo och OSM-filer
+  (.osm.pbf, kräver pyosmium) och ersätter bara vägnätet för de kommuner som filerna gäller.
+- Kalibreringsgruppen "heavy" kalibrerar lastbilar med och utan släp tillsammans.
+- Nytt test: source/test_gavle.cjs.
+
+
 VÄGVIS 2.0.7 – 22 oktober 2026 (CO2 per hektar och fliken Så räknas resultatet)
 
 Basfallet är oförändrat: startresultatet i A är identiskt med 2.0.6 tal för tal (10 914 värden), och alla
