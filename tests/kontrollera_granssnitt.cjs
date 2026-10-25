@@ -30,7 +30,7 @@ async function main(){
     await page.goto(pathToFileURL(path.join(root,'app/Vagvis.html')).href,{waitUntil:'load'});
     await page.waitForFunction(()=>window.VagvisApp&&window.VagvisApp.ready);
     await page.evaluate(async()=>{await window.VagvisApp.ready;return true;});
-    assert.equal(await page.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.3');
+    assert.equal(await page.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.4');
     assert.ok((await page.locator('#view').innerText()).includes('Livscykel'));
     await page.screenshot({path:path.join(out,'granssnitt-A-oversikt.png')});
     await views(page,['map','calc','parameters','data','method']);
@@ -44,6 +44,29 @@ async function main(){
     await page.locator('.nav[data-view="overview"]').click();
     await page.screenshot({path:path.join(out,'granssnitt-B-oversikt.png')});
     await views(page,['map','calc','parameters','measures','control','data','method']);
+    // Räkneexemplen i B:s stegvisa beskrivning ska stämma med beräkningen, för varje nivå och kommun.
+    {
+      const close=(a,b,tol,msg)=>assert.ok(Math.abs(a-b)<=tol,msg+': '+a+' ≠ '+b);
+      const num=x=>Number(x.replace(/[\s  ]/g,'').replace(',','.'));
+      const N='([\\d\\s\\u00a0\\u202f]+(?:,\\d+)?)';
+      await page.locator('.nav[data-view="calc"]').click();
+      for(const city of ['1280','1283','2180']){
+        await page.locator('[data-city="'+city+'"]').click();await page.locator('.nav[data-view="calc"]').click();
+        const opts=await page.locator('#calc-area option').evaluateAll(o=>o.map(x=>x.value));
+        for(const key of [opts.find(k=>k.startsWith('city')),opts.find(k=>k.startsWith('district')),opts.find(k=>k.startsWith('deso'))]){
+          await page.selectOption('#calc-area',key);
+          const t=await page.locator('#view').innerText(),res=await page.evaluate(k=>window.VagvisApp.getResult().results.find(r=>r.key===k).central,key);
+          let m=t.match(new RegExp(N+' bilar × '+N+' km = '+N+' fordonskm'));assert.ok(m,'Fordonskm-exempel saknas '+key);
+          close(num(m[3]),res.vkm,1,'Visade fordonskm '+key);close(num(m[1])*num(m[2]),res.vkm,num(m[1])*0.5+1,'bilar × km '+key);
+          m=t.match(new RegExp(N+' fordonskm × '+N+' g CO₂e ÷ 1 000 000 = '+N+' t CO₂e'));assert.ok(m,'Utsläppsexempel saknas '+key);
+          close(num(m[3]),res.total,0.06,'Visade ton '+key);close(num(m[1])*num(m[2])/1e6,res.total,Math.abs(res.total)*1e-4+0.06,'fordonskm × g/km '+key);
+          m=t.match(new RegExp(N+' km × '+N+' mil ÷ '+N+' mil \\(riket\\) = '+N+' km per bil'));
+          if(m)assert.equal(Math.round(num(m[1])*num(m[2])/num(m[3])),num(m[4]),'Körsträckeformel '+key);
+          assert.ok(!/Stortorget,|Bilmodell|φ =/.test(t),'Inaktuell metodtext '+key);
+        }
+      }
+      checks.push('Räkneexemplen i B stämmer med beräkningen för kommun, RegSO och DeSO');
+    }
     await page.locator('.nav[data-view="measures"]').click();
     await page.locator('[data-preset="carsharing_pbl2015"]').click();
     await page.locator('#scenario-note').fill('Test med <tagg> & Öresund.');
@@ -60,7 +83,7 @@ async function main(){
     await page.locator('#download-audit').click();
     const auditDownload=await auditPending,auditFile=await auditDownload.path();
     const audit=JSON.parse(fs.readFileSync(auditFile,'utf8'));
-    assert.equal(audit.version,'2.2.3');assert.equal(audit.model,'household');assert.equal(audit.evidence.modelVersion,'2.2.3');
+    assert.equal(audit.version,'2.2.4');assert.equal(audit.model,'household');assert.equal(audit.evidence.modelVersion,'2.2.4');
     assert.equal(audit.dirty,false);assert.ok(audit.result.results.length>0);
     checks.push('JSON-export med resultat, inställningar och källkvitto');
     const csvPending=page.waitForEvent('download');
@@ -81,7 +104,7 @@ async function main(){
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getModel()),'household');
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getConfig().scenarioNote),'Test med <tagg> & Öresund.');
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getConfig().areaScenario.bilpool.preset),'carsharing_pbl2015');
-    assert.equal(await offline.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.3');
+    assert.equal(await offline.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.4');
     assert.ok(await offline.evaluate(()=>window.VagvisApp.getProject().cities.some(city=>city.name==='Malmö')));
     await offline.close();
     checks.push('Offlineexport öppnas med samma modell, scenario och svenska tecken');
@@ -101,7 +124,7 @@ async function main(){
       await server.close();
     }
     assert.deepEqual(errors,[]);
-    fs.writeFileSync(path.join(out,'granssnitt.json'),JSON.stringify({version:'2.2.3',executedAt:new Date().toISOString(),browser:'Chromium via Playwright',passed:checks.length,checks,errors},null,2)+'\n');
+    fs.writeFileSync(path.join(out,'granssnitt.json'),JSON.stringify({version:'2.2.4',executedAt:new Date().toISOString(),browser:'Chromium via Playwright',passed:checks.length,checks,errors},null,2)+'\n');
     console.log(checks.length+' verkliga webbläsarkontroller godkända.');
   }finally{
     await browser.close();

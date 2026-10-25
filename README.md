@@ -1,4 +1,4 @@
-# Vägvis 2.2.3 för GitHub och Streamlit
+# Vägvis 2.2.4 för GitHub och Streamlit
 
 Vägvis uppskattar vägtrafikens klimatpåverkan med livscykelperspektiv i Malmö, Helsingborg och Gävle. Paketet innehåller läsbar beräkningskod, data, källregister, importverktyg, tester och manual. Det körs lokalt eller via Streamlit utan Netlify-krediter, API-nycklar eller AI-tjänster.
 
@@ -8,6 +8,11 @@ Två självständiga modeller ingår:
 - **B – hushållens bilar:** registrerade personbilar per DeSO × årlig körsträcka, tilldelat bilarnas hemområde. Körning utanför kommunen ingår.
 
 A och B har olika systemgränser och ska inte summeras.
+
+## Nytt i 2.2.4
+
+- Räkneexemplen i modell B visas med så många decimaler att de kan räknas om exakt, och en automatisk kontroll jämför varje exempel med beräkningen för kommun, RegSO och DeSO.
+- Nya hushåll i exploateringsscenariot får som standard samma körsträcka som områdets befintliga bilar (tidigare riksmedelvärdet).
 
 ## Nytt i 2.2.3
 
@@ -44,12 +49,12 @@ A och B har olika systemgränser och ska inte summeras.
 
 ## Ladda upp till GitHub
 
-1. Packa upp paketet och öppna mappen `vagvis_2_2_3`.
+1. Packa upp paketet och öppna mappen `vagvis_2_2_4`.
 2. Skapa helst ett nytt repo. Välj **Add file → Upload files** och dra in mappens **innehåll** i ett enda steg (under 100 filer och cirka 8 MB). `streamlit_app.py` ska ligga direkt i repots rot.
 3. Kontrollera att `.github/` och `.streamlit/` kom med. Webbläsaren kan dölja punktmappar; använd GitHub Desktop eller Git om de saknas.
-4. Gör commit, exempelvis `Vägvis 2.2.3`.
+4. Gör commit, exempelvis `Vägvis 2.2.4`.
 5. I Streamlit Community Cloud: välj repot och huvudfilen `streamlit_app.py`, Python 3.12.
-6. Öppna appen och kontrollera att den visar **Vägvis 2.2.3** och **MODELLPAKET 2.2** i sidomenyn.
+6. Öppna appen och kontrollera att den visar **Vägvis 2.2.4** och **MODELLPAKET 2.2** i sidomenyn.
 
 Vid uppdatering av ett befintligt repo tas gamla filer inte bort av en uppladdning. Kör därför **Actions → Stada repo → Run workflow** efter uppladdningen. Flödet jämför repot med `MANIFEST_SHA256.json`, tar bort filer som inte hör till paketet (till exempel sidor och skript från äldre modellversioner, `app/Vagvis.html` och okomprimerade geodatafiler från 2.1.1) och lägger ändringen i en pull request som listar varje fil. Filer under `underlag/` och `dokument/` behålls. Lokalt: `python verktyg/stada_repo.py` (visar) och `python verktyg/stada_repo.py --ta-bort`.
 

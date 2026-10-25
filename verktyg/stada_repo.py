@@ -39,6 +39,8 @@ OBSOLETE = {
     'dokument/Kontrollresultat_2.2.1.json',
     'dokument/Vagvis_manual_2.2.2.docx',
     'dokument/Kontrollresultat_2.2.2.json',
+    'dokument/Vagvis_manual_2.2.3.docx',
+    'dokument/Kontrollresultat_2.2.3.json',
 }
 KEEP_PREFIXES = ('underlag/', 'dokument/')
 SKIP_DIRS = {'.git', '__pycache__', 'node_modules', 'testresultat'}
