@@ -3,7 +3,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from vagvis_sidor import page_html
 
-st.set_page_config(page_title="Vägvis 2.0.9", page_icon="🚦", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Vägvis 2.1.1", page_icon="🚦", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("""<style>
 [data-testid="stHeader"], [data-testid="stSidebar"], footer {display:none;}
 .block-container {padding:0 !important;max-width:100% !important;}
@@ -19,7 +19,6 @@ def show(name):
 
 pages = [
     st.Page(lambda: show("vagvis"), title="Vägvis", url_path="vagvis", default=True),
-    st.Page(lambda: show("bilmodell_v7"), title="Bilmodell v7", url_path="bilmodell_v7"),
     st.Page(lambda: show("metod"), title="Metod och källor", url_path="metod"),
     st.Page(lambda: show("trafikdata"), title="Trafikdata", url_path="trafikdata"),
 ]

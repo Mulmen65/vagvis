@@ -26,8 +26,6 @@ attribution to OpenStreetMap contributors: https://www.openstreetmap.org/copyrig
 No endorsement or certification by IVL, municipalities, SCB or cited authors
 is claimed. Scientific parameters marked as assumptions require validation.
 
-Third-party components bundled in Vägvis 2.0:
-Leaflet retains its original BSD 2-Clause license in Bilmodell_v7/lib/leaflet/LICENSE.txt.
-Barlow fonts retain their SIL Open Font License in Bilmodell_v7/fonts/OFL-Barlow.txt.
-The supplied bilmodell_v7 application and datasets remain attributed to their original sources and rights holders; the Vägvis MIT code license does not relicense them.
+Third-party component bundled in Vägvis 2.1.1:
+Leaflet 1.9.4 retains its BSD 2-Clause license in licenser/Leaflet.txt.
 OpenStreetMap background tiles are not redistributed in this package.

@@ -1,2 +1,2 @@
-# Pinned to retain the iframe interface used by Vägvis 2.0.8.
+# Pinned runtime for the packaged browser interface.
 streamlit==1.50.0
