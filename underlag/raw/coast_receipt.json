@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "accessed": "2026-10-23",
+  "use": "display_only",
+  "cities": {
+    "1280": {
+      "status": "unavailable",
+      "note": "Ingen oberoende landmask kunde hämtas. Officiell SCB-gräns inklusive vatten visas över OpenStreetMap."
+    },
+    "1283": {
+      "status": "unavailable",
+      "note": "Ingen oberoende landmask kunde hämtas. Officiell SCB-gräns inklusive vatten visas över OpenStreetMap."
+    },
+    "2180": {
+      "status": "primary_osm_generalised",
+      "source": "https://github.com/simonepri/geo-maps",
+      "file": "underlag/raw/land_gavle_osm_100m.geojson",
+      "sha256": "21b4ce6f1df8914e228229b64fa7c9ac3fbd8e03dd176d31fec8479609ac54a5",
+      "sourceDate": null,
+      "nominalSimplificationMetres": 100
+    }
+  },
+  "attempts": "Direkta officiella källor, Overpass och npm gav HTTP 403 i leveransmiljön. Ingen härledd modellmask användes."
+}

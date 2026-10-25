@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""Hämta granskningsunderlag med enbart Python-standardbiblioteket.
+"""SCB PxWebApi v2 GET → exact raw responses → validated complete DeSO baseline.
 
-Rådata sparas i en ny katalog. Verktyget aktiverar aldrig nya data i appen.
-Kör: python verktyg/hamta_underlag.py --output underlag/hamtningar
+python verktyg/hamta_underlag.py --only scb --activate
+Partial/failed refreshes preserve the active named baseline. No missing value
+is replaced with zero. HTML is subsequently rebuilt by kallkod/bygg_appen.cjs.
 """
 from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
 import hashlib
+import itertools
 import json
+import math
 from pathlib import Path
 import sys
 import time
@@ -16,204 +19,303 @@ import unicodedata
 import urllib.error
 import urllib.parse
 import urllib.request
+try:
+    from paket import read_json
+except ImportError:  # importerad som paket
+    from verktyg.paket import read_json
 
 ROOT = Path(__file__).resolve().parents[1]
 CITIES = ('1280', '1283', '2180')
-SCB = 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/'
-TABLES = [
-    ('scb_bilar_2023_deso2018', SCB+'TK/TK1001/TK1001Z/PersBilarDeso', ['2023']),
-    ('scb_bilar_2024_deso2025', SCB+'TK/TK1001/TK1001Z/PersBilarDesoN', ['2024']),
-    ('scb_hushall_2023_2024', SCB+'BE/BE0101/BE0101Y/HushallDesoTyp', ['2023', '2024']),
-]
+SCB = 'https://statistikdatabasen.scb.se/api/v2'
+TABLES = (
+    {'id': 'TAB6568', 'field': 'hh', 'path': 'START__BE__BE0101__BE0101Y/HushallDesoTyp', 'status': None},
+    {'id': 'TAB6589', 'field': 'bil', 'path': 'START__TK__TK1001__TK1001Z/PersBilarDesoN', 'status': 'i trafik'},
+    {'id': 'TAB6574', 'field': 'bef', 'path': 'START__BE__BE0101__BE0101Y/FolkmDesoAldKon', 'status': None},
+)
 
 
 def slug(text):
-    return ''.join(c for c in unicodedata.normalize('NFKD', text).lower() if not unicodedata.combining(c))
+    return ''.join(c for c in unicodedata.normalize('NFKD', str(text)).lower() if not unicodedata.combining(c)).strip()
+
+
+def write(path, value):
+    Path(path).write_text(json.dumps(value, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
 
 
 def request_json(url, payload=None):
-    headers = {'User-Agent':'Vagvis/2.0.9 public statistics research', 'Accept':'application/json'}
-    body = None
     if payload is not None:
-        body = json.dumps(payload).encode('utf-8')
-        headers['Content-Type'] = 'application/json'
-    req = urllib.request.Request(url, data=body, headers=headers)
+        raise ValueError('SCB v2 använder dokumenterade GET-anrop.')
+    req = urllib.request.Request(url, headers={'User-Agent': 'Vagvis/2.1.1 official-statistics-refresh', 'Accept': 'application/json'})
     for attempt in range(3):
         try:
-            with urllib.request.urlopen(req, timeout=40) as r:
-                raw = r.read(50*1024*1024 + 1)
-            if len(raw)>50*1024*1024:
-                raise ValueError('Svaret överstiger 50 MiB; gör ett mindre urval.')
-            data = json.loads(raw.decode('utf-8-sig'))
-            if isinstance(data, dict) and data.get('success') is False:
-                raise ValueError('API rapporterar fel: '+json.dumps(data.get('error'), ensure_ascii=False))
-            return data, raw
-        except urllib.error.HTTPError as e:
-            if e.code not in (429, 500, 502, 503, 504) or attempt==2:
+            with urllib.request.urlopen(req, timeout=35) as response:
+                raw = response.read(50*1024*1024+1)
+            if len(raw) > 50*1024*1024:
+                raise ValueError('Svaret överstiger 50 MiB.')
+            return json.loads(raw.decode('utf-8-sig')), raw
+        except urllib.error.HTTPError as error:
+            if error.code not in (429, 500, 502, 503, 504) or attempt == 2:
                 raise
-            # Short bounded backoff. A 403 is never retried or bypassed.
-            time.sleep(1+attempt)
-
-
-def px_query(metadata, years):
-    variables = metadata.get('variables')
-    if not variables:
-        raise ValueError('SCB-metadata saknar variabler; API/schema kan ha ändrats.')
-    query=[]
-    found_region=found_year=False
-    for v in variables:
-        code=v['code']; values=v['values']
-        if slug(code) in ('region','deso') or 'region' in slug(v.get('text','')):
-            selected=[x for x in values if len(x)==9 and x[:4] in CITIES]
-            if not selected:
-                raise ValueError('Inga DeSO-koder för de tre kommunerna finns i tabellen.')
-            found_region=True
-        elif slug(code) in ('tid','time','ar'):
-            selected=[y for y in years if y in values]
-            if len(selected)!=len(years):
-                raise ValueError('Begärt referensår saknas: '+str(years))
-            found_year=True
-        else:
-            # Fetch categories separately; never add totals and their parts.
-            selected=values
-        query.append({'code':code,'selection':{'filter':'item','values':selected}})
-    if not (found_region and found_year):
-        raise ValueError('SCB:s region- eller tidsdimension kunde inte identifieras.')
-    cells=1
-    for q in query:
-        cells*=len(q['selection']['values'])
-    if cells>150000:
-        raise ValueError('För stort uttag; dela upp tabellen.')
-    return {'query':query,'response':{'format':'json-stat2'}}
-
-
-def validate_px(data, payload):
-    sizes=data.get('size')
-    if data.get('class')!='dataset' or not sizes or 'value' not in data:
-        raise ValueError('Svaret är inte en JSON-stat2-datamängd.')
-    expected=1
-    for q in payload['query']:
-        expected*=len(q['selection']['values'])
-    actual=1
-    for n in sizes:
-        actual*=n
-    if actual!=expected:
-        raise ValueError(f'Uttagets dimensioner avviker: {actual} mot {expected}.')
-    if isinstance(data['value'], list) and len(data['value'])!=actual:
-        raise ValueError('Antalet dataceller stämmer inte med dimensionerna.')
+            time.sleep(attempt+1)
 
 
 class Run:
     def __init__(self, output, fetch=request_json):
-        stamp=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
-        self.directory=Path(output)/stamp
+        stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+        self.directory = Path(output)/stamp
         self.directory.mkdir(parents=True, exist_ok=False)
-        self.fetch=fetch
-        self.entries=[]
+        self.fetch, self.entries = fetch, []
 
-    def save(self, name, raw):
-        p=self.directory/name
-        p.write_bytes(raw)
-        return {'file':p.name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
-
-    def collect(self, name, url, payload=None, validator=None):
-        entry={'id':name,'url':url,'method':'POST' if payload is not None else 'GET','request':payload,'fetchedAt':datetime.now(timezone.utc).isoformat(),'activatedInApp':False}
+    def collect(self, name, url):
+        entry = {'id': name, 'url': url, 'method': 'GET', 'fetchedAt': datetime.now(timezone.utc).isoformat(), 'activatedInApp': False}
         try:
-            data,raw=self.fetch(url,payload)
-            if validator:
-                validator(data)
-            entry.update(self.save(name+'.json',raw),status='downloaded_for_review')
+            data, raw = self.fetch(url)
+            path = self.directory/(name+'.json')
+            path.write_bytes(raw)
+            entry.update(status='downloaded', file=path.name, bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
             self.entries.append(entry)
             return data
-        except (OSError, ValueError, KeyError, TypeError) as e:
-            entry.update(status='failed',error=type(e).__name__+': '+str(e))
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            entry.update(status='failed', error=type(error).__name__+': '+str(error))
             self.entries.append(entry)
             return None
 
-    def finish(self):
-        failed=sum(x['status']=='failed' for x in self.entries)
-        report={'schemaVersion':1,'modelVersion':'2.0.9','createdAt':datetime.now(timezone.utc).isoformat(),'complete':failed==0,'failed':failed,'activatedInApp':False,'note':'Rådata för granskning. Inga saknade värden har ersatts med noll. Källor med skilda år eller områdesindelningar har inte slagits samman.','entries':self.entries}
-        (self.directory/'hamtningskvitto.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    def fail(self, name, message):
+        self.entries.append({'id': name, 'status': 'failed', 'error': str(message), 'activatedInApp': False})
+
+    def finish(self, activated=False, validated=None):
+        errors = sum(e['status'] == 'failed' for e in self.entries)
+        report = {'schemaVersion': 2, 'modelVersion': '2.1.1', 'dataYear': 2024, 'desoVersion': '2025',
+            'createdAt': datetime.now(timezone.utc).isoformat(), 'complete': validated is not None,
+            'failed': errors, 'activatedInApp': activated,
+            'note': 'Endast komplett validerat SCB-uttag kan ersätta baslinjen. Saknade värden ersätts aldrig med noll. Inga årgångar/geografier blandas.', 'entries': self.entries}
+        write(self.directory/'hamtningskvitto.json', report)
         return report
 
 
+def codes(dimension):
+    index = dimension.get('category', {}).get('index')
+    if isinstance(index, list):
+        return index
+    if not isinstance(index, dict):
+        raise ValueError('JSON-stat-dimension saknar category.index.')
+    return [k for k, v in sorted(index.items(), key=lambda item: item[1])]
+
+
+def expected_codes():
+    fc = read_json(ROOT/'underlag/raw/scb_deso_2025.geojson.gz')
+    return sorted(f['properties']['id'] for f in fc['features'])
+
+
+def total_codes(dimension):
+    labels = dimension.get('category', {}).get('label', {})
+    totals = ('totalt', 'samtliga', 'totalt antal hushall', 'samtliga hushall', 'alla aldrar',
+              'samtliga aldrar', 'totalt, alla aldrar', 'kvinnor och man', 'bada konen', 'total')
+    selected = [k for k in codes(dimension) if slug(labels.get(k, '')) in totals]
+    if len(selected) == 1:
+        return selected
+    if len(codes(dimension)) == 1:
+        return codes(dimension)
+    if slug(dimension.get('label', '')) in ('kon', 'sex'):
+        part = [k for k in codes(dimension) if slug(labels.get(k, '')) in ('kvinnor', 'man', 'women', 'men')]
+        if len(part) == 2:
+            return part  # A disjoint partition, never total plus components.
+    if dimension.get('extension', {}).get('elimination') is True:
+        # PxWeb v2 documents elimination=true as a total/aggregation when the
+        # variable is omitted. Null records this deliberate metadata-based
+        # choice in the exact selection; no category codes are invented.
+        return None
+    raise ValueError('Ingen entydig total/disjunkt partition för '+dimension.get('label', '?'))
+
+
+def selection(metadata, table, regions):
+    if metadata.get('class') != 'dataset' or not metadata.get('dimension') or not metadata.get('id'):
+        raise ValueError('Metadata följer inte PxWebApi v2 JSON-stat2; inga variabelkoder gissas.')
+    result, found_region, found_time = {}, False, False
+    for key in metadata['id']:
+        dim = metadata['dimension'][key]
+        label, keynorm = slug(dim.get('label', key)), slug(key)
+        available = set(codes(dim))
+        if keynorm in ('region', 'deso') or label == 'region':
+            if not set(regions).issubset(available):
+                raise ValueError('Alla begärda DeSO 2025 finns inte i regiondimensionen.')
+            result[key], found_region = regions, True
+        elif key in metadata.get('role', {}).get('time', []) or keynorm in ('tid', 'ar', 'time'):
+            if '2024' not in available:
+                raise ValueError('Referensår 2024 saknas.')
+            result[key], found_time = ['2024'], True
+        elif keynorm == 'status' or label == 'status':
+            match = [k for k, text in dim.get('category', {}).get('label', {}).items() if slug(text) == table.get('status')]
+            if len(match) != 1:
+                raise ValueError('Personbilsstatus "i trafik" kan inte väljas entydigt.')
+            result[key] = match
+        else:
+            result[key] = total_codes(dim)
+    if not (found_region and found_time) or math.prod(len(v) if v is not None else 1 for v in result.values()) > 150000:
+        raise ValueError('Region/tid saknas eller uttaget är för stort.')
+    return result
+
+
+def query_url(table, selected):
+    params = [('lang', 'sv'), ('outputFormat', 'json-stat2')]
+    params.extend(('valueCodes['+k+']', ','.join(v)) for k, v in selected.items() if v is not None)
+    return SCB+'/tables/'+table['id']+'/data?'+urllib.parse.urlencode(params)
+
+
+def flatten(data, selected):
+    if data.get('class') != 'dataset' or not data.get('id') or 'value' not in data:
+        raise ValueError('SCB-svaret är inte ett JSON-stat2-dataset.')
+    ids, sizes, dimensions = data['id'], data.get('size', []), data.get('dimension', {})
+    if len(sizes) != len(ids):
+        raise ValueError('SCB-dimensionerna är inkonsekventa.')
+    order = []
+    for key, size in zip(ids, sizes):
+        cc = codes(dimensions[key])
+        requested = selected.get(key, [])
+        if len(cc) != size or (size != 1 if requested is None else set(cc) != set(requested)):
+            raise ValueError('SCB-svaret matchar inte urvalet: '+key)
+        order.append(cc)
+    if any(k not in ids and v is not None and len(v) != 1 for k, v in selected.items()):
+        raise ValueError('En icke-skalär dimension eliminerades.')
+    n, values = math.prod(sizes), data['value']
+    if not isinstance(values, (list, dict)) or isinstance(values, list) and len(values) != n:
+        raise ValueError('SCB-dataceller saknas eller svaret är avkortat.')
+    rows = []
+    for i, key_values in enumerate(itertools.product(*order)):
+        value = values[i] if isinstance(values, list) else values.get(str(i))
+        status = data.get('status', {})
+        mark = status[i] if isinstance(status, list) and i < len(status) else status.get(str(i)) if isinstance(status, dict) else None
+        if value is None or isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
+            raise ValueError('Saknat/skyddat/ogiltigt SCB-värde ersätts inte med noll.')
+        if mark and str(mark).strip().lower() not in ('', 'e', 'p'):
+            raise ValueError('SCB-cellstatus kräver metodbedömning: '+str(mark))
+        rows.append({**{k: v[0] for k, v in selected.items() if k not in ids and v is not None}, **dict(zip(ids, key_values)), 'value': value})
+    return rows
+
+
 def collect_scb(run):
-    for name,url,years in TABLES:
-        meta=run.collect(name+'_metadata',url)
+    expected = expected_codes()
+    merged, receipts, complete = {k: {'kod': k} for k in expected}, [], True
+    for table in TABLES:
+        meta_url = SCB+'/tables/'+table['id']+'/metadata?lang=sv'
+        meta = run.collect(table['field']+'_metadata', meta_url)
         if meta is None:
+            complete = False
             continue
         try:
-            payload=px_query(meta,years)
-        except (KeyError, ValueError, TypeError) as e:
-            run.entries.append({'id':name,'status':'failed','error':str(e),'activatedInApp':False})
-            continue
-        run.collect(name+'_data',url,payload,lambda d: validate_px(d,payload))
-
-
-def ckan_url(action, **params):
-    return 'https://opendata-api.malmo.se/api/3/action/'+action+'?'+urllib.parse.urlencode(params)
+            for part, offset in enumerate(range(0, len(expected), 25)):
+                region_codes = expected[offset:offset+25]
+                selected = selection(meta, table, region_codes)
+                url = query_url(table, selected)
+                write(run.directory/(table['field']+f'_selection_{part:02d}.json'), {'table':table['id'], 'selection':selected, 'nullMeaning':'Omitted only because official metadata declares elimination=true (aggregate total).', 'url':url})
+                data = run.collect(table['field']+f'_data_{part:02d}', url)
+                if data is None:
+                    raise ValueError('Ett deluttag misslyckades; hela aktiveringen avbryts.')
+                rows = flatten(data, selected)
+                rk = next(k for k in selected if slug(k) in ('region', 'deso') or slug(meta['dimension'][k].get('label')) == 'region')
+                totals = {}
+                for row in rows:
+                    totals[row[rk]] = totals.get(row[rk], 0)+row['value']
+                if set(totals) != set(region_codes):
+                    raise ValueError('Saknade/oväntade DeSO-koder i deluttaget.')
+                for k, value in totals.items():
+                    if table['field'] in merged[k]:
+                        raise ValueError('Dubbelt DeSO-värde: '+k)
+                    merged[k][table['field']] = value
+            receipts.append({'table': table['id'], 'field': table['field'], 'page': 'https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/'+table['path']+'/',
+                'metadataUrl': meta_url, 'referenceYear': 2024, 'updated': meta.get('updated'), 'statusSelection': table['status'],
+                'definition': 'I trafik registrerade på folkbokförda personer 31 december. Privatleasing/enskilda firmor ingår; förmånsbilar ingår inte.' if table['field'] == 'bil' else 'SCB registerstatistik per 31 december; explicit total/disjunkt könspartition.',
+                'files': [e for e in run.entries if e['id'].startswith(table['field']+'_') and e['status'] == 'downloaded']})
+        except (ValueError, KeyError, TypeError) as error:
+            run.fail(table['field']+'_validation', error)
+            complete = False
+    if not complete or any(set(r) != {'kod', 'hh', 'bef', 'bil'} for r in merged.values()):
+        return None
+    value = {'schema': 'vagvis-observed-deso-2024-1', 'status': 'validated_official_data', 'dataYear': 2024, 'desoVersion': '2025', 'rows': list(merged.values()), 'sourceReceipts': receipts}
+    from bygg_underlag import validate_observations
+    validate_observations(value, set(expected))
+    write(run.directory/'validated_deso_2024.json', value)
+    return value
 
 
 def collect_malmo(run):
-    url=ckan_url('resource_search',query='description:malmö statistik',limit=1000,offset=0)
-    listing=run.collect('malmo_resurskatalog',url)
+    """Follow the municipality's documented CKAN discovery and pagination.
+
+    These data are saved for inspection. 'Malmös områden' must not silently be
+    equated with DeSO 2025; source-year/geography/definitions need verification
+    before a separate activation adapter can be written.
+    """
+    base = 'https://opendata-api.malmo.se/api/3/action/'
+    url = base+'resource_search?'+urllib.parse.urlencode({'query': 'description:malmö statistik', 'limit': 1000, 'offset': 0})
+    listing = run.collect('malmo_statistics_resources', url)
     if listing is None:
         return
-    result=listing.get('result',{})
-    resources=result.get('results',[])
-    if result.get('count',len(resources))>len(resources):
-        run.entries.append({'id':'malmo_resurskatalog','status':'failed','error':'Resurskatalogen är paginerad; urvalet behöver delas upp innan användning.','activatedInApp':False})
+    result = listing.get('result', {})
+    resources = result.get('results')
+    if not isinstance(resources, list) or result.get('count') is None or result['count'] > len(resources):
+        run.fail('malmo_resource_completeness', 'Ofullständig eller ändrad resurskatalog; ingen data aktiveras.')
         return
-    wanted=[r for r in resources if any(w in slug(str(r.get('name',''))+' '+str(r.get('description',''))) for w in ['bilar','korkort','hushall','folkmangd','befolkning'])]
-    if not wanted:
-        run.entries.append({'id':'malmo_resursurval','status':'failed','error':'Inga efterfrågade resurser kunde identifieras. Kontrollera metadata; inga värden ersätts.','activatedInApp':False})
-    for i,res in enumerate(wanted):
-        rid=res.get('id')
-        if not rid:
+    selected = [r for r in resources if any(t in slug(r.get('name', '')+' '+r.get('description', '')) for t in ('bilar', 'hushall', 'befolkning', 'folkmangd'))]
+    if not selected:
+        run.fail('malmo_resource_selection', 'Inga identifierade bil-/hushålls-/befolkningsresurser.')
+    for n, resource in enumerate(selected):
+        resource_id = resource.get('id')
+        if not resource_id:
+            run.fail('malmo_resource_identifier', 'Resurs saknar id.')
             continue
-        records=[];offset=0;fields=None
+        all_rows, offset = [], 0
         while True:
-            page=run.collect(f'malmo_{i:03d}_sida_{offset}',ckan_url('datastore_search',resource_id=rid,limit=1000,offset=offset))
+            query = urllib.parse.urlencode({'resource_id': resource_id, 'limit': 1000, 'offset': offset})
+            page = run.collect(f'malmo_{n:03d}_rows_{offset:06d}', base+'datastore_search?'+query)
             if page is None:
                 break
-            info=page.get('result',{});chunk=info.get('records')
-            if not isinstance(chunk,list):
-                run.entries.append({'id':rid,'status':'failed','error':'Malmös datalager saknar förväntade records.','activatedInApp':False});break
-            fields=info.get('fields');records.extend(chunk)
-            total=info.get('total')
-            if total is None:
-                run.entries.append({'id':rid,'status':'failed','error':'Totalantal saknas; fullständighet kan inte verifieras.','activatedInApp':False});break
-            if len(records)>=total:
-                data={'resource':res,'fields':fields,'records':records,'total':total,'activatedInApp':False}
-                raw=json.dumps(data,ensure_ascii=False).encode()
-                run.entries.append({'id':rid,'status':'downloaded_for_review',**run.save(f'malmo_{i:03d}_komplett.json',raw),'activatedInApp':False})
+            result = page.get('result', {})
+            rows, total = result.get('records'), result.get('total')
+            if not isinstance(rows, list) or not isinstance(total, int) or total > 2000000:
+                run.fail('malmo_page_schema', 'Rader/total saknas eller för stort dataset.')
                 break
-            if not chunk or len(records)>100000:
-                run.entries.append({'id':rid,'status':'failed','error':'Avbruten sidindelning; sammanställning får inte användas som fullständig.','activatedInApp':False});break
-            offset+=len(chunk)
+            all_rows.extend(rows)
+            if len(all_rows) == total:
+                write(run.directory/f'malmo_{n:03d}_complete.json', {'resource': resource, 'fields': result.get('fields'),
+                    'total': total, 'records': all_rows, 'activatedInApp': False,
+                    'note': 'Rådata kräver kontroll av år, områdestyp och bildefinition. Ingen DeSO-join antas.'})
+                break
+            if not rows or len(all_rows) > total:
+                run.fail('malmo_page_count', 'Sidantal matchar inte kommunens uppgivna total.')
+                break
+            offset += len(rows)
 
 
-def collect_trafa(run):
-    run.collect('trafa_korstrackor_metadata','https://api.trafa.se/api/structure?query=t10094')
-    query='t10094|ar:2024|korstr|anttrf|Mkorstr|gdkor|fordalder'
-    run.collect('trafa_korstrackor_2024','https://api.trafa.se/api/data?'+urllib.parse.urlencode({'query':query}))
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--out', '--output', dest='output', type=Path, default=ROOT/'underlag/hamtningar')
+    p.add_argument('--only', choices=('all', 'scb', 'malmo', 'trafa'), default='scb')
+    p.add_argument('--activate', action='store_true', help='Ersätt baslinjen endast efter komplett validerad SCB-hämtning.')
+    args = p.parse_args()
+    run = Run(args.output)
+    observed = collect_scb(run) if args.only in ('all', 'scb') else None
+    if args.only in ('all', 'malmo'):
+        collect_malmo(run)
+    if args.only in ('all', 'trafa'):
+        run.collect('trafa_municipal_structure', 'https://api.trafa.se/api/structure?query=t10026')
+    activated = False
+    if args.activate and observed is not None:
+        from bygg_underlag import build
+        try:
+            build(run.directory/'validated_deso_2024.json')
+            activated = True
+            for e in run.entries:
+                if e['status'] == 'downloaded' and e['id'].split('_')[0] in ('hh', 'bil', 'bef'):
+                    e['activatedInApp'] = True
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            run.fail('activation', error)
+    elif args.activate:
+        run.fail('activation', 'Ofullständig SCB-baslinje; befintliga modelldata behålls.')
+    report = run.finish(activated, observed)
+    print(str(run.directory/'hamtningskvitto.json'))
+    print('Aktiverat i modelldata; bygg HTML separat.' if activated else 'Befintliga modelldata har behållits.')
+    return 0 if not report['failed'] else 2
 
 
-def main(argv=None):
-    p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--output',type=Path,default=ROOT/'underlag/hamtningar')
-    p.add_argument('--source',choices=['all','scb','malmo','trafa'],default='all')
-    args=p.parse_args(argv)
-    run=Run(args.output)
-    for key,func in [('scb',collect_scb),('malmo',collect_malmo),('trafa',collect_trafa)]:
-        if args.source in ('all',key):
-            func(run)
-    report=run.finish()
-    print('Sparat:',run.directory)
-    print('Misslyckade uttag:',report['failed'])
-    print('Appens befintliga data har bevarats. Rådata kräver granskning före aktivering.')
-    return 0 if report['complete'] else 1
-
-
-if __name__=='__main__':
+if __name__ == '__main__':
     sys.exit(main())

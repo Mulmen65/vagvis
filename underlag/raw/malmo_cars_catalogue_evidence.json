@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "source": "https://opendata.malmo.se/%40malmo/bilar_i_trafik",
+  "publisher": "Stadskontoret, Malmö stad",
+  "accessed": "2026-10-23",
+  "catalogueUpdated": "2026-09-09",
+  "label": "Bilar i trafik – Statistikunderlag för Malmös områden",
+  "definition": "Personbilar i trafik registrerade på fysiska personer inom området; underlag från Fordonsregistret.",
+  "advertisedFormats": [
+    "CSV, 227.9 KB",
+    "JSON"
+  ],
+  "licenseAsPublished": "Creative Commons CCZero",
+  "geography": "Malmös områden; inte verifierat att denna resurs avser DeSO 2025.",
+  "discovery": "https://opendata-api.malmo.se/api/3/action/resource_search?query=description:malm%C3%B6%20statistik",
+  "dataPattern": "https://opendata-api.malmo.se/api/3/action/datastore_search?resource_id=[id]",
+  "numericDataRetrieved": false,
+  "note": "Katalogens definition och annonserade filer har kunnat verifieras. Inga registertal eller resurs-id har kunnat hämtas i denna miljö; inte använd som talunderlag."
+}

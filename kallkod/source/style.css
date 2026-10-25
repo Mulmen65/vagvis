@@ -672,3 +672,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 /* 2.0.9: retain the footer method button on narrow screens. */
 footer{flex-wrap:wrap;gap:12px}#method-footer{white-space:normal;max-width:100%}
+
+/* Independent interface: retain the existing palette, spacing and navigation. */
+#view>article.card{margin-bottom:18px}label.field{display:block;font-size:11px;font-weight:600;color:var(--ink)}label.field input,label.field select,label.field textarea{display:block;margin-top:6px;width:100%;box-sizing:border-box}label.field textarea{padding:10px;border:1px solid #cbd7ce;border-radius:6px;font:inherit}td label.field input{min-width:76px}#view td small{display:block;font-size:10px;line-height:1.5;color:var(--muted);font-weight:400;white-space:normal;max-width:320px}.scenario-number{width:76px}.map-options{align-items:center;margin:0 0 10px}.map-options label{font-size:11px}.map-options input{accent-color:var(--teal)}.map-options button{padding:7px 11px}.component-row>b{text-align:right;font-size:10px}.component-row{grid-template-columns:135px 1fr 85px}.table-tools{flex-wrap:wrap}#view .table-wrap td{vertical-align:top}#view select{max-width:100%}@media(max-width:720px){.component-row{grid-template-columns:110px 1fr 75px}.map-options{gap:8px}}
+.ref-wrap td{white-space:normal;vertical-align:top;line-height:1.5}.ref-wrap td:last-child{min-width:320px}

@@ -1,0 +1,47 @@
+{
+ "schema": "vagvis-measured-links-1",
+ "targetYear": 2024,
+ "description": "Kurerade uppmätta länkflöden som ersätter vägklasschabloner. Varje post anger källa, mått, mätår, riktningshantering och osäkerhet. Länkarna matchas mot OSM-id i underlag/raw/osm_roads_2026.geojson.gz.",
+ "links": [
+  {
+   "id": "ORESUNDSBRON-2024",
+   "name": "E20 Öresundsbron, svensk del inom Malmö kommuns analysgräns",
+   "osmIds": [
+    "OSM-23283662",
+    "OSM-304383858",
+    "OSM-304383859",
+    "OSM-370255937",
+    "OSM-370255938",
+    "OSM-370255939",
+    "OSM-148500437",
+    "OSM-370255940",
+    "OSM-8123176",
+    "OSM-148500436",
+    "OSM-219657906"
+   ],
+   "flowMetric": "AADT",
+   "measurementYear": 2024,
+   "flowBothDirections": 20692,
+   "flowDirection": "both",
+   "geometryDirection": "forward",
+   "directionShare": 0.5,
+   "directionSource": "Antagen symmetrisk riktningsfördelning. Øresundsbron redovisar summan av vägpassager i båda riktningar; varje OSM-körbana bär en riktning.",
+   "directionCV": 0.05,
+   "aadtCV": 0.03,
+   "classShares": {
+    "car": 0.902861,
+    "van": 0.012469,
+    "rigid": 0.032078,
+    "artic": 0.045826,
+    "bus": 0.006766,
+    "mc": 0.0,
+    "moped": 0.0
+   },
+   "classShareSource": "Øresundsbron (2025): 18 682 personbilar inkl. MC och bil med släp, 1 612 lastbilar över 9 m, 258 varubilar 6–9 m och 140 bussar per dygn 2024. Lastbilar delas 41/59 utan/med släp enligt Trafikverkets normalvärden för Europaväg (6 % utan släp inkl. buss, 8 % med släp). Varubilar under 6 m ingår i personbilar.",
+   "source": "Øresundsbron (2025). Øresundsbron satte nytt årsrekord under 2024. Pressmeddelande 10 februari 2025: i genomsnitt 20 692 vägpassager per dag 2024.",
+   "url": "https://www.oresundsbron.com/sv/news/oresundsbron-satte-nytt-arsrekord-under-2024/3784480",
+   "accessed": "2026-10-25",
+   "status": "observed_operator_count"
+  }
+ ]
+}

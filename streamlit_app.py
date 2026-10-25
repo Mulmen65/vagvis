@@ -1,9 +1,14 @@
 """Streamlit serves the existing Vägvis interface; calculations run in the browser."""
+import sys
+from pathlib import Path
+
 import streamlit as st
 import streamlit.components.v1 as components
-from vagvis_sidor import page_html
 
-st.set_page_config(page_title="Vägvis 2.1.1", page_icon="🚦", layout="wide", initial_sidebar_state="collapsed")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from vagvis_sidor import page_html  # noqa: E402
+
+st.set_page_config(page_title="Vägvis 2.2.0", page_icon="🚦", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("""<style>
 [data-testid="stHeader"], [data-testid="stSidebar"], footer {display:none;}
 .block-container {padding:0 !important;max-width:100% !important;}
@@ -13,7 +18,7 @@ iframe {border:0;}
 
 
 def show(name):
-    # File bytes are read on every rerun, so a new commit is not hidden by a cache.
+    # Sidan monteras från källfilerna; cachen invalideras när en fil ändras.
     components.html(page_html(name), height=1050, scrolling=True)
 
 

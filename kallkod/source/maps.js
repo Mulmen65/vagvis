@@ -32,19 +32,19 @@ function draw({project,city,level,result,onSelect,fill,tooltip,dashed,fillOpacit
  const bounds=land?L.geoJSON(land).getBounds():layer.getBounds();if(bounds.isValid())map.fitBounds(bounds,{padding:[15,15]});
  const tiles=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,referrerPolicy:'strict-origin-when-cross-origin',attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
  const osm=$('map-osm'),localFile=window.location?.protocol==='file:';
- function refresh(){if(localFile){osm.checked=false;osm.disabled=true;status.textContent='Offlinekarta. För OpenStreetMap: starta med Starta_med_karta_windows.cmd eller starta_lokalt.py. Beräkningen fungerar även direkt från HTML-filen.';return;}
+ function refresh(){if(localFile){osm.checked=false;osm.disabled=true;status.textContent='Offlinekarta. För OpenStreetMap: starta appen med Streamlit enligt README. Beräkningen fungerar även direkt från HTML-filen.';return;}
   if(osm.checked){tiles.addTo(map);tiles.bringToBack();status.textContent='OpenStreetMap · bakgrundskartan kräver internet. Områdesytor och beräkning finns lokalt.';}else{map.removeLayer(tiles);status.textContent='Bakgrund avstängd · områdeskartan fungerar utan internet.';}
  }
  let tileFailures=0;tiles.on('tileerror',()=>{tileFailures++;if(tileFailures>2)status.textContent='Bakgrundskartan kunde inte hämtas. Områdeskartan och beräkningen fungerar ändå. Kontrollera internet eller stäng av bakgrunden.';});
  osm.onchange=refresh;refresh();
  const roads=project.roads.filter(r=>r.city===city),roadLayer=L.geoJSON({type:'FeatureCollection',features:roads.map(r=>({type:'Feature',properties:{id:r.id,aadt:r.aadt},geometry:r.geometry}))},{style:f=>({color:f.properties.aadt==null?'#9a7d53':'#cc642d',weight:2,opacity:.8})});
  const show=$('map-roads');show.disabled=!roads.length;show.onchange=()=>{if(show.checked)roadLayer.addTo(map);else map.removeLayer(roadLayer);};
- L.control.attribution({position:'bottomleft',prefix:false}).addTo(map).addAttribution(attribution||'Områden: SCB / bifogade GIS · kustmask: bilmodell v7');
+ L.control.attribution({position:'bottomleft',prefix:false}).addTo(map).addAttribution(attribution||'Områden: SCB DeSO/RegSO 2025 · vägar: OpenStreetMap');
  $('map-fit').onclick=()=>map.fitBounds(bounds,{padding:[15,15]});
  setTimeout(()=>map?.invalidateSize(),50);
 }
 function drawSVG(areas,land,index,max,onSelect,fill,dashed){
- const surface=$('map-surface');surface.innerHTML='<svg id="map-svg" role="img" aria-label="Landklippt områdeskarta"></svg>';const svg=$('map-svg');
+ const surface=$('map-surface');surface.innerHTML='<svg id="map-svg" role="img" aria-label="Områdeskarta"></svg>';const svg=$('map-svg');
  const gs=land?land.features.map(f=>f.geometry):areas.map(a=>a.geometry),bs=gs.map(V.bbox),b=[Math.min(...bs.map(x=>x[0])),Math.min(...bs.map(x=>x[1])),Math.max(...bs.map(x=>x[2])),Math.max(...bs.map(x=>x[3]))],cos=Math.cos((b[1]+b[3])/2*Math.PI/180),scale=Math.min(940/((b[2]-b[0])*cos||1),530/(b[3]-b[1]||1)),p=x=>[30+(x[0]-b[0])*cos*scale,30+(b[3]-x[1])*scale];
  svg.setAttribute('viewBox','0 0 1000 590');svg.innerHTML=(land?'<defs><clipPath id="land-fallback">'+land.features.map(f=>'<path clip-rule="evenodd" d="'+polygonPath(f.geometry,p)+'"/>').join('')+'</clipPath></defs>':'')+'<g '+(land?'clip-path="url(#land-fallback)"':'')+'>'+areas.map(a=>'<path d="'+polygonPath(a.geometry,p)+'" fill="'+(fill?fill(a.id):color(index[a.id]?.central?.total,max))+'" fill-rule="evenodd" data-area="'+esc(a.id)+'"'+(dashed&&dashed(a.id)?' stroke-dasharray="4 4"':'')+'/>').join('')+'</g>';
  svg.addEventListener('click',e=>{const a=e.target.closest('[data-area]');if(a)onSelect(a.dataset.area);});

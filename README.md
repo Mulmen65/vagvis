@@ -1,87 +1,111 @@
-# Vägvis 2.1.1 för GitHub och Streamlit
+# Vägvis 2.2.0 för GitHub och Streamlit
 
-Vägvis uppskattar vägtrafikens klimatpåverkan i Malmö, Helsingborg och Gävle. Paketet innehåller färdigbyggd app, läsbar beräkningskod, data, källregister och manual. Det körs lokalt eller via Streamlit utan Netlify-krediter eller AI-API. Gränssnittets sidomeny, kartor och knapp **Beräkningsbeskrivning och källor** finns kvar.
+Vägvis uppskattar vägtrafikens klimatpåverkan med livscykelperspektiv i Malmö, Helsingborg och Gävle. Paketet innehåller läsbar beräkningskod, data, källregister, importverktyg, tester och manual. Det körs lokalt eller via Streamlit utan Netlify-krediter, API-nycklar eller AI-tjänster.
 
 Två självständiga modeller ingår:
 
-- **A – trafik i området:** fordonskilometer på vägar inom varje geografiskt område, inklusive genomfart. Startunderlaget använder vägklasser och redovisade trafikantaganden där kompletta mätta länkflöden saknas. Kommunal kalibrering belägger inte fördelningen mellan områden.
-- **B – hushållens bilar:** antalet bilar och deras årliga körsträcka, tilldelat bilarnas hemområde. Körning utanför kommunen ingår. B är inte en territoriell utsläppsinventering.
+- **A – trafik i området:** fordonskilometer på vägar inom varje område, inklusive genomfart.
+- **B – hushållens bilar:** registrerade personbilar per DeSO × årlig körsträcka, tilldelat bilarnas hemområde. Körning utanför kommunen ingår.
 
-A och B ska inte summeras. Båda använder samma komponentindelade livscykelfaktorer. Fullständig cirkularitet eller verifierad cradle to cradle redovisas inte. Vägbyggande ingår inte. Osäkerhetsintervallen är villkorade modellintervall, inte belagda konfidensintervall för de verkliga utsläppen. RVU har inte använts för att skatta en ny kausal områdesmodell eller verifiera åtgärdernas koefficienter. Parametrar som saknar tillräckligt direkt stöd är märkta som bedömningar i källregistret.
+A och B har olika systemgränser och ska inte summeras.
 
-## Startunderlagets status
+## Nytt i 2.2.0
 
-Appen innehåller 348 DeSO och 144 RegSO enligt SCB:s indelning 2025 samt 32 274 väggeometrier från OpenStreetMap, hämtade 2026. Beräkningsåret är 2024. För modell A är ÅDT i startunderlaget antagen per vägklass. Vägnätets hämtningsår är inte ett belägg för nätets exakta utseende 2024.
+| Område | 2.1.1 | 2.2.0 |
+|---|---|---|
+| Direktutsläpp per fordonskm | Egna förbrukningsvärden | Kalibrerade så att varje fordonsklass återger Trafikverkets reviderade nationella utsläpp och trafikarbete 2024 |
+| Personbilens livscykel | Egna schabloner | ICCT (2025): 240 000 km, tillverkning 7,2/7,9/6,5 t, batteri 72,8 kg CO₂e/kWh, 53,4 kWh, underhåll per drivlina |
+| Drivlinor | Bensin, diesel, el, laddhybrid, biogas | + elhybrid; körsträckeviktad mix 2024 från Trafikanalys |
+| Laddhybrid | 45 % eldrift i A och B | 35 % i A (all trafik), 47 % i B (privatbilar) |
+| El | 37 g/kWh (byggexempel) | 90 g/kWh, nordisk elmix (Naturvårdsverket/SMED) |
+| Fordonsandelar per vägtyp | Egna schabloner | Trafikverkets normalvärden per vägtyp och DeSO-typ (landsbygd/tätort) |
+| Direktutsläpp stad/landsbygd | En faktor | Kvoter enligt Trafikverkets HBEFA-faktorer |
+| Trafikflöden | 100 % schablon | Uppmätt ÅDT på Öresundsbron; importverktyg för NVDB och kommunala mätningar |
+| Kommuntotal i A | Okalibrerad | Grundfallet kalibreras mot kommunal statistik för direktutsläpp 2024; uppmätta länkar skalas inte |
+| Körsträcka i B | 11 410 km (fel population) | 12 753 km per privat bil i årsslutsbeståndet, härledd ur Trafikanalys |
+| Hushåll och befolkning per DeSO | Fördelade efter bostadsgatornas längd i OSM | SCB:s register 2024 (TAB6568, TAB6574); summorna stämmer exakt med kommunraderna |
+| Osäkerhet | Valda CV | Kommunnivåfelet (0,45) motsvarar observerad avvikelse; kalibrerat läge använder referensens CV |
+| Paketstorlek | 61 MB, 69 filer | cirka 8 MB, packade data, ingen färdigbyggd 18 MB-HTML i repot |
 
-**B använder registrerade personbilar direkt per DeSO.** SCB:s originalexport `TAB6589_sv.zip` ingår oförändrad i paketet. Urvalet är **2024, i trafik och exakt 348 DeSO enligt indelningen 2025**. Registrerade bilar summerar till **100 524 i Malmö, 58 000 i Helsingborg och 43 311 i Gävle**. Varje kommun är avstämd mot filens kommunrad. År 2025, avställda fordon, totalstatus, namngivna RegSO-rader och kommunrader adderas inte till DeSO-summorna. Dessa bilantal är redan aktiverade och kräver ingen API-hämtning eller internetanslutning.
+## Ladda upp till GitHub
 
-Hushåll och befolkning på områdesnivå är fortfarande fördelade modellvärden. Malmös hushållstal är ett avrundat kommunalt värde; Helsingborgs och Gävles hushållstal bygger på överfört hushållsstorleksantagande. Dessa storheter har egna källstatusar och fördelas med bostadsväglängd. **Bilantalet fördelas inte med denna proxy.** I DeSO `1280C2850` är hushållsproxyn noll men registret anger 545 bilar. Bilarna och deras trafikarbete ingår; bilar per hushåll redovisas utan värde när hushållsnämnaren är noll. Inga hushåll hittas på för att fylla luckan.
+1. Packa upp paketet och öppna mappen `vagvis_2_2_0`.
+2. Skapa helst ett nytt repo. Välj **Add file → Upload files** och dra in mappens **innehåll** i ett enda steg (under 100 filer och cirka 8 MB). `streamlit_app.py` ska ligga direkt i repots rot.
+3. Kontrollera att `.github/` och `.streamlit/` kom med. Webbläsaren kan dölja punktmappar; använd GitHub Desktop eller Git om de saknas.
+4. Gör commit, exempelvis `Vägvis 2.2.0`.
+5. I Streamlit Community Cloud: välj repot och huvudfilen `streamlit_app.py`, Python 3.12.
+6. Öppna appen och kontrollera att den visar **Vägvis 2.2.0**.
 
-Huvudberäkningen är `fordonskilometer = registrerade bilar × km per bil och år`. Hushåll och befolkning används för beskrivande kvoter och påverkar inte grundfallets absoluta trafikarbete. Körsträckan 11 410 km per bil är ett överfört riksgenomsnitt och livscykelfaktorerna är modellval. Bilstocken behandlas som fast indata i grundinställningens simulering. Angiven lokal variation avser antagen körsträckevariation, inte omflyttning av registrerade bilar.
+Vid uppdatering av ett befintligt repo tas gamla filer inte bort av en uppladdning. Ta bort `app/Vagvis.html`, `underlag/raw/osm_roads_2026.geojson` och `underlag/raw/scb_deso_2025.geojson` från 2.1.1 (de ersätts av komprimerade filer) innan du gör commit.
 
-Välj **modell B → Data & underlag → Hämta SCB-register 2024** för att komplettera med fullständiga hushålls-, befolknings- och biluttag från användarens webbläsare. Först när hela det efterfrågade uttaget har validerats ersätts underlaget. Nätfel eller spärrar behåller de redan inlagda bilantalen. Kommunala totaler och körsträcka kan även redigeras med egen motivering. Manuellt ändrade fält får egen källstatus; oförändrade registervärden behåller sin källa. Originalfil, filter, kontrollsummor och kommunavstämning finns i `underlag/raw/scb/` och i projektets metadata.
+## Så fungerar Streamlit-sidan
 
-OpenStreetMap används som nätbaserad bakgrund. Gävle har en separat, generaliserad landmask för kartvisning. För Malmö och Helsingborg saknas en ny oberoende kustmask i denna leverans: SCB:s områden kan därför sträcka sig ut över vatten. Beräkningens gränser omfattar officiella kommunala vattenområden; en visningsmask ändrar inte analysgeometrin. Ingen landareal presenteras som verifierad när den saknas.
-
-## Ladda upp och gör commit
-
-1. Packa upp paketet. Öppna mappen `vagvis_2_1_1`.
-2. Skapa helst ett nytt GitHub-repo för en ren installation. Välj **Add file → Upload files** och ladda upp mappens **innehåll**. `streamlit_app.py` ska ligga direkt i repots rot, inte i en extra undermapp.
-3. Kontrollera att `.github/` och `.streamlit/` följer med. GitHubs filuppladdning visar inte alltid dolda mappar; GitHub Desktop eller Git kan användas för att lägga till hela innehållet.
-4. Skriv exempelvis `Vägvis 2.1.1 självständiga modeller` och välj **Commit changes**.
-5. Välj repot och huvudfilen `streamlit_app.py` i Streamlit Community Cloud. Använd Python 3.12. Inga hemligheter eller API-nycklar behövs för den färdigbyggda appen.
-6. Kontrollera att appen visar **Vägvis 2.1.1** och öppna knappen **Beräkningsbeskrivning och källor** längst ner.
-
-Vid uppdatering av ett befintligt repo ersätter uppladdningen endast filer med samma sökväg. Gamla filer och kataloger tas inte bort automatiskt. Använd paketets filstruktur som facit och ta bort överblivna sidor, källfiler och arkiv från äldre installationer innan du gör slutlig commit. Ändra inte filernas placering.
+`vagvis_sidor.py` monterar huvudsidan vid körning av `kallkod/source/shell.html`, källkoden och datafilerna, exakt som byggskriptet gör. Därför behöver den stora färdigbyggda HTML-filen inte ligga i repot. GitHub-flödet **Kontrollera Vagvis** bygger ändå en fristående `Vagvis.html` och sparar den som artefakt (**Vagvis-fristaende-html**) för den som vill öppna appen utan server.
 
 ## Köra på egen dator
-
-Installera Python 3.12. Windows-användare kan dubbelklicka på `STARTA_LOKALT_WINDOWS.cmd`. Alternativt, kör i paketets rot:
 
 ```bash
 python -m pip install -r requirements.txt
 python -m streamlit run streamlit_app.py
 ```
 
-Öppna adressen som visas i terminalen. Beräkningarna sker i webbläsaren. OpenStreetMaps kartbakgrund behöver internet; kartplattor ingår inte i paketet. `app/Vagvis.html` kan även öppnas direkt i en modern webbläsare utan Streamlit. Underlag och beräkningar är inbyggda i denna fil.
+Windows: dubbelklicka på `STARTA_LOKALT_WINDOWS.cmd`. För en fristående HTML-fil: `node kallkod/bygg_appen.cjs` (Node.js 22), därefter öppnas `app/Vagvis.html` i webbläsaren.
 
-## Hämta och aktivera nya primärdata
+## Startunderlagets status
 
-Den publicerade appen anropar inte statistik-API:er när besökaren öppnar den. Data hämtas separat, med råsvar och kvitto, innan de eventuellt aktiveras.
+| Storhet | Status |
+|---|---|
+| Områden | SCB DeSO 2025 (348) och RegSO 2025 (144) |
+| Vägnät | OpenStreetMap, oktober 2026 (32 274 vägar) |
+| Trafikflöden | Uppmätt på Öresundsbron (Øresundsbron 2024); övriga vägar schablon per vägklass, kalibrerade per kommun |
+| Kommunreferenser (TTW 2024) | Malmö 279,7 kt (två kommunala serier), Helsingborg ≈ 205 kt och Gävle ≈ 195 kt (Nationella emissionsdatabasen framskriven) |
+| Bilar per DeSO (B) | SCB TAB6589, 2024, i trafik – registerdata |
+| Hushåll och befolkning per DeSO | SCB TAB6568 och TAB6574, 2024 – registerdata (Malmö 172 941 hushåll, Helsingborg 70 852, Gävle 50 993) |
+| Livscykel | ICCT 2025 (personbil), Trafikverket 2026 (direktutsläpp), Naturvårdsverket 2025 (el), direktiv 2015/652 (bränslen) |
 
-Utan lokal Python: välj **Actions → Hamta kallunderlag → Run workflow** i GitHub. Flödet hämtar SCB-tabellerna och aktiverar endast ett komplett, validerat uttag i sin tillfälliga arbetskopia. Då byggs även HTML-sidorna om. Öppna körningen och hämta **Vagvis-kallunderlag** under **Artifacts**. Paketet innehåller kvitto och uppdaterade data- och appfiler. Läs kvittot och kontrollera källornas enheter, år, områdesversion och målpopulation innan du laddar upp dessa filer med samma sökvägar och gör en ny commit. Flödet gör ingen commit åt dig. Ett misslyckat uttag markeras som fel; kvittot sparas och baslinjen ersätts inte.
+Alla parametrar med källa och status finns i `underlag/evidensregister.json` och i appens vy **Metod & källor**.
 
-Lokalt:
+## Förbättra underlaget
+
+### Hushåll och befolkning per DeSO (SCB)
+
+Uppgifterna för 2024 är redan inlästa (`underlag/raw/active_scb_2024.json`, med filnamn och SHA-256 för originalfilerna). För att läsa in på nytt eller kontrollera: **Actions → Hamta kallunderlag → Run workflow**. Flödet laddar ned SCB:s bulkfiler, validerar dem, bygger om och lägger resultatet på en ny gren med en pull request. Lokalt går både ZIP och uppackad CSV att ange:
 
 ```bash
-python verktyg/hamta_underlag.py --out underlag/hamtat
-```
-
-För att aktivera ett komplett, validerat SCB-uttag i modellens underlag:
-
-```bash
-python verktyg/hamta_underlag.py --out underlag/hamtat --activate
+python verktyg/importera_scb_hushall.py TAB6568_sv.zip TAB6574_sv.zip
 python verktyg/bygg_underlag.py
 node kallkod/bygg_appen.cjs
 ```
 
-Aktivering kräver de efterfrågade tabellerna för rätt år och områden. Startpaketet har 348 DeSO 2025 och 144 RegSO 2025; RegSO är den högre områdesnivån och ska inte förväxlas med kommunernas administrativa stadsdelar. Ofullständiga uttag ska inte användas som nollor. Kontrollera också källstatusen för startunderlaget: officiella kommunvärden och områdesvärden som fördelats med schablon har olika evidensstyrka. Ett framgångsrikt API-anrop gör inte en bedömd fördelning till en observation. Komplettera med dokumenterade vägflöden för A och representativa körsträckedata för B för att stärka resultaten.
+Filerna laddas ned från `https://www.statistikdatabasen.scb.se/Resources/PX/bulk/ssd/sv/TAB6568_sv.zip` respektive `TAB6574_sv.zip`. Importen kräver 2024, alla 348 DeSO och att DeSO-summorna stämmer med kommunraderna. Filerna läses strömmande och lagras inte i repot.
 
-### Läsa in en ny SCB-export för bilar
+### Trafikverkets ÅDT (NVDB)
 
-Det medföljande underlaget är redan inläst. Om du senare ersätter bilfilen, kör i paketets rot:
+Hämta NVDB-lagret med trafikflöden från Lastkajen (kräver inloggning) som GeoPackage eller GeoJSON. Kör per kommun:
 
 ```bash
-python verktyg/importera_scb_bilar.py TAB6589_sv.zip --year 2024
-python verktyg/bygg_underlag.py
-node kallkod/bygg_appen.cjs
+python verktyg/importera_nvdb_adt.py nvdb_malmo.gpkg --kommun 1280 --falt-adt <fält ÅDT> --falt-tunga <fält tunga> --falt-matar <fält mätår>
 ```
 
-Importören kontrollerar alla 348 DeSO, status, år och kommunavstämning före aktivering. En vanlig offlineombyggnad återläser och validerar den paketerade originalfilen så att registerbilarna bevaras. Filen innehåller även 2025 men den här beräkningsbaslinjen använder 2024.
+### Kommunala trafikmätningar
+
+CSV med kolumnerna `id, lat, lon, flode, matt (ADT/MVD), manad, ar, riktning, tung_andel, kalla`:
+
+```bash
+python verktyg/importera_trafikmatningar.py matningar.csv --kommun 1280
+```
+
+MVD räknas om till ÅDT med Trafikverkets månads- och veckodagsindex. Kör därefter `python verktyg/bygg_underlag.py` och `node kallkod/bygg_appen.cjs`. Uppmätta vägar ersätter schablonen och skalas inte vid kalibreringen.
+
+### Kontrollera fordonsfaktorerna
+
+```bash
+node verktyg/kalibrera_fordonsfaktorer.cjs
+```
+
+visar att varje klass återger Trafikverkets nationella g CO₂e/fkm för 2024. Med `--skriv` skrivs nya värden till `kallkod/data/config.json` efter ändrad fordonsmix.
 
 ## Ändra och kontrollera modellen
-
-Node.js 22 behövs för att bygga om appen; Streamlit behöver endast de färdigbyggda HTML-filerna. Byggningen använder medföljande underlag och behöver ingen nätanslutning:
 
 ```bash
 python verktyg/bygg_underlag.py
@@ -89,28 +113,24 @@ node kallkod/bygg_appen.cjs
 node tests/test_modell.cjs
 node tests/test_register.cjs
 python -m unittest discover -s tests -p 'test_*.py' -v
+python verktyg/skapa_manifest.py
 ```
 
-Byggningen räknar om A:s startresultat från modellens aktuella kod, data, inställningar och slumptalsfrö. Den läser inte in en tidigare versions numeriska resultat. B beräknas av sin egen beräkningsmotor med samma livscykelkomponenter. Fast slumptalsfrö och oförändrad modell ger reproducerbara simuleringar; tidstämplar kan skilja sig.
+`skapa_manifest.py` skriver kontrollsummor för alla filer i paketet till `MANIFEST_SHA256.json`.
 
-Ändra `kallkod/source/` för kod och `kallkod/data/config.json` för beräkningsinställningar. Ändringar i källregistret påverkar dokumentationen; ändra den faktiska numeriska inställningen eller källdatan för att ändra resultatet. Bygg om, kör kontrollerna och granska resultatet innan commit. Byggskriptet återskapar `app/` och `underlag/SHA256.json`. Om enbart dokumentation eller gränssnitt ändrats kan `node kallkod/bygg_appen.cjs --reuse-result` återanvända det färska A-resultatet. Det kräver samma modellversion och exakt samma indata och konfiguration enligt fingeravtrycket; annars avbryts bygget. Efter ändrad beräkningskod ska ett fullständigt bygge köras.
+Projektfilerna i `kallkod/data/` lagras förlustfritt packade (`vagvis-pack-1`: heltalskoordinater med differenskodning, delad områdesfil `omraden.json`). `core.js` (`unpackProject`) och `verktyg/paket.py` packar upp dem.
 
-GitHub-flödet **Kontrollera Vagvis** bygger appen, kör numeriska och strukturella kontroller och installerar sedan den riktiga Streamlit-versionen för serverstart och kontroll av Python-huvudfilen. Dessutom installeras Chromium via Playwright för riktiga kontroller av modellbyte, kartvyer, metodknapp, åtgärdsscenario och export. Körningen sparar kontrollresultat och skärmdumpar i artefakten **Vagvis-kontroller**. Granska dessa tillsammans med manuella rimlighetskontroller av valda områden.
-
-## Innehåll och rättigheter
+## Innehåll
 
 | Sökväg | Innehåll |
 |---|---|
-| `streamlit_app.py` | Huvudfil för Streamlit |
-| `vagvis_sidor.py` | Tillåtna färdigbyggda sidor |
-| `app/` | Körbar app, metodsida och underlagsbegäran |
-| `kallkod/source/` | Gränssnitt och självständiga beräkningsmotorer |
-| `kallkod/data/` | Modellens aktiva underlag och inställningar |
-| `underlag/` | Primärunderlag, uttagskvitton, källregister och åtgärder |
-| `verktyg/` | Hämtning och reproducerbar databeredning |
-| `tests/` | Numeriska kontroller och paketkontroller |
-| `dokument/` | Fristående manual och begäran om trafikunderlag |
-| `.github/workflows/` | Automatiska kontroller och manuell datahämtning |
-| `licenser/` | Licens för medföljande Leaflet |
+| `streamlit_app.py`, `vagvis_sidor.py` | Streamlit-start och montering av sidan |
+| `kallkod/source/` | Gränssnitt och beräkningsmotorer (A, B, scenarier) |
+| `kallkod/data/` | Packade projekt, områden, inställningar och beräknat A-resultat |
+| `underlag/` | Källregister, evidensregister, råfiler (komprimerade), uppmätta länkar |
+| `verktyg/` | Databygge, packning, kalibrering och importverktyg |
+| `tests/` | Numeriska, data- och paketkontroller |
+| `dokument/` | Manual, kontrollresultat och begäran om trafikunderlag |
+| `app/` | Metodsida och trafikdatasida (huvudsidan byggs vid körning) |
 
-Koden omfattas av MIT-licensen i `LICENSE.txt`. Källdata behåller sina egna villkor. OpenStreetMaps attribution och databaslicens ska respekteras; Leaflet har BSD 2-Clause-licens. Inga personidentifierande hushållsdata eller API-hemligheter ska läggas i repot.
+Koden omfattas av MIT-licensen i `LICENSE.txt`. Källdata behåller sina villkor; OpenStreetMaps attribution och ODbL ska respekteras. Leaflet har BSD 2-Clause-licens.

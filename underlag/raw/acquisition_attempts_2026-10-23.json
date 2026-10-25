@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "purpose": "Hämta verkliga registeruppgifter för analysår 2024 och DeSO 2025.",
+  "actualRunReceipt": "underlag/hamtningar/20261023T125941695342Z/hamtningskvitto.json",
+  "outcome": "API-anropen gav inget komplett numeriskt SCB-uttag. Observerade bilantal har därefter importerats från användarens originalexport TAB6589_sv.zip; hushåll och invånares lokala fördelning är fortfarande proxy.",
+  "directNetwork": "HTTP 403 för SCB v2 metadata, fullständiga SCB CSV-zippar, Malmö CKAN och npm-kustdata. Inga åtkomstskydd har kringgåtts.",
+  "webReader": "Publika tabell-/katalogsidor kunde läsas. Dynamiska JSON-data var inte åtkomliga och zip-svar gick inte att materialisera. Metadata är inte samma sak som inhämtade observationer.",
+  "officialBulkUrl": "https://www.statistikdatabasen.scb.se/Resources/PX/bulk/ssd/sv/TAB6589_sv.zip",
+  "preservationCheck": {
+    "names": [
+      "project.json",
+      "household-project.json",
+      "land.json",
+      "ytor.json"
+    ],
+    "method": "SHA256 före/efter misslyckad --activate",
+    "unchanged": true
+  },
+  "currentDataResolution": {
+    "bil": "SCB_TAB6589_2024, underlag/raw/scb/car_import_receipt_2024.json",
+    "hh": "spatial_model_assumption",
+    "bef": "spatial_model_assumption",
+    "fullRegisterRefresh": "Ännu inte genomförd; misslyckade framtida API-uttag bevarar de importerade bilantalen."
+  }
+}

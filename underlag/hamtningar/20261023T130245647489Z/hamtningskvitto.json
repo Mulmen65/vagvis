@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "modelVersion": "2.1.0",
+  "dataYear": 2024,
+  "desoVersion": "2025",
+  "createdAt": "2026-10-23T13:02:50.843898+00:00",
+  "complete": false,
+  "failed": 1,
+  "activatedInApp": false,
+  "note": "Endast komplett validerat SCB-uttag kan ersätta baslinjen. Saknade värden ersätts aldrig med noll. Inga årgångar/geografier blandas.",
+  "entries": [
+    {
+      "id": "malmo_statistics_resources",
+      "url": "https://opendata-api.malmo.se/api/3/action/resource_search?query=description%3Amalm%C3%B6+statistik&limit=1000&offset=0",
+      "method": "GET",
+      "fetchedAt": "2026-10-23T13:02:45.647637+00:00",
+      "activatedInApp": false,
+      "status": "failed",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    }
+  ]
+}

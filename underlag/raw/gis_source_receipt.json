@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "source": "SCB, användarlevererade primära geografiska underlag",
+  "url": "https://www.scb.se/vara-tjanster/oppna-data/oppna-geodata/demografiska-statistikomraden-deso/",
+  "referenceDate": "2025-01-01",
+  "version": "2025_v2",
+  "transformation": "Malmö SWEREF99 TM och Helsingborg SWEREF99 13 30 transformerade till WGS84. Gävle primär WGS84 GeoJSON. De transformerade polygonerna har inte landklippts. RegSO-attribut används direkt.",
+  "files": [
+    {
+      "file": "underlag/raw/gis/DESO_2025_Malmo.zip",
+      "bytes": 197793,
+      "sha256": "b39611e41c39a1df2a8206c33d7b83f1fa69797403c0113254ad98220696105c"
+    },
+    {
+      "file": "underlag/raw/gis/Deso2025HelsingborgsKommun.zip",
+      "bytes": 133062,
+      "sha256": "f936a311cbd9133b44d521ad488524d0fc36a93b006f552e7285b4a9a4242321"
+    },
+    {
+      "file": "underlag/raw/gis/DeSO_2025_2180.geojson",
+      "bytes": 380693,
+      "sha256": "42c751d46eeb615ea459d86c383f83ec28175d8fb3490f19b4c1340726a801ca"
+    }
+  ]
+}

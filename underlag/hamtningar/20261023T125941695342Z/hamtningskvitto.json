@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "modelVersion": "2.1.0",
+  "dataYear": 2024,
+  "desoVersion": "2025",
+  "createdAt": "2026-10-23T12:59:58.727997+00:00",
+  "complete": false,
+  "failed": 4,
+  "activatedInApp": false,
+  "note": "Endast komplett validerat SCB-uttag kan ersätta baslinjen. Saknade värden ersätts aldrig med noll. Inga årgångar/geografier blandas.",
+  "entries": [
+    {
+      "id": "hh_metadata",
+      "url": "https://statistikdatabasen.scb.se/api/v2/tables/TAB6568/metadata?lang=sv",
+      "method": "GET",
+      "fetchedAt": "2026-10-23T12:59:41.717080+00:00",
+      "activatedInApp": false,
+      "status": "failed",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "bil_metadata",
+      "url": "https://statistikdatabasen.scb.se/api/v2/tables/TAB6589/metadata?lang=sv",
+      "method": "GET",
+      "fetchedAt": "2026-10-23T12:59:48.978768+00:00",
+      "activatedInApp": false,
+      "status": "failed",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "bef_metadata",
+      "url": "https://statistikdatabasen.scb.se/api/v2/tables/TAB6574/metadata?lang=sv",
+      "method": "GET",
+      "fetchedAt": "2026-10-23T12:59:54.508759+00:00",
+      "activatedInApp": false,
+      "status": "failed",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "activation",
+      "status": "failed",
+      "error": "Ofullständig SCB-baslinje; befintliga modelldata behålls.",
+      "activatedInApp": false
+    }
+  ]
+}
