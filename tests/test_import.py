@@ -1,5 +1,6 @@
 """Kontroller av importverktygen för uppmätta trafikflöden, SCB-hushåll och koordinater (syntetiska filer)."""
 import csv
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -15,6 +16,8 @@ sys.path.insert(0, str(ROOT / "verktyg"))
 import geodesi  # noqa: E402
 import importera_nvdb_adt as nvdb  # noqa: E402
 import importera_scb_hushall as hushall  # noqa: E402
+import stada_repo  # noqa: E402
+import importera_korstracka as korstracka  # noqa: E402
 import importera_trafikmatningar as matningar  # noqa: E402
 import vagdata  # noqa: E402
 from paket import read_json  # noqa: E402
@@ -226,6 +229,132 @@ class HouseholdImportTests(unittest.TestCase):
             a, b = self.fixtures(tmp, scale=1.1)
             with self.assertRaises(ValueError):
                 hushall.import_files(a, b, write=False)
+
+
+class StadaRepoTests(unittest.TestCase):
+    def test_old_model_files_and_unknown_code_are_removed_but_data_is_kept(self):
+        files = ["README.md", "MANIFEST_SHA256.json", "app/aldre_sida.html", "kallkod/source/v7-berakning.js",
+                 "pages/2_aldre_modell.py", "app/Vagvis.html", "dokument/Vagvis_manual_2.1.1.docx",
+                 "underlag/raw/osm_roads_2026.geojson", "underlag/trafik/nvdb_adt_2024.json", "dokument/egna_anteckningar.docx"]
+        remove, review = stada_repo.classify(files, {"README.md"})
+        self.assertEqual(set(remove), {"app/aldre_sida.html", "kallkod/source/v7-berakning.js", "pages/2_aldre_modell.py",
+                                       "app/Vagvis.html", "dokument/Vagvis_manual_2.1.1.docx", "underlag/raw/osm_roads_2026.geojson"})
+        self.assertEqual(set(review), {"underlag/trafik/nvdb_adt_2024.json", "dokument/egna_anteckningar.docx"})
+
+
+class KorstrackaTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.cars = read_json(ROOT / "underlag/raw/scb/active_cars_2024.json")["byDeSO"]
+
+    def test_kommun_values_are_transferred_with_ratio_to_national(self):
+        value = korstracka.build_kommun({"1280": 1064, "1283": 1141, "2180": 1200}, 1141, 2024, {"entry": "test"})
+        self.assertEqual(value["cities"]["1283"]["kmPerCar"], 12753)
+        self.assertEqual(value["cities"]["1280"]["kmPerCar"], round(12753 * 1064 / 1141))
+        with self.assertRaises(ValueError):
+            korstracka.build_kommun({"1280": 1064, "1283": 1141}, 1141, 2024, {})
+        with self.assertRaises(ValueError):
+            korstracka.build_kommun({"1280": 106400, "1283": 1141, "2180": 1200}, 1141, 2024, {})
+
+    def test_rus_excel_is_read_from_year_column(self):
+        try:
+            import openpyxl
+        except ImportError:
+            self.skipTest("openpyxl saknas")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "Tabell-2.xlsx"
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.title = "Mil per invånare"
+            ws.append(["Kommun", 2023, 2024])
+            ws.append(["1280 Malmö", 450, 451])
+            bil = wb.create_sheet("Mil per bil")
+            bil.append(["Körsträcka per personbil i trafik"])
+            bil.append(["Kommun", "2023", "2024"])
+            for row in (["Riket", 1130, 1141], ["1280 Malmö", 1062, 1064], ["1283 Helsingborg", 1150, 1160], ["2180 Gävle", 1180, 1190]):
+                bil.append(row)
+            wb.save(path)
+            values, riket, sheet = korstracka.rus_from_excel(path, 2024)
+        self.assertEqual(sheet, "Mil per bil")
+        self.assertEqual(values, {"1280": 1064, "1283": 1160, "2180": 1190})
+        self.assertEqual(riket, 1141)
+
+    def test_rus_layout_with_paired_year_columns_and_codes(self):
+        # Samma uppställning som RUS tabell 2: "År 1999" … med kolumnerna per bil / per invånare,
+        # kod i första kolumnen och region som "1280MALMÖ". Ett datavärde lika med en kommunkod
+        # (1280 mil) får inte tolkas som kommunens rad.
+        try:
+            import openpyxl
+        except ImportError:
+            self.skipTest("openpyxl saknas")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "Tabell-2-Korstracka.xlsx"
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.title = "Tabell 2"
+            ws.append(["Källa: SCB"])
+            ws.append([None, None, "År 1999", None, "År 2024", None])
+            ws.append(["Kod", "Region", "Körsträcka per bil", "Körsträcka per invånare", "Körsträcka per bil", "Körsträcka per invånare"])
+            ws.append([0, "0 RIKET\u00a0", 1297, 640, 1141.5, 624.8])
+            ws.append([580, "0580LINKÖPING      ", 1280, 571, 1126.2, 524.3])
+            ws.append([1280, "1280MALMÖ          ", 1209, 466, 1064.4, 450.7])
+            ws.append([1283, "1283HELSINGBORG    ", 1225, 578, 1156.1, 558.3])
+            ws.append([2180, "2180GÄVLE          ", 1203, 560, 1120.7, 566.0])
+            wb.save(path)
+            values, riket, _ = korstracka.rus_from_excel(path, 2024)
+        self.assertEqual(values, {"1280": 1064.4, "1283": 1156.1, "2180": 1120.7})
+        self.assertEqual(riket, 1141.5)
+
+    def test_packaged_municipal_mileage_matches_stored_rus_table(self):
+        active = ROOT / "underlag/raw/korstracka_kommun_2024.json"
+        if not active.exists():
+            self.skipTest("Ingen körsträcka per kommun inläst.")
+        try:
+            import openpyxl  # noqa: F401
+        except ImportError:
+            self.skipTest("openpyxl saknas")
+        value = read_json(active)
+        source = ROOT / value["source"]["file"]
+        self.assertEqual(hashlib.sha256(source.read_bytes()).hexdigest(), value["source"]["sha256"])
+        values, riket, _ = korstracka.rus_from_excel(source, 2024)
+        self.assertEqual(value["national"]["rusMilPerCar"], riket)
+        for code, mil in values.items():
+            self.assertEqual(value["cities"][code]["rusMilPerCar"], mil)
+            self.assertEqual(value["cities"][code]["kmPerCar"], round(12753 * mil / riket))
+
+    def _csv(self, tmp, rows):
+        path = Path(tmp) / "korstracka_deso_2024.csv"
+        path.write_text("deso;ar;antal_bilar_31dec;korstracka_km\n" + "\n".join(";".join(map(str, r)) for r in rows) + "\n", encoding="utf-8")
+        return path
+
+    def test_deso_delivery_gives_km_per_car_and_falls_back_for_protected_cells(self):
+        codes = sorted(self.cars)
+        rows = [[k, 2024, self.cars[k], self.cars[k] * (9000 + i)] for i, k in enumerate(codes)]
+        rows[0] = [codes[0], 2024, "..", ".."]
+        with tempfile.TemporaryDirectory() as tmp:
+            value = korstracka.build_deso(self._csv(tmp, rows), 2024, {"1280": {"kmPerCar": 11893}})
+        by = {r["kod"]: r for r in value["rows"]}
+        self.assertEqual(len(by), 348)
+        self.assertEqual(by[codes[0]]["status"], "suppressed")
+        self.assertEqual(by[codes[0]]["km"], 11893 if codes[0].startswith("1280") else 12753)
+        self.assertAlmostEqual(by[codes[5]]["km"], 9005, places=1)
+        self.assertEqual(sum(r["status"] == "observed_register" for r in value["rows"]), 347)
+
+    def test_deso_delivery_with_wrong_population_or_missing_areas_is_rejected(self):
+        codes = sorted(self.cars)
+        good = [[k, 2024, self.cars[k], self.cars[k] * 10000] for k in codes]
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(ValueError):
+                korstracka.build_deso(self._csv(tmp, good[:-1]), 2024)
+            wrong = [list(r) for r in good]
+            big = max(range(len(wrong)), key=lambda i: wrong[i][2])
+            wrong[big][2] = int(wrong[big][2] * 1.5)
+            with self.assertRaises(ValueError):
+                korstracka.build_deso(self._csv(tmp, wrong), 2024)
+            odd = [list(r) for r in good]
+            odd[3][3] = odd[3][2] * 200
+            with self.assertRaises(ValueError):
+                korstracka.build_deso(self._csv(tmp, odd), 2024)
 
 
 if __name__ == "__main__":

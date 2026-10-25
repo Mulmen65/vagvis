@@ -1,6 +1,6 @@
 {
  "schema": "vagvis-evidence-2",
- "version": "2.2.0",
+ "version": "2.2.2",
  "reviewDate": "2026-10-25",
  "release": {
   "model": "Vägvis",
@@ -59,6 +59,15 @@
    "use": "4 977 791 personbilar i trafik vid årsskiftet 2024/2025; 78 % bensin eller diesel; drygt 13 % laddbara. Fördelningen 47,0/31,3/7,2/6,3/4,2/3,4/0,7 % tolkas som bensin/diesel/el/laddhybrid/elhybrid/etanol/gas.",
    "accessed": "2026-10-25",
    "verification": "Primär-PDF kontrollerad. Kategorietiketterna i figur 2 saknas i textlagret; tolkningen är förenlig med de uttryckliga summorna 78 % och drygt 13 %."
+  },
+  {
+   "id": "RUS_KORSTRACKA",
+   "short": "RUS/SCB körsträckedata",
+   "title": "Regional utveckling och samverkan i miljömålssystemet (RUS) och SCB (2025). Körsträckedata per kommun, tabell 2 Körsträcka, till år 2025.",
+   "url": "https://www.rus.se/statistik-och-indikatorer/korstrackor/",
+   "use": "Körsträcka per bil och per invånare för personbilar registrerade i kommunen, beräknad av SCB ur mätarställningar vid besiktning (Transportstyrelsens vägtrafikregister). 2024: Malmö 1 064, Helsingborg 1 156 och Gävle 1 121 mil per bil; riket 1 141. Inläst från underlag/raw/rus/Tabell-2-Korstracka-till-ar-2025.xlsx och överförd till privatägda bilar med kvoten mot riket: 11 892, 12 917 respektive 12 521 km.",
+   "accessed": "2026-10-25",
+   "verification": "Kommunnivå. Avser alla personbilar registrerade i kommunen, även företagsägda; registreringskommun är inte alltid hemkommun. Andelen företagsbilar vid årsskiftet (RUS tabell 1 jämfört med SCB TAB6589) är 20 % i Malmö, 12 % i Helsingborg och 9 % i Gävle mot 12 % i riket; en korrigering för detta ändrar kommunvärdena med högst cirka 3 %. Värden för 2025 är beräknade med ny metod och inte jämförbara med 2024."
   },
   {
    "id": "TV_UTSLAPP_2025",
@@ -234,7 +243,7 @@
   {
    "id": "ASSUMPTIONS",
    "short": "Vägvis 2026",
-   "title": "Vägvis (2026). Redovisade modellval, version 2.2.0.",
+   "title": "Vägvis (2026). Redovisade modellval, version 2.2.2.",
    "url": "",
    "use": "Eget parameterregister i underlag/evidensregister.json. Värden med denna källa är modellantaganden utan direkt extern belägg.",
    "accessed": "2026-10-25",
@@ -2887,11 +2896,12 @@
    "name": "Malmö: bilvägd körsträcka",
    "unit": "km/bil och år",
    "model": "B",
-   "status": "derived_descriptor",
-   "rationale": "Gemensam körsträcka household.kmPerCar för alla DeSO i B: 12 753 km per privat bil i årsslutsbeståndet, härledd ur Trafikanalys (2025a, 2025b).",
+   "status": "derived_official",
+   "rationale": "Bilvägd körsträcka per bil i kommunen. I första hand uppmätt per DeSO (SCB, mätarställningar vid besiktning), i andra hand kommunens värde enligt RUS/SCB körsträckedata, annars riksmedelvärdet 12 753 km per privat bil i årsslutsbeståndet (Trafikanalys 2025a, 2025b). Ingen faktor för avstånd till centrum används.",
    "sources": [
     "TRAFA_KM_2024",
-    "TRAFA_FORDON_2024"
+    "TRAFA_FORDON_2024",
+    "RUS_KORSTRACKA"
    ],
    "value": null,
    "binding": "mean_km:1280"
@@ -2927,11 +2937,12 @@
    "name": "Helsingborg: bilvägd körsträcka",
    "unit": "km/bil och år",
    "model": "B",
-   "status": "derived_descriptor",
-   "rationale": "Gemensam körsträcka household.kmPerCar för alla DeSO i B: 12 753 km per privat bil i årsslutsbeståndet, härledd ur Trafikanalys (2025a, 2025b).",
+   "status": "derived_official",
+   "rationale": "Bilvägd körsträcka per bil i kommunen. I första hand uppmätt per DeSO (SCB, mätarställningar vid besiktning), i andra hand kommunens värde enligt RUS/SCB körsträckedata, annars riksmedelvärdet 12 753 km per privat bil i årsslutsbeståndet (Trafikanalys 2025a, 2025b). Ingen faktor för avstånd till centrum används.",
    "sources": [
     "TRAFA_KM_2024",
-    "TRAFA_FORDON_2024"
+    "TRAFA_FORDON_2024",
+    "RUS_KORSTRACKA"
    ],
    "value": null,
    "binding": "mean_km:1283"
@@ -2967,11 +2978,12 @@
    "name": "Gävle: bilvägd körsträcka",
    "unit": "km/bil och år",
    "model": "B",
-   "status": "derived_descriptor",
-   "rationale": "Gemensam körsträcka household.kmPerCar för alla DeSO i B: 12 753 km per privat bil i årsslutsbeståndet, härledd ur Trafikanalys (2025a, 2025b).",
+   "status": "derived_official",
+   "rationale": "Bilvägd körsträcka per bil i kommunen. I första hand uppmätt per DeSO (SCB, mätarställningar vid besiktning), i andra hand kommunens värde enligt RUS/SCB körsträckedata, annars riksmedelvärdet 12 753 km per privat bil i årsslutsbeståndet (Trafikanalys 2025a, 2025b). Ingen faktor för avstånd till centrum används.",
    "sources": [
     "TRAFA_KM_2024",
-    "TRAFA_FORDON_2024"
+    "TRAFA_FORDON_2024",
+    "RUS_KORSTRACKA"
    ],
    "value": null,
    "binding": "mean_km:2180"
@@ -3033,7 +3045,7 @@
   },
   {
    "id": "B_CV_ALLOCATION",
-   "name": "B: lokal variation i årlig körsträcka",
+   "name": "B: lokal variation i årlig körsträcka utan områdesdata",
    "unit": "CV",
    "path": "household.uncertainty.allocation",
    "defaultValue": 0.5,
@@ -3045,12 +3057,52 @@
    ]
   },
   {
+   "id": "B_KM_MODE",
+   "name": "B: körsträcka per område",
+   "unit": "läge",
+   "path": "household.kmMode",
+   "defaultValue": "local",
+   "model": "B",
+   "status": "derived_official",
+   "rationale": "local: uppmätt körsträcka per DeSO eller kommun används där den finns. national: samma riksmedelvärde för alla områden (för jämförelse).",
+   "sources": [
+    "ASSUMPTIONS"
+   ]
+  },
+  {
+   "id": "B_CV_ALLOCATION_LOCAL",
+   "name": "B: osäkerhet i uppmätt körsträcka per DeSO",
+   "unit": "CV",
+   "path": "household.uncertainty.allocationLocal",
+   "defaultValue": 0.05,
+   "model": "B",
+   "status": "model_assumption",
+   "rationale": "0,05 för DeSO med uppmätt körsträcka. Mätarställningar finns för nästan alla bilar; osäkerheten gäller främst skattningen mellan besiktningstillfällen.",
+   "sources": [
+    "ASSUMPTIONS"
+   ]
+  },
+  {
+   "id": "B_CV_DISTANCE_LOCAL",
+   "name": "B: osäkerhet i kommunens körsträcka med kommun- eller DeSO-data",
+   "unit": "CV",
+   "path": "household.uncertainty.distanceLocal",
+   "defaultValue": 0.05,
+   "model": "B",
+   "status": "model_assumption",
+   "rationale": "0,05 när körsträckan bygger på SCB:s mätarställningar per kommun eller DeSO. Täcker överföring till privatägda bilar i årsslutsbeståndet och skattning mellan besiktningar.",
+   "sources": [
+    "ASSUMPTIONS",
+    "RUS_KORSTRACKA"
+   ]
+  },
+  {
    "id": "B_ANNUAL_KM",
-   "name": "B: gemensam årlig körsträcka",
+   "name": "B: riksmedelvärde för årlig körsträcka",
    "unit": "km/bil och år",
    "model": "B",
    "status": "derived_official",
-   "rationale": "Privatägda bilar 10 950 km per bil i trafik under året (Trafikanalys 2025a) × kvoten mellan bilar i trafik under året (5,80 miljoner) och vid årets slut (4 977 791; Trafikanalys 2025b) = 12 753 km per bil i årsslutsbeståndet. Samma kvot antas för privatägda bilar. Ingen kommunal variation ännu.",
+   "rationale": "Privatägda bilar 10 950 km per bil i trafik under året (Trafikanalys 2025a) × kvoten mellan bilar i trafik under året (5,80 miljoner) och vid årets slut (4 977 791; Trafikanalys 2025b) = 12 753 km per bil i årsslutsbeståndet. Används där körsträcka per kommun eller DeSO inte är inläst.",
    "sources": [
     "TRAFA_KM_2024",
     "TRAFA_FORDON_2024"
@@ -3060,7 +3112,7 @@
   },
   {
    "id": "B_CV_DISTANCE",
-   "name": "B: osäkerhet i kommunens körsträcka",
+   "name": "B: osäkerhet i riksmedelvärdet för körsträcka",
    "unit": "CV",
    "model": "B",
    "status": "derived_official",

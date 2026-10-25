@@ -150,7 +150,7 @@ class PrimaryDataTests(unittest.TestCase):
 
     def test_source_receipt_and_hashes_match_actual_bytes(self):
         receipt = read("underlag/datakvitto.json")
-        self.assertEqual(receipt["modelVersion"], "2.2.0")
+        self.assertEqual(receipt["modelVersion"], "2.2.2")
         self.assertEqual(receipt["dataYear"], 2024)
         self.assertEqual(receipt["desoVersion"], "2025")
         for entry in receipt["dataFiles"] + receipt["builtFiles"]:
@@ -274,7 +274,7 @@ class UploadedCarRegisterTests(unittest.TestCase):
                 cars.import_zip(self.zip_path, year=2025, destination=destination)
             self.assertEqual({path.name: path.read_bytes() for path in destination.iterdir()}, initial)
 
-    def _offline_rebuild(self, keep_household_register):
+    def _offline_rebuild(self, keep_household_register, extra=None):
         # Run the real CLI in an isolated copy, keeping the delivered inputs
         # untouched while other checks read them.
         temporary = tempfile.TemporaryDirectory()
@@ -290,6 +290,8 @@ class UploadedCarRegisterTests(unittest.TestCase):
         shutil.copy2(ROOT / "kallkod/source/households.js", project / "kallkod/source/households.js")
         if not keep_household_register:
             (project / "underlag/raw/active_scb_2024.json").unlink(missing_ok=True)
+        for name, value in (extra or {}).items():
+            (project / "underlag/raw" / name).write_text(json.dumps(value, ensure_ascii=False))
         # Corrupt only a derived temporary cache; the original ZIP is the
         # authority and must replace this stale number on a normal rebuild.
         active_path = project / "underlag/raw/scb/active_cars_2024.json"
@@ -329,6 +331,25 @@ class UploadedCarRegisterTests(unittest.TestCase):
         self.assertGreater(row["hh"], 0)
         self.assertAlmostEqual(row["bph"], row["bil"] / row["hh"])
         self.assertIsNone(rebuilt["metadata"]["spatialProxy"])
+
+
+    def test_offline_rebuild_uses_measured_mileage_per_deso_before_municipal_values(self):
+        cars = json.loads((ROOT / "underlag/raw/scb/active_cars_2024.json").read_text())["byDeSO"]
+        codes = sorted(cars)
+        kommun = {"schema": "vagvis-korstracka-kommun-1", "dataYear": 2024, "status": "validated_official_data",
+                  "cities": {"1280": {"kmPerCar": 11893}, "1283": {"kmPerCar": 12965}, "2180": {"kmPerCar": 13300}}}
+        rows = [{"kod": k, "km": 9000.0, "status": "observed_register", "cars": cars[k], "totalKm": cars[k] * 9000.0} for k in codes]
+        rows[0]["status"] = "suppressed"
+        deso = {"schema": "vagvis-korstracka-deso-1", "dataYear": 2024, "status": "validated_official_data", "rows": rows}
+        rebuilt = self._offline_rebuild(keep_household_register=True,
+                                        extra={"korstracka_kommun_2024.json": kommun, "korstracka_deso_2024.json": deso})
+        by = {r["kod"]: r for r in rebuilt["d"]}
+        self.assertEqual(by[codes[1]]["km"], 9000.0)
+        self.assertEqual(by[codes[1]]["kmStatus"], "observed_register")
+        self.assertEqual(by[codes[0]]["kmStatus"], "derived_official")
+        self.assertEqual(by[codes[0]]["km"], kommun["cities"][codes[0][:4]]["kmPerCar"])
+        self.assertEqual(rebuilt["metadata"]["annualKm"]["level"], "blandad")
+        self.assertEqual(rebuilt["config"]["household"]["kmMode"], "local")
 
 
 class PackageTests(unittest.TestCase):
@@ -371,11 +392,11 @@ class PackageTests(unittest.TestCase):
                     modules.append(node.module or "")
             self.assertFalse(any(module.startswith(("requests", "urllib", "httpx")) for module in modules))
             self.assertNotIn("urlopen", text)
-        self.assertIn('page_title="Vägvis 2.2.0"', (ROOT / "streamlit_app.py").read_text())
+        self.assertIn('page_title="Vägvis 2.2.2"', (ROOT / "streamlit_app.py").read_text())
 
     def test_evidence_has_unique_parameters_sources_and_no_orphan_references(self):
         registry = read("underlag/evidensregister.json")
-        self.assertEqual(registry["version"], "2.2.0")
+        self.assertEqual(registry["version"], "2.2.2")
         for group in ("parameters", "sources"):
             ids = [row["id"] for row in registry[group]]
             self.assertEqual(len(ids), len(set(ids)), group)

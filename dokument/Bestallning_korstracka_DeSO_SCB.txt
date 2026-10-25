@@ -1,0 +1,71 @@
+BESTÄLLNINGSUNDERLAG – KÖRSTRÄCKA FÖR PERSONBILAR PER DeSO
+Till: SCB, uppdrag@scb.se (formuläret "Förfrågan om ny beställning" under
+Våra tjänster → Beställ data och statistik → Förfrågan om statistiktabeller)
+Ämne: Förfrågan om statistiktabell – körsträcka för personbilar per DeSO 2024
+       (Malmö, Helsingborg och Gävle)
+
+Hej,
+
+Vi beräknar klimatpåverkan från hushållens personbilar per område (DeSO) i
+Malmö, Helsingborg och Gävle. Bilantal per DeSO hämtar vi i dag från
+Statistikdatabasen (TAB6589). Körsträckan finns bara per kommun (RUS
+körsträckedata) och som riksmedelvärde. Vi vill därför beställa körsträcka per
+DeSO, framtagen på samma sätt som körsträckestatistiken (mätarställningar vid
+besiktning i Transportstyrelsens vägtrafikregister).
+
+1. Population
+   Personbilar registrerade på folkbokförda personer, samma avgränsning som
+   TAB6589 (privatleasing och enskild firma ingår; bilar ägda av juridiska
+   personer, t.ex. förmånsbilar, ingår inte).
+   - Bilar i trafik den 31 december 2024 (ska stämma med TAB6589).
+   - Körsträckan avser alla dessa bilars körning under 2024. Om det är enklare
+     kan populationen i stället vara bilar i trafik någon gång under 2024; ange
+     i så fall båda antalen.
+
+2. Geografi
+   Ägarens folkbokföringsadress den 31 december 2024, indelad i DeSO 2025.
+   Samtliga DeSO i kommunerna 1280 Malmö, 1283 Helsingborg och 2180 Gävle
+   (348 områden) samt kommuntotaler.
+
+3. Variabler per DeSO
+   - antal_bilar_31dec          antal personbilar i trafik 31 december 2024
+   - antal_bilar_under_aret     antal personbilar i trafik någon gång 2024
+   - korstracka_km              summa körsträcka 2024 i km, enligt metoden i
+                                Trafikanalys körsträckestatistik
+   - antal_med_matarstallning   antal bilar med mätarställningar som ger
+                                körsträcka för 2024 (täckning)
+   Önskvärt, om det är möjligt inom samma beställning:
+   - samma variabler uppdelade på drivmedel: bensin, diesel, el, laddhybrid,
+     elhybrid, övriga
+   - samma variabler för 2023 och 2025, för att kunna följa utvecklingen.
+
+4. Format
+   CSV-fil, en rad per DeSO och år, kolumner:
+   deso;ar;antal_bilar_31dec;antal_bilar_under_aret;korstracka_km;antal_med_matarstallning
+   Exempel (påhittade värden): 1280C1010;2024;900;1000;10800000;980
+   Celler som skyddas av sekretesskäl markeras "..". Vi behöver inga mikrodata,
+   endast aggregerade värden per område.
+
+5. Användning
+   Uppgifterna används i den öppna beräkningsmodellen Vägvis (GitHub/Streamlit)
+   för att ersätta ett riksmedelvärde för körsträcka med uppmätta värden per
+   område. Källan anges som "SCB, beställd tabell (år), körsträcka för
+   personbilar per DeSO".
+
+Vi tar gärna emot en prisuppgift och en uppskattning av leveranstiden. Om
+uppdraget hellre ska gå via Trafikanalys, som ansvarar för statistiken om
+körsträckor, skickar vi samma förfrågan dit.
+
+Med vänlig hälsning
+[Namn]
+[Organisation]
+[E-post och telefon]
+
+----------------------------------------------------------------------------
+När filen har kommit:
+  python verktyg/importera_korstracka.py deso <filnamn>.csv
+  python verktyg/bygg_underlag.py
+  node kallkod/bygg_appen.cjs
+Verktyget kontrollerar att alla 348 DeSO finns, att bilantalen stämmer med
+TAB6589 (högst 2 % avvikelse) och att körsträckan per bil är rimlig. Skyddade
+celler får kommunens eller rikets värde och redovisas i appen.

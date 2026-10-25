@@ -144,6 +144,19 @@ def validate_observations(value, expected):
     return {r['kod']: r for r in rows}
 
 
+def local_mileage(year=2024):
+    """Uppmätt körsträcka per kommun och DeSO, om den lästs in med verktyg/importera_korstracka.py."""
+    kommun_file, deso_file = RAW/f'korstracka_kommun_{year}.json', RAW/f'korstracka_deso_{year}.json'
+    kommun = read(kommun_file) if kommun_file.exists() else None
+    deso = read(deso_file) if deso_file.exists() else None
+    for value, schema in ((kommun, 'vagvis-korstracka-kommun-1'), (deso, 'vagvis-korstracka-deso-1')):
+        if value and (value.get('schema') != schema or value.get('dataYear') != year or value.get('status') != 'validated_official_data'):
+            raise ValueError('Körsträckeunderlaget har fel schema, år eller status: '+schema)
+    if kommun and set(kommun['cities']) != set(CITIES):
+        raise ValueError('Körsträcka per kommun saknas för någon kommun.')
+    return kommun, ({r['kod']: r for r in deso['rows']} if deso else {}), [f for f in (kommun_file, deso_file) if f.exists()]
+
+
 def municipal_references():
     """Kommunala TTW-referenser definieras på ett ställe: MUNICIPAL_REFERENCES i core.js."""
     out = subprocess.run(['node', '-e', "process.stdout.write(JSON.stringify(require('./kallkod/source/core.js').MUNICIPAL_REFERENCES))"],
@@ -274,7 +287,7 @@ def build(observed=None):
         'measuredLinks': measured, 'importedMeasuredRoads': len(imported)}
     if (RAW/'coast_receipt.json').exists():
         meta['coast'] = read(RAW/'coast_receipt.json')['cities']
-    project = {'schema': 'vagvis-1', 'model': 'territorial', 'title': 'Vägvis 2.2.0 · trafik inom området',
+    project = {'schema': 'vagvis-1', 'model': 'territorial', 'title': 'Vägvis 2.2.2 · trafik inom området',
         'isDemo': False, 'metadata': meta, 'cities': cities, 'areas': areas, 'roads': roads, 'config': config}
     active_path = Path(observed) if observed else RAW/'active_scb_2024.json'
     verified = read(active_path) if active_path.exists() else None
@@ -340,40 +353,50 @@ def build(observed=None):
         if car_data:
             for kod, count in car_data['byDeSO'].items():
                 values[kod]['bil'] = count
+    km_kommun, km_deso, km_files = local_mileage()
     rows = []
     for a in deso:
         v = values[a['id']]
+        km, km_status, km_source = KM, 'transferred_assumption', KM_SOURCE
+        if km_kommun:
+            km, km_status, km_source = km_kommun['cities'][a['city']]['kmPerCar'], 'derived_official', 'RUS_KORSTRACKA_2024'
+        if km_deso.get(a['id'], {}).get('status') == 'observed_register':
+            km, km_status, km_source = km_deso[a['id']]['km'], 'observed_register', 'SCB_KORSTRACKA_DESO_2024'
         flat = [x for polygon in polys(a['geometry']) for x in polygon[0][:-1]]
         x = sum(t[0] for t in flat)/len(flat)
         y = sum(t[1] for t in flat)/len(flat)
         row = {'kod': a['id'], 'kk': a['city'], 'sd': a['regso'], 'rs': a['regso'],
             'hh': v['hh'], 'bef': v['bef'], 'bil': v['bil'], 'bph': v['bil']/v['hh'] if v['hh'] else None,
-            'bphR': v['bil']/v['hh'] if v['hh'] else None, 'km': KM, 'lat': y, 'lon': x, 'd': None,
+            'bphR': v['bil']/v['hh'] if v['hh'] else None, 'km': km, 'lat': y, 'lon': x, 'd': None,
             'dataYear': 2024, 'status': data_status,
             'bilStatus': 'observed_register' if verified or car_data else 'spatial_model_assumption',
             'hhStatus': 'observed_register' if verified else 'spatial_model_assumption',
             'befStatus': 'observed_register' if verified else 'spatial_model_assumption',
             'bphStatus': 'derived_register' if verified else 'derived_mixed' if car_data else 'derived_model',
-            'kmStatus': 'transferred_assumption',
+            'kmStatus': km_status,
             'sources': {'bil': 'SCB_TAB6589_2024' if car_register else 'MUNICIPAL_SPATIAL_PROXY',
                 'hh': 'SCB_TAB6568_2024' if verified else 'MUNICIPAL_HH_SPATIAL_PROXY',
-                'bef': 'SCB_TAB6574_2024' if verified else 'MUNICIPAL_POP_SPATIAL_PROXY', 'km': KM_SOURCE}}
+                'bef': 'SCB_TAB6574_2024' if verified else 'MUNICIPAL_POP_SPATIAL_PROXY', 'km': km_source}}
         if not verified:
             row['proxyResidentialKm'] = lengths.get(a['id'], 0)
             row['proxyWeight'] = row['proxyResidentialKm']/sum(lengths.get(z['id'], 0) for z in deso if z['city'] == a['city'])
         rows.append(row)
+    km_states = {r['kmStatus'] for r in rows}
+    km_level = 'deso' if km_states == {'observed_register'} else 'kommun' if km_states == {'derived_official'} else 'riket' if km_states == {'transferred_assumption'} else 'blandad'
     bmeta = {'created': '2026-10-25', 'dataYear': 2024, 'desoVersion': '2025', 'dataStatus': data_status,
         'label': 'SCB register per DeSO 2025' if verified else 'Registerbaserade bilantal per DeSO 2024; hushåll och invånare har modellerad områdesfördelning.' if car_data else 'Illustrativt startscenario – saknar verifierade registertal för hushållens bilar',
         'fieldStatuses': {'bil': 'observed_register' if verified or car_data else 'spatial_model_assumption',
             'hh': 'observed_register' if verified else 'spatial_model_assumption',
-            'bef': 'observed_register' if verified else 'spatial_model_assumption', 'km': 'transferred_assumption'},
+            'bef': 'observed_register' if verified else 'spatial_model_assumption', 'km': km_states.pop() if len(km_states) == 1 else 'mixed'},
         'carRegister': car_register['sourceReceipt'] if car_register else None,
         'districtGrouping': meta['districtGrouping'], 'sourceReceipts': baseline.get('sourceReceipts', []),
         'municipalTotals': baseline.get('cities', {}), 'annualKmSource': KM_SOURCE,
         'distributionMethod': 'SCB register per DeSO 2025' if verified else 'Bilar: SCB-register per DeSO 2025. Hushåll och invånare: modellerad fördelning efter OSM residential-väglängd.' if car_data else 'Modellerad fördelning efter OSM residential-väglängd; inte validerad som hushållsproxy.',
         'cityBaselines': baseline.get('cities', {}), 'geographyProvenance': source_files,
         'annualKm': {'value': KM, 'year': 2024, 'status': 'transferred_assumption', 'source': KM_SOURCE,
-            'definition': KM_DEFINITION},
+            'definition': KM_DEFINITION, 'level': km_level,
+            'byCity': {c: sum(r['bil']*r['km'] for r in rows if r['kk'] == c)/max(1, sum(r['bil'] for r in rows if r['kk'] == c)) for c in CITIES},
+            'kommun': km_kommun, 'deso': {'rows': len(km_deso), 'observed': sum(r.get('status') == 'observed_register' for r in km_deso.values())} if km_deso else None},
         'spatialProxy': None if verified else {'status': 'spatial_model_assumption', 'variable': 'OSM residential road length',
             'formula': 'w_i=L_residential,i/sum_city(L_residential); H_i=w_i H_city; N_i=w_i N_city. P_i hämtas direkt från SCB TAB6589.' if car_data else 'w_i=L_residential,i/sum_city(L_residential); H_i=w_i H_city; P_i=w_i P_city; N_i=w_i N_city',
             'zeroResidentialLength': zero_length,
@@ -381,13 +404,17 @@ def build(observed=None):
             'warning': 'Hushåll och invånare på DeSO/RegSO är fördelade modellvärden. Bilantalet är observerat SCB-registertal och fördelas inte efter väggeometri. Proxyvikt noll betyder inte noll bilar eller utsläpp. Bilar per hushåll är en blandad härledning; kvoten saknas när uppskattade hushåll är noll.' if car_data else 'Hushåll, bilar och invånare på DeSO/RegSO är fördelade modellvärden, inte observerad lokal statistik. Samma vikter ger konstant bilinnehav och konstant körsträcka inom varje kommun. Bostadsväglängd har inte validerats som hushållsproxy.'},
         'notes': ['V_i=P_i K_i. Aktivitet och livscykelfaktorer redovisas separat. Bilar per hushåll redovisas endast när nämnaren är positiv.',
             'Bilarnas körning kan ske både inom och utanför hemkommunen. Företagsägda fordon och genomfart ingår inte i hushållsmodellens avsedda bestånd.',
-            'K=12 753 km är ett härlett riksmedelvärde för privatägda bilar per bil i årsslutsbeståndet, inte uppmätt körsträcka i varje DeSO eller kommun.']}
+            {'deso': 'Körsträckan per DeSO är SCB:s sammanställning av mätarställningar vid besiktning för bilar på folkbokförda personer i området. Den anger hur långt bilarna kör, inte var.',
+             'kommun': 'Körsträckan per kommun bygger på RUS/SCB:s körsträckedata, överförd till privatägda bilar i årsslutsbeståndet med kvoten mot riket. Variation inom kommunen ingår inte.',
+             'riket': 'K=12 753 km är ett härlett riksmedelvärde för privatägda bilar per bil i årsslutsbeståndet, inte uppmätt körsträcka i varje DeSO eller kommun. Ingen faktor för avstånd till centrum används.',
+             'blandad': 'Körsträckan är uppmätt per DeSO där SCB:s värden finns; skyddade celler har kommunens eller rikets värde.'}[km_level]]}
     bmeta['coast'] = meta.get('coast', {})
-    household = {'schema': 'vagvis-1', 'model': 'household', 'title': 'Vägvis 2.2.0 · hushållens bilar',
+    household = {'schema': 'vagvis-1', 'model': 'household', 'title': 'Vägvis 2.2.2 · hushållens bilar',
         'isDemo': False, 'metadata': bmeta, 'cities': copy.deepcopy(cities), 'areas': copy.deepcopy(areas),
         'roads': [], 'd': rows, 'config': copy.deepcopy(config)}
     household['config']['phevElectric'] = 0.47
-    household['config']['household'] = {'kmPerCar': KM, 'uncertainty': {'distance': 0.15, 'carStock': 0, 'allocation': 0.5}}
+    household['config']['household'] = {'kmPerCar': KM, 'kmMode': 'local',
+        'uncertainty': {'distance': 0.15, 'carStock': 0, 'allocation': 0.5, 'distanceLocal': 0.05, 'allocationLocal': 0.05}}
     if verified or car_data:
         hcfg = household['config'].setdefault('household', {})
         hcfg.setdefault('uncertainty', {})['carStock'] = 0
@@ -415,7 +442,7 @@ def build(observed=None):
     summary = {city: {'deso': COUNTS[city], 'regso': sum(a['city'] == city and a['level'] == 'district' for a in areas),
         'hh': sum(r['hh'] for r in rows if r['kk'] == city), 'bef': sum(r['bef'] for r in rows if r['kk'] == city),
         'bil': sum(r['bil'] for r in rows if r['kk'] == city), 'vkm': sum(r['bil']*r['km'] for r in rows if r['kk'] == city)} for city in CITIES}
-    receipt = {'schemaVersion': 1, 'modelVersion': '2.2.0', 'dataYear': 2024, 'desoVersion': '2025',
+    receipt = {'schemaVersion': 1, 'modelVersion': '2.2.2', 'dataYear': 2024, 'desoVersion': '2025',
         'status': data_status, 'dataAvailability': 'SCB TAB6589: observerade bilantal i trafik 2024 för samtliga 348 DeSO aktiverade och avstämda mot kommunrader. Hushåll och invånares lokala fördelning är fortfarande proxy.' if car_data else 'Komplett SCB-uttag har ännu inte hämtats i denna leverans.' if not verified else 'SCB-register 2024 för samtliga 348 DeSO: hushåll (TAB6568), befolkning (TAB6574) och personbilar i trafik (TAB6589), avstämda mot kommunraderna.',
         'dataFiles': source_files+[digest(RAW/'municipal_baseline_2024.json')] if not verified else source_files+[digest(active_path)],
         'builtFiles': [digest(DATA/name) for name in ('omraden.json', 'project.json', 'household-project.json', 'ytor.json', 'land.json')],
@@ -424,6 +451,7 @@ def build(observed=None):
         'fieldStatuses': bmeta['fieldStatuses'], 'carRegister': bmeta['carRegister'],
         'coast': read(RAW/'coast_receipt.json') if (RAW/'coast_receipt.json').exists() else {'status':'unavailable'},
         'refresh': 'python verktyg/hamta_underlag.py --only scb --activate. Endast komplett validerat uttag byter baslinje. Ett misslyckat uttag behåller befintliga data.'}
+    receipt['dataFiles'].extend(digest(f) for f in km_files)
     if car_register:
         receipt['dataFiles'].extend([digest(RAW/'scb/TAB6589_sv.zip'), digest(RAW/'scb/active_cars_2024.json'), digest(RAW/'scb/car_import_receipt_2024.json')])
     write(ROOT/'underlag/datakvitto.json', receipt)

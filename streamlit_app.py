@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from vagvis_sidor import page_html  # noqa: E402
 
-st.set_page_config(page_title="Vägvis 2.2.0", page_icon="🚦", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Vägvis 2.2.2", page_icon="🚦", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("""<style>
 [data-testid="stHeader"], [data-testid="stSidebar"], footer {display:none;}
 .block-container {padding:0 !important;max-width:100% !important;}

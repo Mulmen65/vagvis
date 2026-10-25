@@ -46,6 +46,15 @@
   "verification": "Primär-PDF kontrollerad. Kategorietiketterna i figur 2 saknas i textlagret; tolkningen är förenlig med de uttryckliga summorna 78 % och drygt 13 %."
  },
  {
+  "id": "RUS_KORSTRACKA",
+  "short": "RUS/SCB körsträckedata",
+  "title": "Regional utveckling och samverkan i miljömålssystemet (RUS) och SCB (2025). Körsträckedata per kommun, tabell 2 Körsträcka, till år 2025.",
+  "url": "https://www.rus.se/statistik-och-indikatorer/korstrackor/",
+  "use": "Körsträcka per bil och per invånare för personbilar registrerade i kommunen, beräknad av SCB ur mätarställningar vid besiktning (Transportstyrelsens vägtrafikregister). 2024: Malmö 1 064, Helsingborg 1 156 och Gävle 1 121 mil per bil; riket 1 141. Inläst från underlag/raw/rus/Tabell-2-Korstracka-till-ar-2025.xlsx och överförd till privatägda bilar med kvoten mot riket: 11 892, 12 917 respektive 12 521 km.",
+  "accessed": "2026-10-25",
+  "verification": "Kommunnivå. Avser alla personbilar registrerade i kommunen, även företagsägda; registreringskommun är inte alltid hemkommun. Andelen företagsbilar vid årsskiftet (RUS tabell 1 jämfört med SCB TAB6589) är 20 % i Malmö, 12 % i Helsingborg och 9 % i Gävle mot 12 % i riket; en korrigering för detta ändrar kommunvärdena med högst cirka 3 %. Värden för 2025 är beräknade med ny metod och inte jämförbara med 2024."
+ },
+ {
   "id": "TV_UTSLAPP_2025",
   "short": "Trafikverket 2026",
   "title": "Trafikverket (2026). PM Vägtrafikens utsläpp 2025.",
@@ -219,7 +228,7 @@
  {
   "id": "ASSUMPTIONS",
   "short": "Vägvis 2026",
-  "title": "Vägvis (2026). Redovisade modellval, version 2.2.0.",
+  "title": "Vägvis (2026). Redovisade modellval, version 2.2.2.",
   "url": "",
   "use": "Eget parameterregister i underlag/evidensregister.json. Värden med denna källa är modellantaganden utan direkt extern belägg.",
   "accessed": "2026-10-25",

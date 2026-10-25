@@ -36,15 +36,17 @@ function aggregateClosure(agg,cities){
 }
 async function main(){
   await check('Körbar källkod är självständig och har rätt version',()=>{
-    assert.equal(V.VERSION,'2.2.0');assert.equal(S.VERSION,'2.2.0');assert.equal(H.VERSION,'2.2.0');
-    const sources=fs.readdirSync(path.join(root,'kallkod/source'));
+    assert.equal(V.VERSION,'2.2.2');assert.equal(S.VERSION,'2.2.2');assert.equal(H.VERSION,'2.2.2');
+    // Endast filer som skalet laddar får finnas i kallkod/source; äldre modellers filer ska inte följa med.
+    const sources=fs.readdirSync(path.join(root,'kallkod/source')).sort();
+    const loaded=[...read('kallkod/source/shell.html').matchAll(/\{\{kallkod\/source\/([^}]+)\}\}/g)].map(m=>m[1]);
+    assert.deepEqual(sources,[...loaded,'shell.html'].sort(),'Okända filer i kallkod/source');
     for(const file of sources){
       const source=read('kallkod/source/'+file);
-      assert.ok(!/(?:bilmodell|v[67]-(?:berakning|atgarder|mc|osakerhet)|embedded-v[67]meta)/i.test(source),'Främmande modellberoende i '+file);
       if(file.endsWith('.js'))new vm.Script(source,{filename:file});
     }
-    assert.ok(!sources.some(file=>/^v[67]-/.test(file)));
-    assert.ok(!fs.existsSync(path.join(root,'app','Bilmodell_v7.html')));
+    const pages=fs.readdirSync(path.join(root,'app')).filter(f=>f.endsWith('.html')).sort();
+    assert.ok(pages.every(f=>['Metod_och_anvandning.html','Trafikdata_till_Malmo.html','Vagvis.html'].includes(f)),'Okända sidor i app/: '+pages.join(', '));
   });
   await check('Byggd HTML har körbar JavaScript och laddar beräkningsmoduler i rätt ordning',()=>{
     const html=read('app/Vagvis.html');
@@ -159,6 +161,23 @@ async function main(){
     assert.throws(()=>H.validate({...p,d:[]},c));
     const wrongYear=V.clone(p);wrongYear.metadata.dataYear=2023;assert.throws(()=>H.validate(wrongYear,c),/år/);
   });
+  await check('B använder uppmätt körsträcka per DeSO, därefter kommunvärde och sist riksmedelvärdet',async()=>{
+    const p={model:'household',metadata:{dataYear:2024,dataStatus:'observed_register'},d:[
+      {kod:'1280C1000',kk:'1280',sd:'1280R1',hh:100,bef:200,bil:100,km:8000,kmStatus:'observed_register',dataYear:2024},
+      {kod:'1280C1010',kk:'1280',sd:'1280R1',hh:50,bef:100,bil:50,km:11000,kmStatus:'derived_official',dataYear:2024},
+      {kod:'1280C1020',kk:'1280',sd:'1280R1',hh:50,bef:100,bil:50,km:99999,kmStatus:'transferred_assumption',dataYear:2024}
+    ]},c=toyConfig();c.household={kmPerCar:12753};
+    const d=H.deterministic(p,c);
+    near(d.baseMap.get('city|1280').vkm,100*8000+50*11000+50*12753,'Hierarki för körsträcka');
+    assert.equal(H.kmLevel(p.d[0],H.config(c)),'deso');assert.equal(H.kmLevel(p.d[1],H.config(c)),'kommun');assert.equal(H.kmLevel(p.d[2],H.config(c)),'riket');
+    const national=H.deterministic(p,{...c,household:{kmPerCar:12753,kmMode:'national'}});
+    near(national.baseMap.get('city|1280').vkm,200*12753,'Samma riksvärde för alla');
+    assert.throws(()=>H.config({...c,household:{kmPerCar:12753,kmMode:'centrum'}}),/Körsträckeläget/);
+    const all={...p,d:p.d.map(r=>({...r,km:9000,kmStatus:'observed_register'}))};
+    const sim=await H.simulate(all,{...c,iterations:400,household:{kmPerCar:12753,uncertainty:{distanceLocal:.05,allocationLocal:.05}}});
+    const city=sim.results.find(r=>r.key==='city|1280');
+    assert.ok(city.base.p975/city.base.p025<1.6,'Uppmätt körsträcka ska ge smalare intervall än riksvärdet');
+  });
   await check('B tillämpar total körningsförändring utan ett extra bilinnehavspåslag',()=>{
     const p={metadata:{dataYear:2024},d:[{kod:'1280C1000',kk:'1280',sd:'1280R1',hh:100,bef:200,bil:100}]},c=toyConfig();
     c.household={kmPerCar:1000};c.areaScenario={bilpool:{enabled:true,preset:'carsharing_pbl2015'}};
@@ -200,8 +219,12 @@ async function main(){
   await check('Registerbilar och skattade nämnare har skilda källstatusar i B och CSV',()=>{
     const p=load('kallkod/data/household-project.json'),c=H.config(p.config),d=H.deterministic(p,c),r=H.makeResult(d),observed=r.dataStatus==='observed_register';
     assert.ok(['register_cars_partial','observed_register'].includes(r.dataStatus));assert.equal(c.household.uncertainty.carStock,0);
-    for(const [city,cars,vkm] of [['1280',100524,100524*12753],['1283',58000,58000*12753],['2180',43311,43311*12753]]){
-      const row=d.baseMap.get('city|'+city);near(row.cars,cars,'Kommunens observerade bilar');near(row.vkm,vkm,'Observerade bilar × överförd körsträcka');
+    // Körsträcka: inläst kommunvärde (RUS/SCB) om det finns, annars riksmedelvärdet 12 753 km.
+    const kommunKm=fs.existsSync(path.join(root,'underlag/raw/korstracka_kommun_2024.json'))?JSON.parse(read('underlag/raw/korstracka_kommun_2024.json')).cities:null;
+    for(const [city,cars] of [['1280',100524],['1283',58000],['2180',43311]]){
+      const km=kommunKm?kommunKm[city].kmPerCar:12753,vkm=cars*km;
+      assert.ok(p.d.filter(x=>x.kk===city).every(x=>H.kmOf(x,c)===km),'Körsträcka per bil i '+city);
+      const row=d.baseMap.get('city|'+city);near(row.cars,cars,'Kommunens observerade bilar');near(row.vkm,vkm,'Observerade bilar × körsträcka');
       const exported=V.resultCSV(r,city,'city').replace(/^\uFEFF/,'').split(/\r?\n/).map(line=>line.split(';').map(cell=>cell.slice(1,-1).replaceAll('""','"')));
       const headers=exported[0],values=exported[1],cell=name=>{assert.ok(headers.includes(name),'CSV-fält '+name);return values[headers.indexOf(name)];};
       assert.equal(cell('personbilar_bas'),cars.toFixed(3).replace('.',','));assert.equal(cell('personbilar_scenario'),cars.toFixed(3).replace('.',','));
@@ -210,7 +233,7 @@ async function main(){
       assert.equal(cell('status'),observed?'REGISTERBASERAD HUSHÅLLSMODELL LCA':'REGISTERBILAR MED SKATTAT HUSHÅLLSUNDERLAG');
       const resultRow=r.results.find(value=>value.key==='city|'+city);assert.deepEqual(resultRow.inputStatus,{cars:'observed_register',households:est,population:est});
     }
-    const zeroProxy=d.baseMap.get('deso|1280|1280C2850');near(zeroProxy.cars,545,'Nollproxyområdets observerade bilar');near(zeroProxy.vkm,545*12753,'Nollproxyområdets körning');if(!observed)assert.equal(zeroProxy.households,0);
+    const zeroProxy=d.baseMap.get('deso|1280|1280C2850');near(zeroProxy.cars,545,'Nollproxyområdets observerade bilar');near(zeroProxy.vkm,545*(kommunKm?kommunKm['1280'].kmPerCar:12753),'Nollproxyområdets körning');if(!observed)assert.equal(zeroProxy.households,0);
   });
   await check('B:s aktiva startunderlag är fristående och summerar till kommunnivå',()=>{
     const p=load('kallkod/data/household-project.json'),c=H.config(p.config||json('kallkod/data/config.json')),d=H.deterministic(p,c);

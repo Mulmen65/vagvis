@@ -1,0 +1,45 @@
+{
+ "schema": "vagvis-korstracka-kommun-1",
+ "dataYear": 2024,
+ "status": "validated_official_data",
+ "level": "kommun",
+ "unit": "km per privat personbil i årsslutsbeståndet",
+ "method": "K_kommun = 12 753 km × (mil per bil i kommunen / mil per bil i riket), RUS/SCB körsträckedata tabell 2.",
+ "national": {
+  "rusMilPerCar": 1141.4964327279097,
+  "kmPerCar": 12753
+ },
+ "cities": {
+  "1280": {
+   "name": "Malmö",
+   "rusMilPerCar": 1064.4024564644249,
+   "ratioToNational": 0.9324623590112776,
+   "kmPerCar": 11892
+  },
+  "1283": {
+   "name": "Helsingborg",
+   "rusMilPerCar": 1156.137230044405,
+   "ratioToNational": 1.0128259685240604,
+   "kmPerCar": 12917
+  },
+  "2180": {
+   "name": "Gävle",
+   "rusMilPerCar": 1120.7141979196506,
+   "ratioToNational": 0.9817938679329953,
+   "kmPerCar": 12521
+  }
+ },
+ "source": {
+  "publisher": "RUS/SCB",
+  "table": "Tabell 2 Körsträcka",
+  "url": "https://www.rus.se/statistik-och-indikatorer/korstrackor/",
+  "file": "underlag/raw/rus/Tabell-2-Korstracka-till-ar-2025.xlsx",
+  "sha256": "6dabf2c9a202ae44b438b304b0e63c8166bddf1b20ff3aa0669a335a57b229c5",
+  "sheet": "Tabell 2"
+ },
+ "imported": "2026-10-25",
+ "caveats": [
+  "Kommunvärdet avser bilar registrerade i kommunen, även företagsägda; registreringskommun är inte alltid hemkommun.",
+  "Överföringen till privatägda bilar antar samma kvot mellan kommun och riket för privat- och företagsägda bilar."
+ ]
+}
