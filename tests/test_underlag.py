@@ -150,7 +150,7 @@ class PrimaryDataTests(unittest.TestCase):
 
     def test_source_receipt_and_hashes_match_actual_bytes(self):
         receipt = read("underlag/datakvitto.json")
-        self.assertEqual(receipt["modelVersion"], "2.2.2")
+        self.assertEqual(receipt["modelVersion"], "2.2.3")
         self.assertEqual(receipt["dataYear"], 2024)
         self.assertEqual(receipt["desoVersion"], "2025")
         for entry in receipt["dataFiles"] + receipt["builtFiles"]:
@@ -193,6 +193,22 @@ class PrimaryDataTests(unittest.TestCase):
         self.assertEqual(row["bil"], 545)
         self.assertIsNone(row["bph"])
         self.assertIsNone(row["bphR"])
+
+
+class RegsoNameTests(unittest.TestCase):
+    def test_every_regso_gets_one_official_name_from_tab6589(self):
+        sys.path.insert(0, str(ROOT / "verktyg"))
+        import bygg_underlag
+        geo = read("underlag/raw/scb_deso_2025.geojson.gz")
+        deso2reg = {f["properties"]["id"]: f["properties"]["regso"] for f in geo["features"]}
+        names = bygg_underlag.regso_names(deso2reg)
+        self.assertEqual(set(names), set(deso2reg.values()))
+        self.assertEqual(len(names), 144)
+        self.assertEqual(names["1280R081"], "Västra hamnen sydöst")
+        self.assertFalse(any(n.startswith("RegSO-") for n in names.values()))
+        omraden = read("kallkod/data/omraden.json")
+        packed = {d[0]["id"]: d[0]["name"] for d in omraden["districts"]}
+        self.assertEqual(packed, names)
 
 
 class UploadedCarRegisterTests(unittest.TestCase):
@@ -392,11 +408,11 @@ class PackageTests(unittest.TestCase):
                     modules.append(node.module or "")
             self.assertFalse(any(module.startswith(("requests", "urllib", "httpx")) for module in modules))
             self.assertNotIn("urlopen", text)
-        self.assertIn('page_title="Vägvis 2.2.2"', (ROOT / "streamlit_app.py").read_text())
+        self.assertIn('page_title="Vägvis 2.2.3"', (ROOT / "streamlit_app.py").read_text())
 
     def test_evidence_has_unique_parameters_sources_and_no_orphan_references(self):
         registry = read("underlag/evidensregister.json")
-        self.assertEqual(registry["version"], "2.2.2")
+        self.assertEqual(registry["version"], "2.2.3")
         for group in ("parameters", "sources"):
             ids = [row["id"] for row in registry[group]]
             self.assertEqual(len(ids), len(set(ids)), group)

@@ -60,7 +60,7 @@ async function main(){
  assert.throws(()=>R.expectedCodes({...project,d:project.d.slice(1)}),/Hushållsraderna/);
  const browser=vm.createContext({AbortController,URLSearchParams,TextEncoder,setTimeout,clearTimeout,console});
  for(const name of ['core.js','scenarios.js','households.js','register.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../kallkod/source',name),'utf8'),browser,{filename:name});
- assert.equal(browser.VagvisRegister.VERSION,'2.2.2');assert.equal(browser.VagvisHouseholds.VERSION,'2.2.2');
+ assert.equal(browser.VagvisRegister.VERSION,'2.2.3');assert.equal(browser.VagvisHouseholds.VERSION,'2.2.3');
  const browserMock=fakeFetch(),browserResult=await browser.VagvisRegister.fetch(project,{fetchImpl:browserMock.fetchImpl});
  assert.equal(browserMock.requests,45);assert.equal(browserResult.d[0].bil,8);assert.equal(browserResult.metadata.dataStatus,'observed_register');
  const wrongConfig=structuredClone(project);wrongConfig.config.year=2023;

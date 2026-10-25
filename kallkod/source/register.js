@@ -6,7 +6,7 @@
  else root.VagvisRegister=factory(root.VagvisHouseholds);
 })(typeof globalThis!=='undefined'?globalThis:this,function(H){
  'use strict';
- const VERSION='2.2.2',BASE='https://statistikdatabasen.scb.se/api/v2';
+ const VERSION='2.2.3',BASE='https://statistikdatabasen.scb.se/api/v2';
  const COUNTS=Object.freeze({'1280':209,'1283':84,'2180':55});
  const TABLES=Object.freeze([
   {id:'TAB6568',field:'hh',path:'START__BE__BE0101__BE0101Y/HushallDesoTyp',status:null},

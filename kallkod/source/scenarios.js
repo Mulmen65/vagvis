@@ -9,7 +9,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  const VERSION = '2.2.2';
+  const VERSION = '2.2.3';
   const KEYS = ['cars', 'vkm', 'energy'];
   const ZERO = Object.freeze({ cars: 0, vkm: 0, energy: 0 });
   const clone = value => JSON.parse(JSON.stringify(value));

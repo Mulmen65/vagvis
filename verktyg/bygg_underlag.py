@@ -68,6 +68,42 @@ def area_ha(g):
     return total/10000
 
 
+def regso_names(deso2reg):
+    """Officiella RegSO-namn ur SCB TAB6589 (som finns i paketet).
+
+    Tabellens RegSO-rader har bara namn ("Malmö (RegSO-Västra hamnen sydöst)"), inte kod. Koden
+    kopplas genom att summera DeSO-raderna per RegSO för varje år och status (sex värden) och
+    jämföra med namnraderna. Endast entydiga träffar används; övriga behåller koden som namn.
+    """
+    import csv
+    import io
+    import re
+    import zipfile
+    from collections import Counter, defaultdict
+    path = RAW/'scb/TAB6589_sv.zip'
+    if not path.exists():
+        return {}
+    with zipfile.ZipFile(path) as z:
+        rows = list(csv.DictReader(io.StringIO(z.read('TAB6589_sv.csv').decode('cp1252'), newline='')))
+    value = list(rows[0])[-1]
+    by_code, by_name = defaultdict(Counter), defaultdict(Counter)
+    pattern = re.compile(r'^(%s) \((.+)\)$' % '|'.join(CITIES.values()))
+    for r in rows:
+        key = (r['år'], r['status'])
+        if r['region'] in deso2reg:
+            by_code[deso2reg[r['region']]][key] += int(r[value])
+        else:
+            m = pattern.match(r['region'])
+            if m:
+                by_name[(m.group(1), m.group(2))][key] += int(r[value])
+    names = {}
+    for code, signature in by_code.items():
+        hits = [n for (city, n), s in by_name.items() if city == CITIES[code[:4]] and s == signature]
+        if len(hits) == 1:
+            names[code] = re.sub(r'^RegSO-', '', hits[0])
+    return names
+
+
 def geography():
     fc = read(RAW/'scb_deso_2025.geojson.gz')
     areas = [{**f['properties'], 'geometry': f['geometry']} for f in fc['features']]
@@ -87,6 +123,15 @@ def geography():
         g['geometry']['coordinates'].extend(copy.deepcopy(polys(a['geometry'])))
     for city, n in COUNTS.items():
         assert sum(a['city'] == city for a in areas) == n
+    names = regso_names({a['id']: a['regso'] for a in areas})
+    for a in areas:
+        if a['regso'] in names:
+            a['regsoName'] = names[a['regso']]
+            a['name'] = a['id']+' ('+names[a['regso']]+')'
+    for code, g in groups.items():
+        if code in names:
+            g['name'] = names[code]
+            g['source'] = 'SCB: RegSO-kod i DeSO 2025-geometri; namn ur SCB TAB6589 (kopplat via summor per RegSO)'
     # Geometrin sist och koordinater med 6 decimaler (≈0,1 m) så att paketfilerna kan packas förlustfritt.
     out = []
     for a in sorted(areas, key=lambda a: a['id']) + sorted(groups.values(), key=lambda a: a['id']):
@@ -287,7 +332,7 @@ def build(observed=None):
         'measuredLinks': measured, 'importedMeasuredRoads': len(imported)}
     if (RAW/'coast_receipt.json').exists():
         meta['coast'] = read(RAW/'coast_receipt.json')['cities']
-    project = {'schema': 'vagvis-1', 'model': 'territorial', 'title': 'Vägvis 2.2.2 · trafik inom området',
+    project = {'schema': 'vagvis-1', 'model': 'territorial', 'title': 'Vägvis 2.2.3 · trafik inom området',
         'isDemo': False, 'metadata': meta, 'cities': cities, 'areas': areas, 'roads': roads, 'config': config}
     active_path = Path(observed) if observed else RAW/'active_scb_2024.json'
     verified = read(active_path) if active_path.exists() else None
@@ -377,6 +422,8 @@ def build(observed=None):
             'sources': {'bil': 'SCB_TAB6589_2024' if car_register else 'MUNICIPAL_SPATIAL_PROXY',
                 'hh': 'SCB_TAB6568_2024' if verified else 'MUNICIPAL_HH_SPATIAL_PROXY',
                 'bef': 'SCB_TAB6574_2024' if verified else 'MUNICIPAL_POP_SPATIAL_PROXY', 'km': km_source}}
+        if a.get('regsoName'):
+            row['name'], row['regsoName'] = a['name'], a['regsoName']
         if not verified:
             row['proxyResidentialKm'] = lengths.get(a['id'], 0)
             row['proxyWeight'] = row['proxyResidentialKm']/sum(lengths.get(z['id'], 0) for z in deso if z['city'] == a['city'])
@@ -409,7 +456,7 @@ def build(observed=None):
              'riket': 'K=12 753 km är ett härlett riksmedelvärde för privatägda bilar per bil i årsslutsbeståndet, inte uppmätt körsträcka i varje DeSO eller kommun. Ingen faktor för avstånd till centrum används.',
              'blandad': 'Körsträckan är uppmätt per DeSO där SCB:s värden finns; skyddade celler har kommunens eller rikets värde.'}[km_level]]}
     bmeta['coast'] = meta.get('coast', {})
-    household = {'schema': 'vagvis-1', 'model': 'household', 'title': 'Vägvis 2.2.2 · hushållens bilar',
+    household = {'schema': 'vagvis-1', 'model': 'household', 'title': 'Vägvis 2.2.3 · hushållens bilar',
         'isDemo': False, 'metadata': bmeta, 'cities': copy.deepcopy(cities), 'areas': copy.deepcopy(areas),
         'roads': [], 'd': rows, 'config': copy.deepcopy(config)}
     household['config']['phevElectric'] = 0.47
@@ -442,7 +489,7 @@ def build(observed=None):
     summary = {city: {'deso': COUNTS[city], 'regso': sum(a['city'] == city and a['level'] == 'district' for a in areas),
         'hh': sum(r['hh'] for r in rows if r['kk'] == city), 'bef': sum(r['bef'] for r in rows if r['kk'] == city),
         'bil': sum(r['bil'] for r in rows if r['kk'] == city), 'vkm': sum(r['bil']*r['km'] for r in rows if r['kk'] == city)} for city in CITIES}
-    receipt = {'schemaVersion': 1, 'modelVersion': '2.2.2', 'dataYear': 2024, 'desoVersion': '2025',
+    receipt = {'schemaVersion': 1, 'modelVersion': '2.2.3', 'dataYear': 2024, 'desoVersion': '2025',
         'status': data_status, 'dataAvailability': 'SCB TAB6589: observerade bilantal i trafik 2024 för samtliga 348 DeSO aktiverade och avstämda mot kommunrader. Hushåll och invånares lokala fördelning är fortfarande proxy.' if car_data else 'Komplett SCB-uttag har ännu inte hämtats i denna leverans.' if not verified else 'SCB-register 2024 för samtliga 348 DeSO: hushåll (TAB6568), befolkning (TAB6574) och personbilar i trafik (TAB6589), avstämda mot kommunraderna.',
         'dataFiles': source_files+[digest(RAW/'municipal_baseline_2024.json')] if not verified else source_files+[digest(active_path)],
         'builtFiles': [digest(DATA/name) for name in ('omraden.json', 'project.json', 'household-project.json', 'ytor.json', 'land.json')],

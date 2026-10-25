@@ -1,0 +1,116 @@
+{
+ "modelVersion": "2.2.3",
+ "datum": "2026-10-25",
+ "kontroller": [
+  {
+   "kommando": "node tests/test_modell.cjs",
+   "resultat": "godkänd",
+   "sekunder": 65.5,
+   "sammanfattning": "27 kontroller godkända."
+  },
+  {
+   "kommando": "node tests/test_register.cjs",
+   "resultat": "godkänd",
+   "sekunder": 1.5,
+   "sammanfattning": "Register import fixtures passed:45requests,348complete rows, elimination and sex partition, data/unit/year/status guards, CORS/HTTP/cancel, atomic success/failure."
+  },
+  {
+   "kommando": "python3 -m unittest discover -s tests -p 'test_*.py'",
+   "resultat": "godkänd",
+   "sekunder": 24.5,
+   "sammanfattning": "36 Python-tester godkända (OK)."
+  },
+  {
+   "kommando": "node tests/kontrollera_granssnitt.cjs",
+   "resultat": "godkänd",
+   "sekunder": 9.9,
+   "sammanfattning": "17 verkliga webbläsarkontroller godkända."
+  },
+  {
+   "kommando": "node verktyg/kalibrera_fordonsfaktorer.cjs",
+   "resultat": "godkänd",
+   "sekunder": 0.1,
+   "sammanfattning": "Alla fordonsklasser återger Trafikverkets nationella direktutsläpp per fordonskm 2024."
+  }
+ ],
+ "alla_godkanda": true,
+ "nyckeltal": {
+  "Malmö": {
+   "A_livscykel_t": 424876,
+   "A_TTW_t": 279650,
+   "A_intervall_95_t": [
+    368027,
+    498093
+   ],
+   "A_okalibrerad_TTW_t": 273020,
+   "referens_TTW_t": 279650,
+   "kalibreringsfaktor": 1.0251,
+   "B_livscykel_t": 272277,
+   "B_intervall_95_t": [
+    218010,
+    343989
+   ],
+   "B_bilar": 100524,
+   "hushall": 172941,
+   "folkmangd": 365644
+  },
+  "Helsingborg": {
+   "A_livscykel_t": 312690,
+   "A_TTW_t": 205000,
+   "A_intervall_95_t": [
+    248881,
+    392320
+   ],
+   "A_okalibrerad_TTW_t": 246115,
+   "referens_TTW_t": 205000,
+   "kalibreringsfaktor": 0.8329,
+   "B_livscykel_t": 170638,
+   "B_intervall_95_t": [
+    137372,
+    215382
+   ],
+   "B_bilar": 58000,
+   "hushall": 70852,
+   "folkmangd": 152091
+  },
+  "Gävle": {
+   "A_livscykel_t": 297809,
+   "A_TTW_t": 194700,
+   "A_intervall_95_t": [
+    230295,
+    387104
+   ],
+   "A_okalibrerad_TTW_t": 398797,
+   "referens_TTW_t": 194700,
+   "kalibreringsfaktor": 0.4882,
+   "B_livscykel_t": 123516,
+   "B_intervall_95_t": [
+    98523,
+    155524
+   ],
+   "B_bilar": 43311,
+   "hushall": 50993,
+   "folkmangd": 103838
+  }
+ },
+ "livscykelfaktor_personbil_g_per_fkm": {
+  "A": 229.97,
+  "B": 227.76
+ },
+ "underlag": {
+  "hushall_och_folkmangd": "SCB TAB6568/TAB6574 2024, inlästa 2026-10-25",
+  "bilar": "SCB TAB6589 2024",
+  "simuleringar": 3000,
+  "seed": 19062026,
+  "korstracka_B": {
+   "niva": "kommun",
+   "kalla": "RUS/SCB körsträckedata tabell 2 (underlag/raw/rus/)",
+   "km_per_privat_bil": {
+    "Malmö": 11892,
+    "Helsingborg": 12917,
+    "Gävle": 12521
+   }
+  },
+  "omradesnamn": "RegSO-namn ur SCB TAB6589, 144 av 144 entydigt kopplade"
+ }
+}

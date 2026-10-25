@@ -1,4 +1,4 @@
-# Vägvis 2.2.2 för GitHub och Streamlit
+# Vägvis 2.2.3 för GitHub och Streamlit
 
 Vägvis uppskattar vägtrafikens klimatpåverkan med livscykelperspektiv i Malmö, Helsingborg och Gävle. Paketet innehåller läsbar beräkningskod, data, källregister, importverktyg, tester och manual. Det körs lokalt eller via Streamlit utan Netlify-krediter, API-nycklar eller AI-tjänster.
 
@@ -8,6 +8,11 @@ Två självständiga modeller ingår:
 - **B – hushållens bilar:** registrerade personbilar per DeSO × årlig körsträcka, tilldelat bilarnas hemområde. Körning utanför kommunen ingår.
 
 A och B har olika systemgränser och ska inte summeras.
+
+## Nytt i 2.2.3
+
+- **Stegvis beräkning i modell B** under *Så räknas resultatet*: hushåll och bilar, bilar per hushåll, körsträcka per bil, fordonskilometer och livscykelutsläpp, med räkneexempel för valt område och numrerade källor. Texterna beskriver den aktuella metoden (SCB-register 2024, uppmätt körsträcka per kommun). Uppräkning för förmånsbilar och körsträcka efter avstånd till centrum används inte.
+- **Officiella RegSO-namn** (t.ex. *Västra hamnen sydöst*) i listor, kartor och tabeller. Namnen kommer från SCB TAB6589 och kopplas till RegSO-koderna genom summor per år och status; alla 144 RegSO får ett entydigt namn. DeSO visas som *kod (RegSO-namn)*.
 
 ## Nytt i 2.2.2
 
@@ -39,16 +44,25 @@ A och B har olika systemgränser och ska inte summeras.
 
 ## Ladda upp till GitHub
 
-1. Packa upp paketet och öppna mappen `vagvis_2_2_2`.
+1. Packa upp paketet och öppna mappen `vagvis_2_2_3`.
 2. Skapa helst ett nytt repo. Välj **Add file → Upload files** och dra in mappens **innehåll** i ett enda steg (under 100 filer och cirka 8 MB). `streamlit_app.py` ska ligga direkt i repots rot.
 3. Kontrollera att `.github/` och `.streamlit/` kom med. Webbläsaren kan dölja punktmappar; använd GitHub Desktop eller Git om de saknas.
-4. Gör commit, exempelvis `Vägvis 2.2.2`.
+4. Gör commit, exempelvis `Vägvis 2.2.3`.
 5. I Streamlit Community Cloud: välj repot och huvudfilen `streamlit_app.py`, Python 3.12.
-6. Öppna appen och kontrollera att den visar **Vägvis 2.2.2**.
+6. Öppna appen och kontrollera att den visar **Vägvis 2.2.3** och **MODELLPAKET 2.2** i sidomenyn.
 
 Vid uppdatering av ett befintligt repo tas gamla filer inte bort av en uppladdning. Kör därför **Actions → Stada repo → Run workflow** efter uppladdningen. Flödet jämför repot med `MANIFEST_SHA256.json`, tar bort filer som inte hör till paketet (till exempel sidor och skript från äldre modellversioner, `app/Vagvis.html` och okomprimerade geodatafiler från 2.1.1) och lägger ändringen i en pull request som listar varje fil. Filer under `underlag/` och `dokument/` behålls. Lokalt: `python verktyg/stada_repo.py` (visar) och `python verktyg/stada_repo.py --ta-bort`.
 
 Om flödet inte får skapa pull requesten (inställningen *Allow GitHub Actions to create and approve pull requests* är avstängd som standard) finns ändringen på grenen `stada-repo-<nr>`; öppna en pull request från den.
+
+### Om appen fortfarande visar en äldre version
+
+Står det **MODELLPAKET 2.0** (eller 2.1) i sidomenyn kör Streamlit fortfarande en äldre version. Kontrollera i tur och ordning:
+
+1. Att uppladdningen gick till samma repo och gren som appen använder (Streamlit Community Cloud → appens meny → **Settings**).
+2. Att **Main file path** är `streamlit_app.py` i repots rot. Äldre versioner kan ha använt en annan startfil, som då fortsätter att visa den gamla sidan.
+3. Kör **Actions → Stada repo** och slå ihop pull requesten, så att gamla filer tas bort.
+4. Välj **Reboot app** i Streamlit. Sidan byggs då om från de nya källfilerna.
 
 ## Så fungerar Streamlit-sidan
 

@@ -13,7 +13,7 @@
   "short": "SCB TAB6589",
   "title": "Statistiska centralbyrån och Trafikanalys (2026). Personbilar registrerade på folkbokförda personer 31 december efter status och region. År 2024–2025. TAB6589.",
   "url": "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__TK__TK1001__TK1001Z/PersBilarDesoN/",
-  "use": "Personbilar registrerade på folkbokförda personer; privatleasing och enskild firma ingår, förmånsbil via arbetsgivare ingår inte.",
+  "use": "Personbilar registrerade på folkbokförda personer; privatleasing och enskild firma ingår, förmånsbil via arbetsgivare ingår inte. Tabellens RegSO-rader ger också de officiella RegSO-namnen, som kopplas till RegSO-koderna genom summor per år och status.",
   "accessed": "2026-10-23",
   "verification": "SCB:s originalexport TAB6589_sv.zip är inlagd. Urval: i trafik, 2024 och 348 DeSO 2025. Samtliga kommuners DeSO-summor stämmer exakt med filens kommunrader. Originalfil och SHA256 finns i underlag/raw/scb/.",
   "locator": "TAB6589_sv.csv: region, status, år, personbilar; Windows-1252."
@@ -228,7 +228,7 @@
  {
   "id": "ASSUMPTIONS",
   "short": "Vägvis 2026",
-  "title": "Vägvis (2026). Redovisade modellval, version 2.2.2.",
+  "title": "Vägvis (2026). Redovisade modellval, version 2.2.3.",
   "url": "",
   "use": "Eget parameterregister i underlag/evidensregister.json. Värden med denna källa är modellantaganden utan direkt extern belägg.",
   "accessed": "2026-10-25",
