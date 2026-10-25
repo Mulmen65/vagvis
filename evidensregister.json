@@ -1,0 +1,2404 @@
+{
+  "schema": "vagvis-evidence-2",
+  "version": "2.1.1",
+  "reviewDate": "2026-10-23",
+  "release": {
+    "model": "Vägvis",
+    "independentEquations": true,
+    "automaticTopDownCalibration": false
+  },
+  "boundaries": {
+    "A": "Territoriell aktivitet: trafikarbete på vägavsnitt inom området, oavsett förare och hemort. Fordonslivscykel fördelas per kilometer; livscykelutsläppen kan ske utanför området.",
+    "B": "Boendeanknuten aktivitet: bilkörning som tillskrivs hushåll i området, även när körningen sker utanför kommunen. Personbil; omfattar inte all vägtrafik.",
+    "overlap": "A och B överlappar och ska inte summeras."
+  },
+  "sources": [
+    {
+      "id": "SCB_DESO",
+      "title": "Statistiska centralbyrån (u.å.). Demografiska statistikområden (DeSO).",
+      "url": "https://www.scb.se/vara-tjanster/oppna-data/oppna-geodata/demografiska-statistikomraden-deso/",
+      "use": "Definition och öppna geodata. DeSO 2025 och 2018 är olika indelningar; årgångar räknas inte automatiskt om.",
+      "short": "SCB_DESO",
+      "accessed": "2026-10-23",
+      "verification": "Källans beskrivning kontrollerad. Numerisk användning måste styrkas av ett sparat datauttag."
+    },
+    {
+      "id": "SCB_CARS",
+      "title": "Statistiska centralbyrån och Trafikanalys (2026). Personbilar, registrerade på folkbokförda personer 31 december, efter status och region. År 2024–2025. TAB6589.",
+      "url": "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__TK__TK1001__TK1001Z/PersBilarDesoN/",
+      "use": "Personbilar registrerade på folkbokförda personer; privatleasing och enskild firma ingår, förmånsbil via arbetsgivare ingår inte. Förmånsbilar får därför inte läggas till utan ett separat redovisat antagande eller underlag.",
+      "short": "SCB_CARS",
+      "accessed": "2026-10-23",
+      "verification": "SCB:s originalexport TAB6589_sv.zip är inlagd. Urval: i trafik, 2024 och exakt matchade 348 DeSO 2025. Samtliga tre kommuners DeSO-summor stämmer exakt med filens kommunrader. Originalfil och SHA256 finns i underlag/raw/scb/. Hushåll och körsträcka ingår inte i detta biluttag.",
+      "locator": "TAB6589_sv.csv: kolumner region, status, år och personbilar i trafik; Windows-1252."
+    },
+    {
+      "id": "SCB_HOUSEHOLDS",
+      "title": "Statistiska centralbyrån (2026a). Antal hushåll per region efter hushållstyp. År 2011–2025. TAB6568.",
+      "url": "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101Y/HushallDesoTyp/",
+      "use": "Registrerade hushåll 31 december. Från referensår 2024 gäller DeSO 2025. Små celler till och med 2024 kan vara justerade med CTA; från 2025 gäller CKM, vilket kan hindra exakt summering. Läs faktisk uttagsstatus i datamanifestet.",
+      "short": "SCB_HOUSEHOLDS",
+      "accessed": "2026-10-23",
+      "verification": "Källans beskrivning kontrollerad. Numerisk användning måste styrkas av ett sparat datauttag."
+    },
+    {
+      "id": "TRAFANALYS",
+      "title": "Trafikanalys (u.å.). Körsträckor.",
+      "url": "https://www.trafa.se/vagtrafik/korstrackor/",
+      "use": "Fordonsregister- och besiktningsbaserade körsträckor. Anger inte var ett registrerat fordon har körts; skilj från territoriellt trafikarbete.",
+      "short": "TRAFANALYS",
+      "accessed": "2026-10-23",
+      "verification": "Källans beskrivning kontrollerad. Numerisk användning måste styrkas av ett sparat datauttag."
+    },
+    {
+      "id": "TV_AADT_METHOD",
+      "title": "Trafikverket (2015). Metodbeskrivning: Undersökningen av ÅDT. 18 juni.",
+      "url": "https://bransch.trafikverket.se/contentassets/29f030c5f81948f1ae48ab3b73c02d30/metodbeskrivning_adt_2015-06-18.pdf",
+      "use": "Avsnitt 2: trafikarbete = summan av ÅDT × länklängd × antal dagar. Avsnitt 6 beskriver ÅDT-skattning. Vägvis använder årets faktiska dagantal. Ger inget generellt MVD→ÅDT-tal.",
+      "short": "TV_AADT_METHOD",
+      "accessed": "2026-10-23",
+      "verification": "Primär-PDF kontrollerad 2026-10-23; avsnitt 2, tryckt sida 5."
+    },
+    {
+      "id": "OSM",
+      "title": "OpenStreetMap contributors (u.å.). OpenStreetMap: Copyright and License.",
+      "url": "https://www.openstreetmap.org/copyright",
+      "use": "Öppen väggeometri och vägklass med ODbL-attribuering. Trafikvolym kan inte utläsas ur geometri eller vägklass.",
+      "short": "OSM",
+      "accessed": "2026-10-23",
+      "verification": "Källans beskrivning kontrollerad. Numerisk användning måste styrkas av ett sparat datauttag."
+    },
+    {
+      "id": "OSM_TILES",
+      "title": "OpenStreetMap Foundation (u.å.). Tile Usage Policy.",
+      "url": "https://operations.osmfoundation.org/policies/tiles/",
+      "use": "Villkor för nätbaserade bakgrundsbilder. OSM-bilder hämtas vid visning och paketeras inte som offlinekartor.",
+      "short": "OSM_TILES",
+      "accessed": "2026-10-23",
+      "verification": "Källans beskrivning kontrollerad. Numerisk användning måste styrkas av ett sparat datauttag."
+    },
+    {
+      "id": "BOVERKET_EL",
+      "title": "Boverket (2026). Indata om energianvändning i klimatdeklarationen.",
+      "url": "https://www.boverket.se/sv/klimatdeklaration/gor-sa-har/underlag/indata-om-energi/",
+      "use": "Exempeltabellen anger svensk elmix 0,037 kg CO2e/kWh. Vägvis väljer samma storleksordning, 37 g/kWh, som scenarioantagande. Källan avser byggande och verifierar inte kommunal fordonsladdning 2024.",
+      "short": "BOVERKET_EL",
+      "accessed": "2026-10-23",
+      "verification": "Exempeltabellen kontrollerad 2026-10-23: 0,037 kg CO2e/kWh. Tillämpningen på fordonsladdning är ett modellval."
+    },
+    {
+      "id": "IVL_C444",
+      "title": "Emilsson, E. och Dahllöf, L. (2019). Lithium-Ion Vehicle Battery Production: Status 2019. IVL, rapport C 444.",
+      "url": "https://www.ivl.se/english/ivl/press/press-releases/2019-12-04-new-report-on-climate-impact-of-electric-car-batteries.html",
+      "use": "IVL:s redovisning anger 61–106 kg CO2e/kWh för batteriproduktion, med högre övre värde vid mindre transparent underlag. Valet 75 är Vägvis scenarioantagande inom detta äldre litteraturspann; ingen uppmätt 2024-flotta.",
+      "short": "IVL_C444",
+      "accessed": "2026-10-23",
+      "verification": "IVL:s egen forskningssammanfattning kontrollerad 2026-10-23. Stöd för ett äldre intervall; ingen verifierad faktor för lokal fordonsflotta."
+    },
+    {
+      "id": "MALMO_TRAFFIC",
+      "title": "Malmö stad (u.å.). Växthusgasutsläpp per trafikslag.",
+      "url": "https://miljobarometern.malmo.se/miljomal/mal-7/utslapp-fran-vagtrafik/vaxthusgasutslapp-per-trafikslag/table/",
+      "use": "Kommunal jämförelseserie för direkt territoriell vägtrafik. Jämförbarhet i år och fordonskategorier måste kontrolleras. Används inte som automatisk LCA-kalibrering.",
+      "short": "MALMO_TRAFFIC",
+      "accessed": "2026-10-23",
+      "verification": "Kommunal källadress identifierad. Siffror och kategorier ska kontrolleras mot ett daterat uttag före kalibrering."
+    },
+    {
+      "id": "ASSUMPTIONS",
+      "title": "Vägvis (2026). Redovisade modellval, version 2.1.1.",
+      "url": "",
+      "use": "Eget parameterregister i underlag/evidensregister.json. Förbrukning, livslängd, karossproduktion, underhåll, fordonsmix, bränsleblandning, bränslefaktorer, slutbehandling, återvinningspotential, ÅDT-schabloner och variationskoefficienter är valda modellantaganden om inte ett specifikt datauttag anges. Detta är ingen extern validering.",
+      "short": "ASSUMPTIONS",
+      "accessed": "2026-10-23",
+      "verification": "Öppet modellval i detta paket; inte ett externt empiriskt belägg."
+    },
+    {
+      "id": "TRAFA_KM_2024",
+      "short": "Trafikanalys (2025)",
+      "title": "Trafikanalys (2025). Körsträckor 2024. Statistik 2025:10, sammanfattning. Publicerad 18 september.",
+      "url": "https://www.trafa.se/globalassets/statistik/vagtrafik/korstrackor/2024/korstrackor-2024---2025-09-18.pdf",
+      "use": "Sida 1: 1 141 mil per personbil under 2024. Avser alla svenskregistrerade personbilar som varit i trafik någon gång under året, oavsett körplats och ägarkategori. Överföring av 11 410 km/bil till hushållens antagna årsslutsstock är ett modellantagande. Privatägda bilar anges separat till 1 095 mil på sida 4; definitionen motsvarar inte automatiskt SCB:s folkbokförda registerbilars privatleasing och enskilda firma.",
+      "accessed": "2026-10-23",
+      "verification": "Primär-PDF kontrollerad 2026-10-23. Verifierar riksgenomsnitt och population, inte kommunens privata bilars körsträcka."
+    }
+  ],
+  "parameters": [
+    {
+      "id": "YEAR",
+      "name": "Beräkningsår",
+      "unit": "år",
+      "model": "both",
+      "status": "user_setting",
+      "rationale": "Valt analysår. Årtalet räknar inte automatiskt om aktivitet, vägnät, flotta eller utsläppsfaktorer.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "year"
+    },
+    {
+      "id": "GEOGRAPHY",
+      "name": "Vald geografiversion",
+      "unit": "",
+      "model": "both",
+      "status": "user_setting",
+      "rationale": "Importerad områdesversion och statistiktabellens faktiska geografi gäller vid beräkningen.",
+      "sources": [
+        "SCB_DESO"
+      ],
+      "path": "desoVersion"
+    },
+    {
+      "id": "MODE",
+      "name": "Territoriellt beräkningsläge",
+      "unit": "",
+      "model": "A",
+      "status": "user_setting",
+      "rationale": "network summerar vägarnas trafikarbete utan kommunal utsläppskalibrering. calibrated får användas med en uttryckligen importerad referens med förenliga kategorier.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "mode"
+    },
+    {
+      "id": "ELECTRICITY",
+      "name": "Elproduktion inklusive försörjningsled",
+      "unit": "g CO2e/kWh",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Valt referensscenario 37. Boverkets byggexempel anger samma tal; det är inte observerad laddningsmix i kommunen 2024.",
+      "sources": [
+        "BOVERKET_EL"
+      ],
+      "path": "electricity"
+    },
+    {
+      "id": "BATTERY_EF",
+      "name": "Batteriproduktion",
+      "unit": "kg CO2e/kWh batteri",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Valt centralvärde 75 inom IVL:s äldre litteraturspann 61–106. Omfattar tillverkning; ingen verifierad lokal flottmedelfaktor eller sannolikhetsfördelning.",
+      "sources": [
+        "IVL_C444"
+      ],
+      "path": "batteryEF"
+    },
+    {
+      "id": "CHARGE",
+      "name": "Laddverkningsgrad",
+      "unit": "andel",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald verkningsgrad 0,90. Batteriets kWh per fordonskm divideras med denna för att få inköpt laddenergi. Ersätt med dokumenterade verkliga laddförluster.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "chargeEfficiency"
+    },
+    {
+      "id": "PHEV_ELECTRIC",
+      "name": "Laddhybridens andel körning på el",
+      "unit": "andel",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Valt antagande 0,45, inte en skattning från lokala kördata. Övrig körning använder bensinblandningen.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "phevElectric"
+    },
+    {
+      "id": "SCENARIO_TRAFFICCHANGE",
+      "name": "Generell förändring av trafikarbete",
+      "unit": "andel",
+      "model": "both",
+      "status": "user_setting",
+      "rationale": "Scenariot multipliceras med 1 + förändringen.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "trafficChange"
+    },
+    {
+      "id": "SCENARIO_ELECTRIFY",
+      "name": "Överföring till batterielbil",
+      "unit": "andel av fordonsflottan",
+      "model": "both",
+      "status": "user_setting",
+      "rationale": "Procentenheter flyttas proportionellt från övriga drivlinor till batterielbil, högst återstående andel.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "electrify"
+    },
+    {
+      "id": "SCENARIO_ENERGYSCALE",
+      "name": "Förbrukningsfaktor",
+      "unit": "multiplikator",
+      "model": "both",
+      "status": "user_setting",
+      "rationale": "Gemensam skalning av förbrukning i MJ och kWh.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "energyScale"
+    },
+    {
+      "id": "SCENARIO_PRODUCTIONSCALE",
+      "name": "Produktionsfaktor",
+      "unit": "multiplikator",
+      "model": "both",
+      "status": "user_setting",
+      "rationale": "Skalar kaross- och batteritillverkning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "productionScale"
+    },
+    {
+      "id": "SCENARIO_LIFESCALE",
+      "name": "Livslängdsfaktor",
+      "unit": "multiplikator",
+      "model": "both",
+      "status": "user_setting",
+      "rationale": "Skalar livslängd i kilometer; tillverkning och slutbehandling fördelas på denna livslängd.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "lifeScale"
+    },
+    {
+      "id": "RULE_BEVBODY",
+      "name": "Karossfaktor, batterielbil",
+      "unit": "multiplikator",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Antagen skillnad i tillverkning exklusive separat batteriproduktion.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profileRules.bevBody"
+    },
+    {
+      "id": "RULE_PHEVBODY",
+      "name": "Karossfaktor, laddhybrid",
+      "unit": "multiplikator",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Antagen skillnad i tillverkning exklusive separat batteriproduktion.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profileRules.phevBody"
+    },
+    {
+      "id": "RULE_BEVMAINTENANCE",
+      "name": "Underhållsfaktor, batterielbil",
+      "unit": "multiplikator",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Antagen skillnad mot profilens underhåll per kilometer.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profileRules.bevMaintenance"
+    },
+    {
+      "id": "RULE_PHEVBATTERYMAX",
+      "name": "Batterikapacitetstak, laddhybrid",
+      "unit": "kWh",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Laddhybridens antagna kapacitet är min(profilens batteri, detta tak).",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profileRules.phevBatteryMax"
+    },
+    {
+      "id": "CAR_LIFE",
+      "name": "Personbil: Livslängd",
+      "unit": "fordonskm",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Antagen sammanlagd körsträcka under fordonets hela liv, inte antal kilometer under analysåret.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.life"
+    },
+    {
+      "id": "CAR_BODY",
+      "name": "Personbil: Fordonsproduktion exklusive drivbatteri",
+      "unit": "kg CO2e/fordon",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Antagen kaross-, komponent- och monteringsemission för förbränningsprofilen; drivlinjefaktorer justerar batterielbil och laddhybrid.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.body"
+    },
+    {
+      "id": "CAR_BATTERY",
+      "name": "Personbil: Batterikapacitet, batterielbil",
+      "unit": "kWh",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Antagen kapacitet för batterielbil i klassen.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.battery"
+    },
+    {
+      "id": "CAR_MAINT",
+      "name": "Personbil: Underhåll",
+      "unit": "g CO2e/fordonskm",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Valt schablonvärde per kilometer. Separat från tillverkning och slutbehandling.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.maint"
+    },
+    {
+      "id": "CAR_EOL",
+      "name": "Personbil: Slutbehandling",
+      "unit": "kg CO2e/fordon",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald bruttobelastning för slutbehandling, fördelad på livslängd. Ingen automatiskt garanterad sluten materialcykel.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.eol"
+    },
+    {
+      "id": "CAR_CREDIT",
+      "name": "Personbil: Potentiell återvinningskredit",
+      "unit": "kg CO2e/fordon",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald substitutionspotential. Redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.credit"
+    },
+    {
+      "id": "CAR_MJ",
+      "name": "Personbil: Termisk energiförbrukning",
+      "unit": "MJ/fordonskm",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald förbrukning vid ren termisk drift. Trafiksituation, last, hastighet och kallstart är inte explicit simulerade.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.mj"
+    },
+    {
+      "id": "CAR_KWH",
+      "name": "Personbil: Elförbrukning vid batteriet",
+      "unit": "kWh/fordonskm",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald energiförbrukning vid ren eldrift före modellens laddförlustpåslag.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.kwh"
+    },
+    {
+      "id": "CAR_OTHER",
+      "name": "Personbil: Övriga direkta växthusgaser",
+      "unit": "g CO2e/fordonskm termisk drift",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald approximation för andra direkta växthusgaser än bränslets fossila CO2; inte hämtad från lokal mätning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.other"
+    },
+    {
+      "id": "CAR_MIX_PETROL",
+      "name": "Personbil: andel petrol",
+      "unit": "andel",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad personbilsmix som används gemensamt i A och B. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. Ingen separat kommunmix används i B.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.mix.petrol"
+    },
+    {
+      "id": "CAR_MIX_DIESEL",
+      "name": "Personbil: andel diesel",
+      "unit": "andel",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad personbilsmix som används gemensamt i A och B. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. Ingen separat kommunmix används i B.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.mix.diesel"
+    },
+    {
+      "id": "CAR_MIX_BEV",
+      "name": "Personbil: andel bev",
+      "unit": "andel",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad personbilsmix som används gemensamt i A och B. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. Ingen separat kommunmix används i B.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.mix.bev"
+    },
+    {
+      "id": "CAR_MIX_PHEV",
+      "name": "Personbil: andel phev",
+      "unit": "andel",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad personbilsmix som används gemensamt i A och B. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. Ingen separat kommunmix används i B.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.mix.phev"
+    },
+    {
+      "id": "CAR_MIX_BIOGAS",
+      "name": "Personbil: andel biogas",
+      "unit": "andel",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad personbilsmix som används gemensamt i A och B. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. Ingen separat kommunmix används i B.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.0.mix.biogas"
+    },
+    {
+      "id": "VAN_LIFE",
+      "name": "Lätt lastbil: Livslängd",
+      "unit": "fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen sammanlagd körsträcka under fordonets hela liv, inte antal kilometer under analysåret.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.life"
+    },
+    {
+      "id": "VAN_BODY",
+      "name": "Lätt lastbil: Fordonsproduktion exklusive drivbatteri",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kaross-, komponent- och monteringsemission för förbränningsprofilen; drivlinjefaktorer justerar batterielbil och laddhybrid.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.body"
+    },
+    {
+      "id": "VAN_BATTERY",
+      "name": "Lätt lastbil: Batterikapacitet, batterielbil",
+      "unit": "kWh",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kapacitet för batterielbil i klassen.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.battery"
+    },
+    {
+      "id": "VAN_MAINT",
+      "name": "Lätt lastbil: Underhåll",
+      "unit": "g CO2e/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Valt schablonvärde per kilometer. Separat från tillverkning och slutbehandling.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.maint"
+    },
+    {
+      "id": "VAN_EOL",
+      "name": "Lätt lastbil: Slutbehandling",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald bruttobelastning för slutbehandling, fördelad på livslängd. Ingen automatiskt garanterad sluten materialcykel.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.eol"
+    },
+    {
+      "id": "VAN_CREDIT",
+      "name": "Lätt lastbil: Potentiell återvinningskredit",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald substitutionspotential. Redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.credit"
+    },
+    {
+      "id": "VAN_MJ",
+      "name": "Lätt lastbil: Termisk energiförbrukning",
+      "unit": "MJ/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald förbrukning vid ren termisk drift. Trafiksituation, last, hastighet och kallstart är inte explicit simulerade.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.mj"
+    },
+    {
+      "id": "VAN_KWH",
+      "name": "Lätt lastbil: Elförbrukning vid batteriet",
+      "unit": "kWh/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald energiförbrukning vid ren eldrift före modellens laddförlustpåslag.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.kwh"
+    },
+    {
+      "id": "VAN_OTHER",
+      "name": "Lätt lastbil: Övriga direkta växthusgaser",
+      "unit": "g CO2e/fordonskm termisk drift",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald approximation för andra direkta växthusgaser än bränslets fossila CO2; inte hämtad från lokal mätning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.other"
+    },
+    {
+      "id": "VAN_MIX_PETROL",
+      "name": "Lätt lastbil: andel petrol",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.mix.petrol"
+    },
+    {
+      "id": "VAN_MIX_DIESEL",
+      "name": "Lätt lastbil: andel diesel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.mix.diesel"
+    },
+    {
+      "id": "VAN_MIX_BEV",
+      "name": "Lätt lastbil: andel bev",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.mix.bev"
+    },
+    {
+      "id": "VAN_MIX_HVO",
+      "name": "Lätt lastbil: andel hvo",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.1.mix.hvo"
+    },
+    {
+      "id": "RIGID_LIFE",
+      "name": "Tung lastbil utan släp: Livslängd",
+      "unit": "fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen sammanlagd körsträcka under fordonets hela liv, inte antal kilometer under analysåret.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.life"
+    },
+    {
+      "id": "RIGID_BODY",
+      "name": "Tung lastbil utan släp: Fordonsproduktion exklusive drivbatteri",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kaross-, komponent- och monteringsemission för förbränningsprofilen; drivlinjefaktorer justerar batterielbil och laddhybrid.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.body"
+    },
+    {
+      "id": "RIGID_BATTERY",
+      "name": "Tung lastbil utan släp: Batterikapacitet, batterielbil",
+      "unit": "kWh",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kapacitet för batterielbil i klassen.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.battery"
+    },
+    {
+      "id": "RIGID_MAINT",
+      "name": "Tung lastbil utan släp: Underhåll",
+      "unit": "g CO2e/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Valt schablonvärde per kilometer. Separat från tillverkning och slutbehandling.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.maint"
+    },
+    {
+      "id": "RIGID_EOL",
+      "name": "Tung lastbil utan släp: Slutbehandling",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald bruttobelastning för slutbehandling, fördelad på livslängd. Ingen automatiskt garanterad sluten materialcykel.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.eol"
+    },
+    {
+      "id": "RIGID_CREDIT",
+      "name": "Tung lastbil utan släp: Potentiell återvinningskredit",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald substitutionspotential. Redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.credit"
+    },
+    {
+      "id": "RIGID_MJ",
+      "name": "Tung lastbil utan släp: Termisk energiförbrukning",
+      "unit": "MJ/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald förbrukning vid ren termisk drift. Trafiksituation, last, hastighet och kallstart är inte explicit simulerade.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.mj"
+    },
+    {
+      "id": "RIGID_KWH",
+      "name": "Tung lastbil utan släp: Elförbrukning vid batteriet",
+      "unit": "kWh/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald energiförbrukning vid ren eldrift före modellens laddförlustpåslag.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.kwh"
+    },
+    {
+      "id": "RIGID_OTHER",
+      "name": "Tung lastbil utan släp: Övriga direkta växthusgaser",
+      "unit": "g CO2e/fordonskm termisk drift",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald approximation för andra direkta växthusgaser än bränslets fossila CO2; inte hämtad från lokal mätning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.other"
+    },
+    {
+      "id": "RIGID_MIX_DIESEL",
+      "name": "Tung lastbil utan släp: andel diesel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.mix.diesel"
+    },
+    {
+      "id": "RIGID_MIX_HVO",
+      "name": "Tung lastbil utan släp: andel hvo",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.mix.hvo"
+    },
+    {
+      "id": "RIGID_MIX_BEV",
+      "name": "Tung lastbil utan släp: andel bev",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.2.mix.bev"
+    },
+    {
+      "id": "ARTIC_LIFE",
+      "name": "Tung lastbil med släp: Livslängd",
+      "unit": "fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen sammanlagd körsträcka under fordonets hela liv, inte antal kilometer under analysåret.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.life"
+    },
+    {
+      "id": "ARTIC_BODY",
+      "name": "Tung lastbil med släp: Fordonsproduktion exklusive drivbatteri",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kaross-, komponent- och monteringsemission för förbränningsprofilen; drivlinjefaktorer justerar batterielbil och laddhybrid.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.body"
+    },
+    {
+      "id": "ARTIC_BATTERY",
+      "name": "Tung lastbil med släp: Batterikapacitet, batterielbil",
+      "unit": "kWh",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kapacitet för batterielbil i klassen.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.battery"
+    },
+    {
+      "id": "ARTIC_MAINT",
+      "name": "Tung lastbil med släp: Underhåll",
+      "unit": "g CO2e/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Valt schablonvärde per kilometer. Separat från tillverkning och slutbehandling.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.maint"
+    },
+    {
+      "id": "ARTIC_EOL",
+      "name": "Tung lastbil med släp: Slutbehandling",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald bruttobelastning för slutbehandling, fördelad på livslängd. Ingen automatiskt garanterad sluten materialcykel.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.eol"
+    },
+    {
+      "id": "ARTIC_CREDIT",
+      "name": "Tung lastbil med släp: Potentiell återvinningskredit",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald substitutionspotential. Redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.credit"
+    },
+    {
+      "id": "ARTIC_MJ",
+      "name": "Tung lastbil med släp: Termisk energiförbrukning",
+      "unit": "MJ/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald förbrukning vid ren termisk drift. Trafiksituation, last, hastighet och kallstart är inte explicit simulerade.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.mj"
+    },
+    {
+      "id": "ARTIC_KWH",
+      "name": "Tung lastbil med släp: Elförbrukning vid batteriet",
+      "unit": "kWh/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald energiförbrukning vid ren eldrift före modellens laddförlustpåslag.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.kwh"
+    },
+    {
+      "id": "ARTIC_OTHER",
+      "name": "Tung lastbil med släp: Övriga direkta växthusgaser",
+      "unit": "g CO2e/fordonskm termisk drift",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald approximation för andra direkta växthusgaser än bränslets fossila CO2; inte hämtad från lokal mätning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.other"
+    },
+    {
+      "id": "ARTIC_MIX_DIESEL",
+      "name": "Tung lastbil med släp: andel diesel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.mix.diesel"
+    },
+    {
+      "id": "ARTIC_MIX_HVO",
+      "name": "Tung lastbil med släp: andel hvo",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.mix.hvo"
+    },
+    {
+      "id": "ARTIC_MIX_BEV",
+      "name": "Tung lastbil med släp: andel bev",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.3.mix.bev"
+    },
+    {
+      "id": "BUS_LIFE",
+      "name": "Buss, även region- och turistbuss: Livslängd",
+      "unit": "fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen sammanlagd körsträcka under fordonets hela liv, inte antal kilometer under analysåret.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.life"
+    },
+    {
+      "id": "BUS_BODY",
+      "name": "Buss, även region- och turistbuss: Fordonsproduktion exklusive drivbatteri",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kaross-, komponent- och monteringsemission för förbränningsprofilen; drivlinjefaktorer justerar batterielbil och laddhybrid.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.body"
+    },
+    {
+      "id": "BUS_BATTERY",
+      "name": "Buss, även region- och turistbuss: Batterikapacitet, batterielbil",
+      "unit": "kWh",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kapacitet för batterielbil i klassen.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.battery"
+    },
+    {
+      "id": "BUS_MAINT",
+      "name": "Buss, även region- och turistbuss: Underhåll",
+      "unit": "g CO2e/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Valt schablonvärde per kilometer. Separat från tillverkning och slutbehandling.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.maint"
+    },
+    {
+      "id": "BUS_EOL",
+      "name": "Buss, även region- och turistbuss: Slutbehandling",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald bruttobelastning för slutbehandling, fördelad på livslängd. Ingen automatiskt garanterad sluten materialcykel.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.eol"
+    },
+    {
+      "id": "BUS_CREDIT",
+      "name": "Buss, även region- och turistbuss: Potentiell återvinningskredit",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald substitutionspotential. Redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.credit"
+    },
+    {
+      "id": "BUS_MJ",
+      "name": "Buss, även region- och turistbuss: Termisk energiförbrukning",
+      "unit": "MJ/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald förbrukning vid ren termisk drift. Trafiksituation, last, hastighet och kallstart är inte explicit simulerade.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.mj"
+    },
+    {
+      "id": "BUS_KWH",
+      "name": "Buss, även region- och turistbuss: Elförbrukning vid batteriet",
+      "unit": "kWh/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald energiförbrukning vid ren eldrift före modellens laddförlustpåslag.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.kwh"
+    },
+    {
+      "id": "BUS_OTHER",
+      "name": "Buss, även region- och turistbuss: Övriga direkta växthusgaser",
+      "unit": "g CO2e/fordonskm termisk drift",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald approximation för andra direkta växthusgaser än bränslets fossila CO2; inte hämtad från lokal mätning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.other"
+    },
+    {
+      "id": "BUS_MIX_BEV",
+      "name": "Buss, även region- och turistbuss: andel bev",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.mix.bev"
+    },
+    {
+      "id": "BUS_MIX_BIOGAS",
+      "name": "Buss, även region- och turistbuss: andel biogas",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.mix.biogas"
+    },
+    {
+      "id": "BUS_MIX_HVO",
+      "name": "Buss, även region- och turistbuss: andel hvo",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.4.mix.hvo"
+    },
+    {
+      "id": "MC_LIFE",
+      "name": "Motorcykel: Livslängd",
+      "unit": "fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen sammanlagd körsträcka under fordonets hela liv, inte antal kilometer under analysåret.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.5.life"
+    },
+    {
+      "id": "MC_BODY",
+      "name": "Motorcykel: Fordonsproduktion exklusive drivbatteri",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kaross-, komponent- och monteringsemission för förbränningsprofilen; drivlinjefaktorer justerar batterielbil och laddhybrid.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.5.body"
+    },
+    {
+      "id": "MC_BATTERY",
+      "name": "Motorcykel: Batterikapacitet, batterielbil",
+      "unit": "kWh",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kapacitet för batterielbil i klassen.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.5.battery"
+    },
+    {
+      "id": "MC_MAINT",
+      "name": "Motorcykel: Underhåll",
+      "unit": "g CO2e/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Valt schablonvärde per kilometer. Separat från tillverkning och slutbehandling.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.5.maint"
+    },
+    {
+      "id": "MC_EOL",
+      "name": "Motorcykel: Slutbehandling",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald bruttobelastning för slutbehandling, fördelad på livslängd. Ingen automatiskt garanterad sluten materialcykel.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.5.eol"
+    },
+    {
+      "id": "MC_CREDIT",
+      "name": "Motorcykel: Potentiell återvinningskredit",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald substitutionspotential. Redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.5.credit"
+    },
+    {
+      "id": "MC_MJ",
+      "name": "Motorcykel: Termisk energiförbrukning",
+      "unit": "MJ/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald förbrukning vid ren termisk drift. Trafiksituation, last, hastighet och kallstart är inte explicit simulerade.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.5.mj"
+    },
+    {
+      "id": "MC_KWH",
+      "name": "Motorcykel: Elförbrukning vid batteriet",
+      "unit": "kWh/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald energiförbrukning vid ren eldrift före modellens laddförlustpåslag.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.5.kwh"
+    },
+    {
+      "id": "MC_OTHER",
+      "name": "Motorcykel: Övriga direkta växthusgaser",
+      "unit": "g CO2e/fordonskm termisk drift",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald approximation för andra direkta växthusgaser än bränslets fossila CO2; inte hämtad från lokal mätning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.5.other"
+    },
+    {
+      "id": "MC_MIX_PETROL",
+      "name": "Motorcykel: andel petrol",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.5.mix.petrol"
+    },
+    {
+      "id": "MC_MIX_BEV",
+      "name": "Motorcykel: andel bev",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.5.mix.bev"
+    },
+    {
+      "id": "MOPED_LIFE",
+      "name": "Moped: Livslängd",
+      "unit": "fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen sammanlagd körsträcka under fordonets hela liv, inte antal kilometer under analysåret.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.6.life"
+    },
+    {
+      "id": "MOPED_BODY",
+      "name": "Moped: Fordonsproduktion exklusive drivbatteri",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kaross-, komponent- och monteringsemission för förbränningsprofilen; drivlinjefaktorer justerar batterielbil och laddhybrid.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.6.body"
+    },
+    {
+      "id": "MOPED_BATTERY",
+      "name": "Moped: Batterikapacitet, batterielbil",
+      "unit": "kWh",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen kapacitet för batterielbil i klassen.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.6.battery"
+    },
+    {
+      "id": "MOPED_MAINT",
+      "name": "Moped: Underhåll",
+      "unit": "g CO2e/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Valt schablonvärde per kilometer. Separat från tillverkning och slutbehandling.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.6.maint"
+    },
+    {
+      "id": "MOPED_EOL",
+      "name": "Moped: Slutbehandling",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald bruttobelastning för slutbehandling, fördelad på livslängd. Ingen automatiskt garanterad sluten materialcykel.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.6.eol"
+    },
+    {
+      "id": "MOPED_CREDIT",
+      "name": "Moped: Potentiell återvinningskredit",
+      "unit": "kg CO2e/fordon",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald substitutionspotential. Redovisas separat och dras inte av från huvudresultatet.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.6.credit"
+    },
+    {
+      "id": "MOPED_MJ",
+      "name": "Moped: Termisk energiförbrukning",
+      "unit": "MJ/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald förbrukning vid ren termisk drift. Trafiksituation, last, hastighet och kallstart är inte explicit simulerade.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.6.mj"
+    },
+    {
+      "id": "MOPED_KWH",
+      "name": "Moped: Elförbrukning vid batteriet",
+      "unit": "kWh/fordonskm",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald energiförbrukning vid ren eldrift före modellens laddförlustpåslag.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.6.kwh"
+    },
+    {
+      "id": "MOPED_OTHER",
+      "name": "Moped: Övriga direkta växthusgaser",
+      "unit": "g CO2e/fordonskm termisk drift",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald approximation för andra direkta växthusgaser än bränslets fossila CO2; inte hämtad från lokal mätning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.6.other"
+    },
+    {
+      "id": "MOPED_MIX_PETROL",
+      "name": "Moped: andel petrol",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.6.mix.petrol"
+    },
+    {
+      "id": "MOPED_MIX_BEV",
+      "name": "Moped: andel bev",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Antagen körsträckeviktad fordonsmix. Registerandel av antal bilar är inte automatiskt andel av körda kilometer. För B kan kommunal mix uttryckligen ersätta denna profil; aktuell B-mix visas separat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "profiles.6.mix.bev"
+    },
+    {
+      "id": "FUEL_PETROL_FOSSIL",
+      "name": "Bensinblandning: Fossil energiandel",
+      "unit": "andel",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald fossil energiandel i levererad blandning, inte volymandel eller reduktionsplikt. Ingen automatisk uppdatering mellan år.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.petrol.fossil"
+    },
+    {
+      "id": "FUEL_PETROL_TTW",
+      "name": "Bensinblandning: Fossil CO2 vid förbränning",
+      "unit": "g CO2e/MJ fossil energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald förbränningsfaktor för fossil komponent. Exakta standardvärden har inte verifierats för detta underlag; ersätt med dokumenterade leverantörs- eller myndighetsdata.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.petrol.ttw"
+    },
+    {
+      "id": "FUEL_PETROL_WTT",
+      "name": "Bensinblandning: Fossil komponent, försörjningsled",
+      "unit": "g CO2e/MJ fossil energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald faktor för fossil bränsleproduktion och distribution. Inte en uppmätt lokal blandning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.petrol.wtt"
+    },
+    {
+      "id": "FUEL_PETROL_BIO",
+      "name": "Bensinblandning: Biogen komponent, försörjningsled",
+      "unit": "g CO2e/MJ biogen energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald schablon för biobränslets försörjningsled. Råvara, markanvändning och produktionsväg är inte separat identifierade.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.petrol.bio"
+    },
+    {
+      "id": "FUEL_PETROL_BIOCO2",
+      "name": "Bensinblandning: Biogen CO2 vid förbränning",
+      "unit": "g CO2/MJ biogen energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Valt värde för separat information. Biogen avgas-CO2 ingår inte i modellens huvudsumma; biobränsle är därför inte utsläppsfritt i livscykeln.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.petrol.bioCO2"
+    },
+    {
+      "id": "FUEL_DIESEL_FOSSIL",
+      "name": "Dieselblandning: Fossil energiandel",
+      "unit": "andel",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald fossil energiandel i levererad blandning, inte volymandel eller reduktionsplikt. Ingen automatisk uppdatering mellan år.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.diesel.fossil"
+    },
+    {
+      "id": "FUEL_DIESEL_TTW",
+      "name": "Dieselblandning: Fossil CO2 vid förbränning",
+      "unit": "g CO2e/MJ fossil energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald förbränningsfaktor för fossil komponent. Exakta standardvärden har inte verifierats för detta underlag; ersätt med dokumenterade leverantörs- eller myndighetsdata.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.diesel.ttw"
+    },
+    {
+      "id": "FUEL_DIESEL_WTT",
+      "name": "Dieselblandning: Fossil komponent, försörjningsled",
+      "unit": "g CO2e/MJ fossil energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald faktor för fossil bränsleproduktion och distribution. Inte en uppmätt lokal blandning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.diesel.wtt"
+    },
+    {
+      "id": "FUEL_DIESEL_BIO",
+      "name": "Dieselblandning: Biogen komponent, försörjningsled",
+      "unit": "g CO2e/MJ biogen energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald schablon för biobränslets försörjningsled. Råvara, markanvändning och produktionsväg är inte separat identifierade.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.diesel.bio"
+    },
+    {
+      "id": "FUEL_DIESEL_BIOCO2",
+      "name": "Dieselblandning: Biogen CO2 vid förbränning",
+      "unit": "g CO2/MJ biogen energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Valt värde för separat information. Biogen avgas-CO2 ingår inte i modellens huvudsumma; biobränsle är därför inte utsläppsfritt i livscykeln.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.diesel.bioCO2"
+    },
+    {
+      "id": "FUEL_HVO_FOSSIL",
+      "name": "HVO100: Fossil energiandel",
+      "unit": "andel",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald fossil energiandel i levererad blandning, inte volymandel eller reduktionsplikt. Ingen automatisk uppdatering mellan år.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.hvo.fossil"
+    },
+    {
+      "id": "FUEL_HVO_TTW",
+      "name": "HVO100: Fossil CO2 vid förbränning",
+      "unit": "g CO2e/MJ fossil energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald förbränningsfaktor för fossil komponent. Exakta standardvärden har inte verifierats för detta underlag; ersätt med dokumenterade leverantörs- eller myndighetsdata.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.hvo.ttw"
+    },
+    {
+      "id": "FUEL_HVO_WTT",
+      "name": "HVO100: Fossil komponent, försörjningsled",
+      "unit": "g CO2e/MJ fossil energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald faktor för fossil bränsleproduktion och distribution. Inte en uppmätt lokal blandning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.hvo.wtt"
+    },
+    {
+      "id": "FUEL_HVO_BIO",
+      "name": "HVO100: Biogen komponent, försörjningsled",
+      "unit": "g CO2e/MJ biogen energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald schablon för biobränslets försörjningsled. Råvara, markanvändning och produktionsväg är inte separat identifierade.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.hvo.bio"
+    },
+    {
+      "id": "FUEL_HVO_BIOCO2",
+      "name": "HVO100: Biogen CO2 vid förbränning",
+      "unit": "g CO2/MJ biogen energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Valt värde för separat information. Biogen avgas-CO2 ingår inte i modellens huvudsumma; biobränsle är därför inte utsläppsfritt i livscykeln.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.hvo.bioCO2"
+    },
+    {
+      "id": "FUEL_BIOGAS_FOSSIL",
+      "name": "Biogas: Fossil energiandel",
+      "unit": "andel",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald fossil energiandel i levererad blandning, inte volymandel eller reduktionsplikt. Ingen automatisk uppdatering mellan år.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.biogas.fossil"
+    },
+    {
+      "id": "FUEL_BIOGAS_TTW",
+      "name": "Biogas: Fossil CO2 vid förbränning",
+      "unit": "g CO2e/MJ fossil energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald förbränningsfaktor för fossil komponent. Exakta standardvärden har inte verifierats för detta underlag; ersätt med dokumenterade leverantörs- eller myndighetsdata.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.biogas.ttw"
+    },
+    {
+      "id": "FUEL_BIOGAS_WTT",
+      "name": "Biogas: Fossil komponent, försörjningsled",
+      "unit": "g CO2e/MJ fossil energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald faktor för fossil bränsleproduktion och distribution. Inte en uppmätt lokal blandning.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.biogas.wtt"
+    },
+    {
+      "id": "FUEL_BIOGAS_BIO",
+      "name": "Biogas: Biogen komponent, försörjningsled",
+      "unit": "g CO2e/MJ biogen energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald schablon för biobränslets försörjningsled. Råvara, markanvändning och produktionsväg är inte separat identifierade.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.biogas.bio"
+    },
+    {
+      "id": "FUEL_BIOGAS_BIOCO2",
+      "name": "Biogas: Biogen CO2 vid förbränning",
+      "unit": "g CO2/MJ biogen energi",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Valt värde för separat information. Biogen avgas-CO2 ingår inte i modellens huvudsumma; biobränsle är därför inte utsläppsfritt i livscykeln.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "fuels.biogas.bioCO2"
+    },
+    {
+      "id": "ROAD_MOTORWAY_AADT",
+      "name": "motorway: schablon-ÅDT",
+      "unit": "fordon/dygn",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 30000
+    },
+    {
+      "id": "ROAD_MOTORWAY_HEAVY",
+      "name": "motorway: tung andel exklusive buss",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.13
+    },
+    {
+      "id": "ROAD_MOTORWAY_BUS",
+      "name": "motorway: bussandel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.004
+    },
+    {
+      "id": "ROAD_TRUNK_AADT",
+      "name": "trunk: schablon-ÅDT",
+      "unit": "fordon/dygn",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 18000
+    },
+    {
+      "id": "ROAD_TRUNK_HEAVY",
+      "name": "trunk: tung andel exklusive buss",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.11
+    },
+    {
+      "id": "ROAD_TRUNK_BUS",
+      "name": "trunk: bussandel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.006
+    },
+    {
+      "id": "ROAD_PRIMARY_AADT",
+      "name": "primary: schablon-ÅDT",
+      "unit": "fordon/dygn",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 10000
+    },
+    {
+      "id": "ROAD_PRIMARY_HEAVY",
+      "name": "primary: tung andel exklusive buss",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.07
+    },
+    {
+      "id": "ROAD_PRIMARY_BUS",
+      "name": "primary: bussandel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.012
+    },
+    {
+      "id": "ROAD_SECONDARY_AADT",
+      "name": "secondary: schablon-ÅDT",
+      "unit": "fordon/dygn",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 6000
+    },
+    {
+      "id": "ROAD_SECONDARY_HEAVY",
+      "name": "secondary: tung andel exklusive buss",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.055
+    },
+    {
+      "id": "ROAD_SECONDARY_BUS",
+      "name": "secondary: bussandel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.018
+    },
+    {
+      "id": "ROAD_TERTIARY_AADT",
+      "name": "tertiary: schablon-ÅDT",
+      "unit": "fordon/dygn",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 3000
+    },
+    {
+      "id": "ROAD_TERTIARY_HEAVY",
+      "name": "tertiary: tung andel exklusive buss",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.04
+    },
+    {
+      "id": "ROAD_TERTIARY_BUS",
+      "name": "tertiary: bussandel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.02
+    },
+    {
+      "id": "ROAD_RESIDENTIAL_AADT",
+      "name": "residential: schablon-ÅDT",
+      "unit": "fordon/dygn",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 750
+    },
+    {
+      "id": "ROAD_RESIDENTIAL_HEAVY",
+      "name": "residential: tung andel exklusive buss",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.02
+    },
+    {
+      "id": "ROAD_RESIDENTIAL_BUS",
+      "name": "residential: bussandel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.005
+    },
+    {
+      "id": "ROAD_SERVICE_AADT",
+      "name": "service: schablon-ÅDT",
+      "unit": "fordon/dygn",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 150
+    },
+    {
+      "id": "ROAD_SERVICE_HEAVY",
+      "name": "service: tung andel exklusive buss",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.03
+    },
+    {
+      "id": "ROAD_SERVICE_BUS",
+      "name": "service: bussandel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.002
+    },
+    {
+      "id": "ROAD_LIVING_STREET_AADT",
+      "name": "living_street: schablon-ÅDT",
+      "unit": "fordon/dygn",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 150
+    },
+    {
+      "id": "ROAD_LIVING_STREET_HEAVY",
+      "name": "living_street: tung andel exklusive buss",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.01
+    },
+    {
+      "id": "ROAD_LIVING_STREET_BUS",
+      "name": "living_street: bussandel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0
+    },
+    {
+      "id": "ROAD_UNCLASSIFIED_AADT",
+      "name": "unclassified: schablon-ÅDT",
+      "unit": "fordon/dygn",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 500
+    },
+    {
+      "id": "ROAD_UNCLASSIFIED_HEAVY",
+      "name": "unclassified: tung andel exklusive buss",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.04
+    },
+    {
+      "id": "ROAD_UNCLASSIFIED_BUS",
+      "name": "unclassified: bussandel",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Öppen utvecklingsschablon för vägklass, inte uppmätt trafik. Används endast om motsvarande uppgift saknas i vägimporten. OSM-klass belägger inte detta tal.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.005
+    },
+    {
+      "id": "TRAFFIC_CAR",
+      "name": "Personbil inom lätt trafik",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald modellregel. Lätta fordon är återstoden efter tung trafik och buss.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.87
+    },
+    {
+      "id": "TRAFFIC_VAN",
+      "name": "Lätt lastbil inom lätt trafik",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald modellregel. Andel av återstående lätta fordon.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.11
+    },
+    {
+      "id": "TRAFFIC_MC",
+      "name": "Motorcykel inom lätt trafik",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald modellregel. Andel av återstående lätta fordon.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.015
+    },
+    {
+      "id": "TRAFFIC_MOPED",
+      "name": "Moped inom lätt trafik",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald modellregel. Andel av återstående lätta fordon.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.005
+    },
+    {
+      "id": "TRAFFIC_RIGID",
+      "name": "Lastbil utan släp inom tung trafik",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald modellregel. Tung trafik är definierad exklusive buss.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.6
+    },
+    {
+      "id": "TRAFFIC_ARTIC",
+      "name": "Lastbil med släp inom tung trafik",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald modellregel. Tung trafik är definierad exklusive buss.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.4
+    },
+    {
+      "id": "TRAFFIC_ONEWAY",
+      "name": "Riktningsfaktor för schablon på enkelriktad geometri",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald modellregel. Endast för saknad ÅDT. En importerad dubbelriktad mätning kräver egen dokumenterad riktningsandel.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.5
+    },
+    {
+      "id": "TRAFFIC_RAMP",
+      "name": "Rampandel vid saknad ÅDT",
+      "unit": "andel",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald modellregel. Multipliceras med schablonen för motsvarande huvudväg; inte en uppmätt rampandel.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "value": 0.35
+    },
+    {
+      "id": "UNCERTAINTY_CITY",
+      "name": "Variation: city",
+      "unit": "CV",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald fördelningsparameter, inte statistiskt skattad osäkerhet. Positiva multiplikatorer är lognormala med medel 1; mix använder Dirichlet. Intervallen är villkorade modellintervall.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.city"
+    },
+    {
+      "id": "UNCERTAINTY_CLASS",
+      "name": "Variation: class",
+      "unit": "CV",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald fördelningsparameter, inte statistiskt skattad osäkerhet. Positiva multiplikatorer är lognormala med medel 1; mix använder Dirichlet. Intervallen är villkorade modellintervall.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.class"
+    },
+    {
+      "id": "UNCERTAINTY_LOCALASSUMED",
+      "name": "Variation: localAssumed",
+      "unit": "CV",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald fördelningsparameter, inte statistiskt skattad osäkerhet. Positiva multiplikatorer är lognormala med medel 1; mix använder Dirichlet. Intervallen är villkorade modellintervall.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.localAssumed"
+    },
+    {
+      "id": "UNCERTAINTY_LOCALMEASURED",
+      "name": "Variation: localMeasured",
+      "unit": "CV",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald fördelningsparameter, inte statistiskt skattad osäkerhet. Positiva multiplikatorer är lognormala med medel 1; mix använder Dirichlet. Intervallen är villkorade modellintervall.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.localMeasured"
+    },
+    {
+      "id": "UNCERTAINTY_SPATIAL",
+      "name": "Variation: spatial",
+      "unit": "CV",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald fördelningsparameter, inte statistiskt skattad osäkerhet. Positiva multiplikatorer är lognormala med medel 1; mix använder Dirichlet. Intervallen är villkorade modellintervall.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.spatial"
+    },
+    {
+      "id": "UNCERTAINTY_ENERGY",
+      "name": "Variation: energy",
+      "unit": "CV",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald variationskoefficient, inte empiriskt skattad. A och B använder en gemensam positiv lognormal multiplikator med medel 1 för denna LCA-parameter. Intervallen är villkorade modellintervall.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.energy"
+    },
+    {
+      "id": "UNCERTAINTY_PRODUCTION",
+      "name": "Variation: production",
+      "unit": "CV",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald variationskoefficient, inte empiriskt skattad. A och B använder en gemensam positiv lognormal multiplikator med medel 1 för denna LCA-parameter. Intervallen är villkorade modellintervall.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.production"
+    },
+    {
+      "id": "UNCERTAINTY_LIFE",
+      "name": "Variation: life",
+      "unit": "CV",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald variationskoefficient, inte empiriskt skattad. A och B använder en gemensam positiv lognormal multiplikator med medel 1 för denna LCA-parameter. Intervallen är villkorade modellintervall.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.life"
+    },
+    {
+      "id": "UNCERTAINTY_ELECTRICITY",
+      "name": "Variation: electricity",
+      "unit": "CV",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald variationskoefficient, inte empiriskt skattad. A och B använder en gemensam positiv lognormal multiplikator med medel 1 för denna LCA-parameter. Intervallen är villkorade modellintervall.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.electricity"
+    },
+    {
+      "id": "UNCERTAINTY_UPSTREAM",
+      "name": "Variation: upstream",
+      "unit": "CV",
+      "model": "both",
+      "status": "model_assumption",
+      "rationale": "Vald variationskoefficient, inte empiriskt skattad. A och B använder en gemensam positiv lognormal multiplikator med medel 1 för denna LCA-parameter. Intervallen är villkorade modellintervall.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.upstream"
+    },
+    {
+      "id": "UNCERTAINTY_REFERENCE",
+      "name": "Variation: reference",
+      "unit": "CV",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald fördelningsparameter, inte statistiskt skattad osäkerhet. Positiva multiplikatorer är lognormala med medel 1; mix använder Dirichlet. Intervallen är villkorade modellintervall.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.reference"
+    },
+    {
+      "id": "UNCERTAINTY_MIXCONCENTRATION",
+      "name": "Variation: mixConcentration",
+      "unit": "koncentration",
+      "model": "A",
+      "status": "model_assumption",
+      "rationale": "Vald Dirichlet-koncentration för A:s fordonsmix, inte empiriskt skattad. B håller personbilsmixen fast i sina dragningar.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "uncertainty.mixConcentration"
+    },
+    {
+      "id": "SIM_ITERATIONS",
+      "name": "Antal Monte Carlo-dragningar",
+      "unit": "",
+      "model": "both",
+      "status": "user_setting",
+      "rationale": "Beräkningsteknisk inställning som styr upprepbar simulering; inte ett empiriskt parameterestimat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "iterations"
+    },
+    {
+      "id": "SIM_SEED",
+      "name": "Slumptalsfrö",
+      "unit": "",
+      "model": "both",
+      "status": "user_setting",
+      "rationale": "Beräkningsteknisk inställning som styr upprepbar simulering; inte ett empiriskt parameterestimat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ],
+      "path": "seed"
+    },
+    {
+      "id": "B_HOUSEHOLDS_1280",
+      "name": "Malmö: hushåll i aktivt underlag",
+      "unit": "hushåll",
+      "model": "B",
+      "status": "input_data",
+      "rationale": "Summering av faktiskt aktivt underlag. Läs datakvalitet och ursprung i projektets manifest; en imputerad rad är inte ett verifierat DeSO-registervärde.",
+      "sources": [
+        "SCB_HOUSEHOLDS"
+      ],
+      "value": null,
+      "binding": "households:1280"
+    },
+    {
+      "id": "B_CARS_1280",
+      "name": "Malmö: bilar i aktivt underlag",
+      "unit": "bilar",
+      "model": "B",
+      "status": "input_data",
+      "rationale": "Summan av fältet bil i aktiva DeSO-rader. Medföljande data är SCB TAB6589, status i trafik, år 2024. Exakta DeSO-koder har kopplats till GIS-underlaget och summan stämmer med kommunraden. Manuellt ändrade värden får egen källstatus.",
+      "sources": [
+        "SCB_CARS"
+      ],
+      "value": null,
+      "binding": "cars:1280"
+    },
+    {
+      "id": "B_KM_1280",
+      "name": "Malmö: bilvägd körsträcka",
+      "unit": "km/bil och år",
+      "model": "B",
+      "status": "derived_descriptor",
+      "rationale": "Vald gemensam körsträcka household.kmPerCar som används för alla aktiva områdesrader i B. Eventuella äldre eller importerade radvisa km-värden används inte. Startreferensen 11 410 km är rikets alla personbilar 2024; överföring mellan ägarkategori, kommun och årsslutsstock är ett antagande.",
+      "sources": [
+        "TRAFA_KM_2024"
+      ],
+      "value": null,
+      "binding": "mean_km:1280"
+    },
+    {
+      "id": "B_HOUSEHOLDS_1283",
+      "name": "Helsingborg: hushåll i aktivt underlag",
+      "unit": "hushåll",
+      "model": "B",
+      "status": "input_data",
+      "rationale": "Summering av faktiskt aktivt underlag. Läs datakvalitet och ursprung i projektets manifest; en imputerad rad är inte ett verifierat DeSO-registervärde.",
+      "sources": [
+        "SCB_HOUSEHOLDS"
+      ],
+      "value": null,
+      "binding": "households:1283"
+    },
+    {
+      "id": "B_CARS_1283",
+      "name": "Helsingborg: bilar i aktivt underlag",
+      "unit": "bilar",
+      "model": "B",
+      "status": "input_data",
+      "rationale": "Summan av fältet bil i aktiva DeSO-rader. Medföljande data är SCB TAB6589, status i trafik, år 2024. Exakta DeSO-koder har kopplats till GIS-underlaget och summan stämmer med kommunraden. Manuellt ändrade värden får egen källstatus.",
+      "sources": [
+        "SCB_CARS"
+      ],
+      "value": null,
+      "binding": "cars:1283"
+    },
+    {
+      "id": "B_KM_1283",
+      "name": "Helsingborg: bilvägd körsträcka",
+      "unit": "km/bil och år",
+      "model": "B",
+      "status": "derived_descriptor",
+      "rationale": "Vald gemensam körsträcka household.kmPerCar som används för alla aktiva områdesrader i B. Eventuella äldre eller importerade radvisa km-värden används inte. Startreferensen 11 410 km är rikets alla personbilar 2024; överföring mellan ägarkategori, kommun och årsslutsstock är ett antagande.",
+      "sources": [
+        "TRAFA_KM_2024"
+      ],
+      "value": null,
+      "binding": "mean_km:1283"
+    },
+    {
+      "id": "B_HOUSEHOLDS_2180",
+      "name": "Gävle: hushåll i aktivt underlag",
+      "unit": "hushåll",
+      "model": "B",
+      "status": "input_data",
+      "rationale": "Summering av faktiskt aktivt underlag. Läs datakvalitet och ursprung i projektets manifest; en imputerad rad är inte ett verifierat DeSO-registervärde.",
+      "sources": [
+        "SCB_HOUSEHOLDS"
+      ],
+      "value": null,
+      "binding": "households:2180"
+    },
+    {
+      "id": "B_CARS_2180",
+      "name": "Gävle: bilar i aktivt underlag",
+      "unit": "bilar",
+      "model": "B",
+      "status": "input_data",
+      "rationale": "Summan av fältet bil i aktiva DeSO-rader. Medföljande data är SCB TAB6589, status i trafik, år 2024. Exakta DeSO-koder har kopplats till GIS-underlaget och summan stämmer med kommunraden. Manuellt ändrade värden får egen källstatus.",
+      "sources": [
+        "SCB_CARS"
+      ],
+      "value": null,
+      "binding": "cars:2180"
+    },
+    {
+      "id": "B_KM_2180",
+      "name": "Gävle: bilvägd körsträcka",
+      "unit": "km/bil och år",
+      "model": "B",
+      "status": "derived_descriptor",
+      "rationale": "Vald gemensam körsträcka household.kmPerCar som används för alla aktiva områdesrader i B. Eventuella äldre eller importerade radvisa km-värden används inte. Startreferensen 11 410 km är rikets alla personbilar 2024; överföring mellan ägarkategori, kommun och årsslutsstock är ett antagande.",
+      "sources": [
+        "TRAFA_KM_2024"
+      ],
+      "value": null,
+      "binding": "mean_km:2180"
+    },
+    {
+      "id": "B_BPH_1280",
+      "name": "Malmö: bilar per hushåll i aktivt underlag",
+      "unit": "bilar/hushåll",
+      "model": "B",
+      "status": "derived_descriptor",
+      "binding": "cars_per_household:1280",
+      "rationale": "Summa aktiva bilar / summa aktiva hushåll. Bilstocken är registrerad; hushållen i det medföljande områdesunderlaget är skattade. Kvoten är ett härlett mått med blandade källor, inte ett observerat bilinnehav per hushåll. Vid hushållsproxy noll redovisas ingen lokal kvot.",
+      "sources": [
+        "SCB_CARS",
+        "ASSUMPTIONS"
+      ],
+      "value": null
+    },
+    {
+      "id": "B_BPH_1283",
+      "name": "Helsingborg: bilar per hushåll i aktivt underlag",
+      "unit": "bilar/hushåll",
+      "model": "B",
+      "status": "derived_descriptor",
+      "binding": "cars_per_household:1283",
+      "rationale": "Summa aktiva bilar / summa aktiva hushåll. Bilstocken är registrerad; hushållen i det medföljande områdesunderlaget är skattade. Kvoten är ett härlett mått med blandade källor, inte ett observerat bilinnehav per hushåll. Vid hushållsproxy noll redovisas ingen lokal kvot.",
+      "sources": [
+        "SCB_CARS",
+        "ASSUMPTIONS"
+      ],
+      "value": null
+    },
+    {
+      "id": "B_BPH_2180",
+      "name": "Gävle: bilar per hushåll i aktivt underlag",
+      "unit": "bilar/hushåll",
+      "model": "B",
+      "status": "derived_descriptor",
+      "binding": "cars_per_household:2180",
+      "rationale": "Summa aktiva bilar / summa aktiva hushåll. Bilstocken är registrerad; hushållen i det medföljande områdesunderlaget är skattade. Kvoten är ett härlett mått med blandade källor, inte ett observerat bilinnehav per hushåll. Vid hushållsproxy noll redovisas ingen lokal kvot.",
+      "sources": [
+        "SCB_CARS",
+        "ASSUMPTIONS"
+      ],
+      "value": null
+    },
+    {
+      "id": "B_ANNUAL_KM",
+      "name": "B: gemensam årlig körsträcka",
+      "unit": "km/bil och år",
+      "path": "household.kmPerCar",
+      "defaultValue": 11410,
+      "model": "B",
+      "status": "model_assumption",
+      "rationale": "Vald global körsträcka i B. Standardvärdet 11 410 km är ett överfört riksgenomsnitt för alla personbilar 2024, inte en uppmätt kommunal privatbilsflotta. Detta värde ersätter radvisa km-värden.",
+      "sources": [
+        "TRAFA_KM_2024"
+      ]
+    },
+    {
+      "id": "B_CV_DISTANCE",
+      "name": "B: variation i körsträcka",
+      "unit": "CV",
+      "path": "household.uncertainty.distance",
+      "defaultValue": 0.2,
+      "model": "B",
+      "status": "model_assumption",
+      "rationale": "Vald lognormal variationskoefficient för körsträckan, gemensam inom kommunen. Inte empiriskt skattad.",
+      "sources": [
+        "ASSUMPTIONS"
+      ]
+    },
+    {
+      "id": "B_CV_CARSTOCK",
+      "name": "B: variation i bilstock",
+      "unit": "CV",
+      "path": "household.uncertainty.carStock",
+      "defaultValue": 0,
+      "model": "B",
+      "status": "model_assumption",
+      "rationale": "Registrerade bilantal behandlas som fasta indata i grundinställningen (CV 0). Detta är en villkorad beräkning och innebär inte att registeruppgifter saknar all mät- eller klassificeringsosäkerhet. Ett annat värde är ett uttryckligt användarantagande.",
+      "sources": [
+        "ASSUMPTIONS"
+      ]
+    },
+    {
+      "id": "B_CV_ALLOCATION",
+      "name": "B: lokal variation i årlig körsträcka",
+      "unit": "CV",
+      "path": "household.uncertainty.allocation",
+      "defaultValue": 0.5,
+      "model": "B",
+      "status": "model_assumption",
+      "rationale": "Vald lognormal variation i årlig körsträcka mellan DeSO. Faktorer normaliseras med bilantal så att kommunens trafikarbete bevaras före kommunal körsträckevariation. Den registrerade bilstockens fördelning flyttas inte. CV 0,5 är ett modellval, inte empiriskt skattat.",
+      "sources": [
+        "ASSUMPTIONS"
+      ]
+    }
+  ],
+  "apiStatus": {
+    "note": "Bilregistret TAB6589 för 2024 ingår redan i paketet som användarlevererad SCB-originalexport, med validerad koppling till 348 DeSO och kommunavstämning. API-hämtning behövs inte för dessa bilantal. Hushåll och befolkning per DeSO är fortfarande skattade. Data-sidans SCB-knapp kan komplettera med fullständiga registeruttag; ofullständiga eller misslyckade svar ändrar inte befintligt underlag. Körsträcka, LCA och scenarioeffekter har separata antaganden.",
+    "liveQueriesRequired": false
+  },
+  "scope": {
+    "includes": [
+      "Fossila direkta växthusgaser",
+      "Bränsleförsörjning",
+      "Elproduktion",
+      "Fordonstillverkning",
+      "Batteritillverkning",
+      "Underhåll",
+      "Slutbehandling"
+    ],
+    "excludes": [
+      "Vägbyggnad och vägunderhåll",
+      "Laddinfrastruktur",
+      "Parkeringens byggnader",
+      "Detaljerad trafikdynamik",
+      "Separat geografisk lokalisering av livscykelns utsläpp"
+    ],
+    "recycling": "Potential redovisas separat. Huvudresultatet är en förenklad livscykelscreening och styrker inte en fullständig sluten cradle-to-cradle-cykel."
+  },
+  "actions": [],
+  "actionReferences": []
+}

@@ -1,0 +1,111 @@
+[
+  {
+    "id": "SCB_DESO",
+    "title": "Statistiska centralbyrån (u.å.). Demografiska statistikområden (DeSO).",
+    "url": "https://www.scb.se/vara-tjanster/oppna-data/oppna-geodata/demografiska-statistikomraden-deso/",
+    "use": "Definition och öppna geodata. DeSO 2025 och 2018 är olika indelningar; årgångar räknas inte automatiskt om.",
+    "short": "SCB_DESO",
+    "accessed": "2026-10-23",
+    "verification": "Källans beskrivning kontrollerad. Numerisk användning måste styrkas av ett sparat datauttag."
+  },
+  {
+    "id": "SCB_CARS",
+    "title": "Statistiska centralbyrån och Trafikanalys (2026). Personbilar, registrerade på folkbokförda personer 31 december, efter status och region. År 2024–2025. TAB6589.",
+    "url": "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__TK__TK1001__TK1001Z/PersBilarDesoN/",
+    "use": "Personbilar registrerade på folkbokförda personer; privatleasing och enskild firma ingår, förmånsbil via arbetsgivare ingår inte. Förmånsbilar får därför inte läggas till utan ett separat redovisat antagande eller underlag.",
+    "short": "SCB_CARS",
+    "accessed": "2026-10-23",
+    "verification": "SCB:s originalexport TAB6589_sv.zip är inlagd. Urval: i trafik, 2024 och exakt matchade 348 DeSO 2025. Samtliga tre kommuners DeSO-summor stämmer exakt med filens kommunrader. Originalfil och SHA256 finns i underlag/raw/scb/. Hushåll och körsträcka ingår inte i detta biluttag.",
+    "locator": "TAB6589_sv.csv: kolumner region, status, år och personbilar i trafik; Windows-1252."
+  },
+  {
+    "id": "SCB_HOUSEHOLDS",
+    "title": "Statistiska centralbyrån (2026a). Antal hushåll per region efter hushållstyp. År 2011–2025. TAB6568.",
+    "url": "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__BE__BE0101__BE0101Y/HushallDesoTyp/",
+    "use": "Registrerade hushåll 31 december. Från referensår 2024 gäller DeSO 2025. Små celler till och med 2024 kan vara justerade med CTA; från 2025 gäller CKM, vilket kan hindra exakt summering. Läs faktisk uttagsstatus i datamanifestet.",
+    "short": "SCB_HOUSEHOLDS",
+    "accessed": "2026-10-23",
+    "verification": "Källans beskrivning kontrollerad. Numerisk användning måste styrkas av ett sparat datauttag."
+  },
+  {
+    "id": "TRAFANALYS",
+    "title": "Trafikanalys (u.å.). Körsträckor.",
+    "url": "https://www.trafa.se/vagtrafik/korstrackor/",
+    "use": "Fordonsregister- och besiktningsbaserade körsträckor. Anger inte var ett registrerat fordon har körts; skilj från territoriellt trafikarbete.",
+    "short": "TRAFANALYS",
+    "accessed": "2026-10-23",
+    "verification": "Källans beskrivning kontrollerad. Numerisk användning måste styrkas av ett sparat datauttag."
+  },
+  {
+    "id": "TV_AADT_METHOD",
+    "title": "Trafikverket (2015). Metodbeskrivning: Undersökningen av ÅDT. 18 juni.",
+    "url": "https://bransch.trafikverket.se/contentassets/29f030c5f81948f1ae48ab3b73c02d30/metodbeskrivning_adt_2015-06-18.pdf",
+    "use": "Avsnitt 2: trafikarbete = summan av ÅDT × länklängd × antal dagar. Avsnitt 6 beskriver ÅDT-skattning. Vägvis använder årets faktiska dagantal. Ger inget generellt MVD→ÅDT-tal.",
+    "short": "TV_AADT_METHOD",
+    "accessed": "2026-10-23",
+    "verification": "Primär-PDF kontrollerad 2026-10-23; avsnitt 2, tryckt sida 5."
+  },
+  {
+    "id": "OSM",
+    "title": "OpenStreetMap contributors (u.å.). OpenStreetMap: Copyright and License.",
+    "url": "https://www.openstreetmap.org/copyright",
+    "use": "Öppen väggeometri och vägklass med ODbL-attribuering. Trafikvolym kan inte utläsas ur geometri eller vägklass.",
+    "short": "OSM",
+    "accessed": "2026-10-23",
+    "verification": "Källans beskrivning kontrollerad. Numerisk användning måste styrkas av ett sparat datauttag."
+  },
+  {
+    "id": "OSM_TILES",
+    "title": "OpenStreetMap Foundation (u.å.). Tile Usage Policy.",
+    "url": "https://operations.osmfoundation.org/policies/tiles/",
+    "use": "Villkor för nätbaserade bakgrundsbilder. OSM-bilder hämtas vid visning och paketeras inte som offlinekartor.",
+    "short": "OSM_TILES",
+    "accessed": "2026-10-23",
+    "verification": "Källans beskrivning kontrollerad. Numerisk användning måste styrkas av ett sparat datauttag."
+  },
+  {
+    "id": "BOVERKET_EL",
+    "title": "Boverket (2026). Indata om energianvändning i klimatdeklarationen.",
+    "url": "https://www.boverket.se/sv/klimatdeklaration/gor-sa-har/underlag/indata-om-energi/",
+    "use": "Exempeltabellen anger svensk elmix 0,037 kg CO2e/kWh. Vägvis väljer samma storleksordning, 37 g/kWh, som scenarioantagande. Källan avser byggande och verifierar inte kommunal fordonsladdning 2024.",
+    "short": "BOVERKET_EL",
+    "accessed": "2026-10-23",
+    "verification": "Exempeltabellen kontrollerad 2026-10-23: 0,037 kg CO2e/kWh. Tillämpningen på fordonsladdning är ett modellval."
+  },
+  {
+    "id": "IVL_C444",
+    "title": "Emilsson, E. och Dahllöf, L. (2019). Lithium-Ion Vehicle Battery Production: Status 2019. IVL, rapport C 444.",
+    "url": "https://www.ivl.se/english/ivl/press/press-releases/2019-12-04-new-report-on-climate-impact-of-electric-car-batteries.html",
+    "use": "IVL:s redovisning anger 61–106 kg CO2e/kWh för batteriproduktion, med högre övre värde vid mindre transparent underlag. Valet 75 är Vägvis scenarioantagande inom detta äldre litteraturspann; ingen uppmätt 2024-flotta.",
+    "short": "IVL_C444",
+    "accessed": "2026-10-23",
+    "verification": "IVL:s egen forskningssammanfattning kontrollerad 2026-10-23. Stöd för ett äldre intervall; ingen verifierad faktor för lokal fordonsflotta."
+  },
+  {
+    "id": "MALMO_TRAFFIC",
+    "title": "Malmö stad (u.å.). Växthusgasutsläpp per trafikslag.",
+    "url": "https://miljobarometern.malmo.se/miljomal/mal-7/utslapp-fran-vagtrafik/vaxthusgasutslapp-per-trafikslag/table/",
+    "use": "Kommunal jämförelseserie för direkt territoriell vägtrafik. Jämförbarhet i år och fordonskategorier måste kontrolleras. Används inte som automatisk LCA-kalibrering.",
+    "short": "MALMO_TRAFFIC",
+    "accessed": "2026-10-23",
+    "verification": "Kommunal källadress identifierad. Siffror och kategorier ska kontrolleras mot ett daterat uttag före kalibrering."
+  },
+  {
+    "id": "ASSUMPTIONS",
+    "title": "Vägvis (2026). Redovisade modellval, version 2.1.1.",
+    "url": "",
+    "use": "Eget parameterregister i underlag/evidensregister.json. Förbrukning, livslängd, karossproduktion, underhåll, fordonsmix, bränsleblandning, bränslefaktorer, slutbehandling, återvinningspotential, ÅDT-schabloner och variationskoefficienter är valda modellantaganden om inte ett specifikt datauttag anges. Detta är ingen extern validering.",
+    "short": "ASSUMPTIONS",
+    "accessed": "2026-10-23",
+    "verification": "Öppet modellval i detta paket; inte ett externt empiriskt belägg."
+  },
+  {
+    "id": "TRAFA_KM_2024",
+    "short": "Trafikanalys (2025)",
+    "title": "Trafikanalys (2025). Körsträckor 2024. Statistik 2025:10, sammanfattning. Publicerad 18 september.",
+    "url": "https://www.trafa.se/globalassets/statistik/vagtrafik/korstrackor/2024/korstrackor-2024---2025-09-18.pdf",
+    "use": "Sida 1: 1 141 mil per personbil under 2024. Avser alla svenskregistrerade personbilar som varit i trafik någon gång under året, oavsett körplats och ägarkategori. Överföring av 11 410 km/bil till hushållens antagna årsslutsstock är ett modellantagande. Privatägda bilar anges separat till 1 095 mil på sida 4; definitionen motsvarar inte automatiskt SCB:s folkbokförda registerbilars privatleasing och enskilda firma.",
+    "accessed": "2026-10-23",
+    "verification": "Primär-PDF kontrollerad 2026-10-23. Verifierar riksgenomsnitt och population, inte kommunens privata bilars körsträcka."
+  }
+]
