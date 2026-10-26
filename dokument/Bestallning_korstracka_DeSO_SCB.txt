@@ -1,71 +1,54 @@
-BESTÄLLNINGSUNDERLAG – KÖRSTRÄCKA FÖR PERSONBILAR PER DeSO
-Till: SCB, uppdrag@scb.se (formuläret "Förfrågan om ny beställning" under
-Våra tjänster → Beställ data och statistik → Förfrågan om statistiktabeller)
-Ämne: Förfrågan om statistiktabell – körsträcka för personbilar per DeSO 2024
-       (Malmö, Helsingborg och Gävle)
+UNDERLAG FÖR BÄTTRE SKATTNING AV KÖRSTRÄCKA
+Vägvis 2.3.0, 26 oktober 2026
 
-Hej,
+SCB har meddelat att körsträcka levereras ned till kommunnivå. Detta dokument
+är därför inte en beställning av körsträcka per DeSO från SCB. Filnamnet
+behålls för att befintliga länkar ska fortsätta fungera.
 
-Vi beräknar klimatpåverkan från hushållens personbilar per område (DeSO) i
-Malmö, Helsingborg och Gävle. Bilantal per DeSO hämtar vi i dag från
-Statistikdatabasen (TAB6589). Körsträckan finns bara per kommun (RUS
-körsträckedata) och som riksmedelvärde. Vi vill därför beställa körsträcka per
-DeSO, framtagen på samma sätt som körsträckestatistiken (mätarställningar vid
-besiktning i Transportstyrelsens vägtrafikregister).
+Vägvis använder som grundfall härledda kommunvärden. Det valbara läget
+Skattad körsträcka per DeSO fördelar kommunens trafikarbete med geografiska
+indikatorer och uttryckliga modellantaganden. Koefficienterna har inte
+skattats ur en RVU. Körsträckan är modellerad, inte observerad per DeSO.
 
-1. Population
-   Personbilar registrerade på folkbokförda personer, samma avgränsning som
-   TAB6589 (privatleasing och enskild firma ingår; bilar ägda av juridiska
-   personer, t.ex. förmånsbilar, ingår inte).
-   - Bilar i trafik den 31 december 2024 (ska stämma med TAB6589).
-   - Körsträckan avser alla dessa bilars körning under 2024. Om det är enklare
-     kan populationen i stället vara bilar i trafik någon gång under 2024; ange
-     i så fall båda antalen.
+FÖRSLAG TILL FÖRFRÅGAN TILL RESVANEUNDERSÖKNINGENS ANSVARIGA
 
-2. Geografi
-   Ägarens folkbokföringsadress den 31 december 2024, indelad i DeSO 2025.
-   Samtliga DeSO i kommunerna 1280 Malmö, 1283 Helsingborg och 2180 Gävle
-   (348 områden) samt kommuntotaler.
+Syfte: skatta och pröva skillnader i bilkörning mellan bostadsområden, med
+observerat bilantal som separat indata. För Skåne avses RVU 2023 och, där
+jämförbarheten medger det, RVU 2018. För Gävle behöver befintligt material
+och dess representativitet först bekräftas med kommunen eller regionen.
 
-3. Variabler per DeSO
-   - antal_bilar_31dec          antal personbilar i trafik 31 december 2024
-   - antal_bilar_under_aret     antal personbilar i trafik någon gång 2024
-   - korstracka_km              summa körsträcka 2024 i km, enligt metoden i
-                                Trafikanalys körsträckestatistik
-   - antal_med_matarstallning   antal bilar med mätarställningar som ger
-                                körsträcka för 2024 (täckning)
-   Önskvärt, om det är möjligt inom samma beställning:
-   - samma variabler uppdelade på drivmedel: bensin, diesel, el, laddhybrid,
-     elhybrid, övriga
-   - samma variabler för 2023 och 2025, för att kunna följa utvecklingen.
+Vi önskar ett sekretessprövat analysuttag eller specialtabeller som omfattar:
 
-4. Format
-   CSV-fil, en rad per DeSO och år, kolumner:
-   deso;ar;antal_bilar_31dec;antal_bilar_under_aret;korstracka_km;antal_med_matarstallning
-   Exempel (påhittade värden): 1280C1010;2024;900;1000;10800000;980
-   Celler som skyddas av sekretesskäl markeras "..". Vi behöver inga mikrodata,
-   endast aggregerade värden per område.
+1. Bilförarsträcka per mätdag, separat från passagerarsträcka. Inkludera
+   personer som inte reste eller inte körde bil under mätdagen.
+2. Bostadsområde eller en dokumenterad geografisk grupp som kan kopplas
+   till områdestyper och tillgänglighet. Vi behöver inte personadresser.
+3. Hushållets tillgång till bilar och, om möjligt, antal bilar som omfattas
+   av samma definition som SCB TAB6589: privatleasing och enskild firma
+   ingår, förmånsbilar via arbetsgivare ingår inte.
+4. Hushållets storlek och sammansättning, sysselsättning och inkomst med
+   exakta definitioner, samt relevanta reseärenden.
+5. Datum eller dagtyp, urvals- och analysvikter, antal observationer och
+   information om bortfall och geografisk precision.
+6. Besked om tjänste-, förmåns- och lånade bilar, långresor och utlandsresor
+   kan särskiljas, samt om uppgift om årlig körsträcka faktiskt finns.
+7. Vägledning om överföring till helår, inklusive säsong. Skånes RVU 2023
+   representerar en genomsnittlig höstdag, inte automatiskt ett helt år.
+8. Tillåtna användningar och publicering av aggregerade modellparametrar
+   och dokumentation i ett öppet GitHub-paket.
 
-5. Användning
-   Uppgifterna används i den öppna beräkningsmodellen Vägvis (GitHub/Streamlit)
-   för att ersätta ett riksmedelvärde för körsträcka med uppmätta värden per
-   område. Källan anges som "SCB, beställd tabell (år), körsträcka för
-   personbilar per DeSO".
+Det önskade utfallet är fordonskilometer, inte personkilometer. Ett samband
+med hushållets totala bilkörning ska skiljas från samband med körsträcka per
+bil när bilinnehavet redan är känt. Små urval per DeSO kan behöva ersättas
+av gemensamt skattade samband för flera områden.
 
-Vi tar gärna emot en prisuppgift och en uppskattning av leveranstiden. Om
-uppdraget hellre ska gå via Trafikanalys, som ansvarar för statistiken om
-körsträckor, skickar vi samma förfrågan dit.
+KONTROLL AV KÖRSTRÄCKANS KOMMUNREFERENS
 
-Med vänlig hälsning
-[Namn]
-[Organisation]
-[E-post och telefon]
+Om en kommunuppgift kan lämnas önskas en tydlig avgränsning till samma
+bilpopulation som TAB6589, samt uppgift om både antal bilar vid årets slut
+och antal som varit i trafik någon gång under året. RUS kommunmedel avser
+samtliga personbilar, inklusive juridiska personer, och är därför inte en
+definitionsmässigt exakt observation för hushållens årsslutsbestånd.
 
-----------------------------------------------------------------------------
-När filen har kommit:
-  python verktyg/importera_korstracka.py deso <filnamn>.csv
-  python verktyg/bygg_underlag.py
-  node kallkod/bygg_appen.cjs
-Verktyget kontrollerar att alla 348 DeSO finns, att bilantalen stämmer med
-TAB6589 (högst 2 % avvikelse) och att körsträckan per bil är rimlig. Skyddade
-celler får kommunens eller rikets värde och redovisas i appen.
+Inga förfrågningar skickas automatiskt av Vägvis. Användaren väljer själv
+vem som ska kontaktas och vilka uppgifter som ska lämnas.

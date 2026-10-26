@@ -1,0 +1,196 @@
+{
+  "modelVersion": "2.3.0",
+  "executedAt": "2026-10-26T12:35:38.460351+00:00",
+  "status": "passed_with_explicit_runtime_limits",
+  "scope": "Numerisk regression, beräkningsinvarianter, indatavalidering och gränssnittslogik. Ingen empirisk validering av skattad körsträcka per DeSO.",
+  "defaultCompatibility": {
+    "referenceVersion": "2.2.7",
+    "referenceArchiveSHA256": "3a1deb462d243416f41cf35b3e537628ea7765828deef9f7af42c9fa2404f7e7",
+    "numericalRegression": {
+      "version": "2.3.0",
+      "executedAt": "2026-10-26T12:35:00.585Z",
+      "runtime": "v24.22.1",
+      "sourceVersion": "2.2.7",
+      "sourceArchiveSHA256": "3a1deb462d243416f41cf35b3e537628ea7765828deef9f7af42c9fa2404f7e7",
+      "passed": 11,
+      "checks": [
+        "A-default exact central values for all areas and numerical components",
+        "A-network exact central values for all areas and numerical components",
+        "A-scenario exact central values for all areas and numerical components",
+        "B-local exact central values for all areas and numerical components",
+        "B-local exact fixed-seed 100 Monte Carlo draws, every area",
+        "B-national exact central values for all areas and numerical components",
+        "B-national exact fixed-seed 100 Monte Carlo draws, every area",
+        "B-measures exact central values for all areas and numerical components",
+        "B-measures exact fixed-seed 100 Monte Carlo draws, every area",
+        "B-exploitation exact central values for all areas and numerical components",
+        "B-national-custom exact central values for all areas and numerical components"
+      ],
+      "scope": "Numerical regression only; no browser or visual verification."
+    },
+    "cssByteIdentical": true,
+    "cssSHA256": "7496de0737cf8846d8accb0786735fdae8b6f0d32a0a7036c71a4d565ffeab36",
+    "defaultDistanceMode": "local",
+    "newPanelRequiresExplicitChoice": true,
+    "visualLimit": "Oförändrad CSS och körd gränssnittslogik är kontrollerade. Ingen verklig webbläsarjämförelse eller skärmdumpsgranskning har körts lokalt."
+  },
+  "executedChecks": {
+    "existingModelTests": {
+      "version": "2.3.0",
+      "executedAt": "2026-10-26T12:31:02.886Z",
+      "runtime": "v24.22.1",
+      "passed": 27,
+      "checks": [
+        "Körbar källkod är självständig och har rätt version",
+        "Byggd HTML har körbar JavaScript och laddar beräkningsmoduler i rätt ordning",
+        "Livscykeln summerar sex komponenter utan dubbelräkning eller återvinningsavdrag",
+        "Elbil har noll TTW och redovisar elproduktion en gång",
+        "Årstrafik, ton och skottår har rätt enheter i ett explicit räknefall",
+        "MVD, målår och körriktning kräver dokumenterad omräkning",
+        "Fordonsandelar ska anges som andelar, inte procenttal",
+        "Åtgärder har inga dolda effekter och dubblar inte bilinnehav och körning",
+        "A-scenario ändrar scenariot utan att skriva över basfallet",
+        "Monte Carlo bevarar områdessummor i varje dragning och saknade områden är null",
+        "CSV lämnar landnormalisering tom när landareal saknas och A kan avbrytas",
+        "Aktiva geografier och nyberäknat A-resultat går att spåra och summera",
+        "B beräknar antal bilar × km per bil med samma LCA-enhet som A",
+        "B använder uppmätt körsträcka per DeSO, därefter kommunvärde och sist riksmedelvärdet",
+        "B tillämpar total körningsförändring utan ett extra bilinnehavspåslag",
+        "B:s lokala körsträckevariation bevarar kommunens aktivitet i varje dragning",
+        "Nya hushåll ger ett separat tillägg i B utan att ändra basfallet",
+        "Observerade bilar får positiv körning även när en uttrycklig hushållsproxy är noll",
+        "Registerbilar och skattade nämnare har skilda källstatusar i B och CSV",
+        "B:s aktiva startunderlag är fristående och summerar till kommunnivå",
+        "Klassfaktorerna återger Trafikverkets nationella direktutsläpp 2024 per fordonskm",
+        "Personbilens livscykel följer ICCT 2025 per drivlina",
+        "Fordonsandelar följer Trafikverkets normalvärden per vägtyp och DeSO-typ",
+        "Stad/landsbygd-faktorer är normerade till nationellt genomsnitt",
+        "Packade projektfiler är förlustfria och delar områdesgeometri",
+        "Kalibrerat läge träffar kommunreferensen och skalar inte uppmätta länkar",
+        "B använder populationskonsistent körsträcka och privat laddhybridandel"
+      ],
+      "scope": "Numerik och källkod i Node. Ingen körning av grafiskt gränssnitt eller Streamlit."
+    },
+    "registerImportFixtures": {
+      "status": "passed",
+      "requests": 45,
+      "desoRows": 348,
+      "scope": "Mockade SCB-svar; urval, år, enheter, skyddade celler, fel och avbrott. CommonJS och verklig UMD-laddningsordning."
+    },
+    "newDistanceModule": {
+      "version": "2.3.0",
+      "executedAt": "2026-10-26T12:31:04.118Z",
+      "runtime": "v24.22.1",
+      "passed": 11,
+      "checks": [
+        "Default mode and chosen coefficients are explicit, no DeSO mode is auto-enabled",
+        "Browser UMD exports the same DeSO allocation as CommonJS",
+        "Selected DeSO allocation varies within a city and preserves registered cars and city Vkm",
+        "Bounds apply after normalization, including extreme coefficients and zero-car areas",
+        "Missing indicators are null/neutral, never fabricated; complete absence gives baseline",
+        "Observed household ratio is recalculated after edits rather than stale indicator bph",
+        "Zero cars and zero anchor are finite and cannot create phantom traffic",
+        "Bad geography, data year, duplicate rows and invalid values fail explicitly",
+        "Baseline allocation stays frozen through measures and new-household scenario",
+        "New-mode MC normalizes P×K, preserves city activity and closes in every draw",
+        "Actual packaged indicators match all 348 DeSO and preserve all three city totals"
+      ],
+      "scope": "Numerical/methodological tests, not empirical validation of DeSO mileage."
+    },
+    "interfaceLogic": {
+      "version": "2.3.0",
+      "executedAt": "2026-10-26T12:34:20.023Z",
+      "runtime": "v24.22.1",
+      "passed": 12,
+      "checks": [
+        "B default local: all eight UI routes render without errors",
+        "New panel hidden until explicit selection; current local default retained",
+        "B DeSO estimate: all eight UI routes render without errors",
+        "Selected model changes DeSO allocation, preserves city activity, exports indicator/assumption provenance",
+        "Coefficient edit invalidates cache and result; reset restores defaults",
+        "Actual preset event gives correct scenario factors in new mode",
+        "Offline export serializes selected mode, indicators, scenario, Swedish text and escaped HTML; round-trip reproduces activity",
+        "Failed register fetch is atomic with selected DeSO mode",
+        "Indicator file import accepts validated data and rejects wrong-year, negative and duplicate data atomically",
+        "B national: all eight UI routes render without errors",
+        "Switching back restores local baseline and national option remains functional",
+        "Independent A engine and existing routes remain usable"
+      ],
+      "errors": [],
+      "scope": "Minimal DOM fixture executes actual source and engines. It does not validate Chromium layout, screenshots or Streamlit runtime."
+    },
+    "pythonUnittests": {
+      "run": 49,
+      "passed": 47,
+      "skipped": 2,
+      "failed": 0,
+      "newSourceInputTests": 9,
+      "command": "python -m unittest discover -s tests -p 'test_*.py' -v",
+      "skippedReason": "Två tester av landmaskverktyget kräver shapely och pyshp; dessa är inte installerade lokalt."
+    }
+  },
+  "notExecutedLocally": [
+    {
+      "test": "Chromium/Playwright, grafisk kontroll och offline-HTML i verklig webbläsare",
+      "reason": "Playwrightbibliotek finns men Chromiumbinär saknas. Normal hämtning nekades med HTTP 403 av miljön. Utökade tester finns i tests/kontrollera_granssnitt.cjs för CI."
+    },
+    {
+      "test": "Streamlitserver och dess iframe i riktig webbläsare",
+      "reason": "Streamlit är inte installerat; vanlig pipinstallation kunde inte hitta paketversionen i miljön. Server- och webbläsartester ingår i GitHub-flödet."
+    }
+  ],
+  "optionalModuleData": {
+    "coverage": {
+      "bph": {
+        "available": 348,
+        "total": 348
+      },
+      "centreKm": {
+        "available": 348,
+        "total": 348
+      },
+      "income": {
+        "available": 0,
+        "total": 348
+      },
+      "serviceKm": {
+        "available": 0,
+        "total": 348
+      },
+      "transitKm": {
+        "available": 0,
+        "total": 348
+      }
+    },
+    "dataYear": 2024,
+    "desoVersion": "2025",
+    "coefficientsStatus": "chosen_assumptions_not_empirically_estimated",
+    "note": "Paketets faktiska geografiska variation bygger på tillgängligt centrumavstånd. Registerkvoten bilar/hushåll finns men har koefficient 0. Inkomst, kollektivnod och dagligvaror saknar hämtade observationer och ger neutralt bidrag. De har inte ersatts med påhittade data.",
+    "acquisitionReceipt": "underlag/korstracka/senaste_hamtning.json"
+  },
+  "interpretationLimits": [
+    "Bilvägd normalisering bevarar kommunens referenstrafikarbete; den visar inte att skillnader mellan DeSO är riktiga.",
+    "Koefficienter, begränsningar och CV är redigerbara modellantaganden. Deras numeriska värden är inte belagda av forskningsreferenserna.",
+    "Avstånd är fågelvägsproxies från längdviktade bostadsgator, inte uppmätta restider eller faktisk befolkningsviktning.",
+    "Den villkorade Monte Carlo-analysen täcker inte all osäkerhet i valda samband. Koefficientkänslighet kräver separata körningar."
+  ],
+  "additionalCsvCompatibilityCheck": {
+    "status": "passed",
+    "A": "Byte-identical CSV to 2.2.7, with and without land columns.",
+    "B": "Existing column positions retained; four distance provenance columns appended, row alignment verified."
+  },
+  "optionalModuleFullRun": {
+    "iterations": 3000,
+    "elapsedSeconds": 17.963,
+    "maxClosureError": 7.566995918750763e-10,
+    "finiteAllResults": true,
+    "scope": "Actual 348-DeSO dataset, all three municipalities, optional DeSO mode at default assumptions; statistical intervals remain conditional model intervals."
+  },
+  "manualVerification": {
+    "pages": 27,
+    "allPagesVisuallyInspectedAtOriginalResolution": true,
+    "harvardReferences": 34,
+    "newNativeEquations": 3,
+    "sha256": "b8c58b93d4d63afa9fe72f34b681c44492696497d3f52db207c95b8aa916dd88"
+  }
+}

@@ -36,7 +36,7 @@ function aggregateClosure(agg,cities){
 }
 async function main(){
   await check('Körbar källkod är självständig och har rätt version',()=>{
-    assert.equal(V.VERSION,'2.2.7');assert.equal(S.VERSION,'2.2.7');assert.equal(H.VERSION,'2.2.7');
+    assert.equal(V.VERSION,'2.3.0');assert.equal(S.VERSION,'2.3.0');assert.equal(H.VERSION,'2.3.0');
     // Endast filer som skalet laddar får finnas i kallkod/source; äldre modellers filer ska inte följa med.
     const sources=fs.readdirSync(path.join(root,'kallkod/source')).sort();
     const loaded=[...read('kallkod/source/shell.html').matchAll(/\{\{kallkod\/source\/([^}]+)\}\}/g)].map(m=>m[1]);
@@ -50,7 +50,7 @@ async function main(){
   });
   await check('Byggd HTML har körbar JavaScript och laddar beräkningsmoduler i rätt ordning',()=>{
     const html=read('app/Vagvis.html');
-    const ids=['core-script','scenario-script','household-script','register-script'];
+    const ids=['core-script','scenario-script','distance-script','household-script','register-script'];
     const positions=ids.map(id=>html.indexOf('id="'+id+'"'));
     assert.ok(positions.every(position=>position>=0),'En modulmarkör saknas');
     assert.deepEqual(positions,[...positions].sort((a,b)=>a-b),'Globalmodulerna har fel laddningsordning');
@@ -231,7 +231,7 @@ async function main(){
       const est=observed?'observed_register':'spatial_model_assumption';
       assert.equal(cell('bilantal_kallstatus'),'observed_register');assert.equal(cell('hushall_kallstatus'),est);assert.equal(cell('befolkning_kallstatus'),est);
       assert.equal(cell('status'),observed?'REGISTERBASERAD HUSHÅLLSMODELL LCA':'REGISTERBILAR MED SKATTAT HUSHÅLLSUNDERLAG');
-      const resultRow=r.results.find(value=>value.key==='city|'+city);assert.deepEqual(resultRow.inputStatus,{cars:'observed_register',households:est,population:est});
+      const resultRow=r.results.find(value=>value.key==='city|'+city);assert.deepEqual(resultRow.inputStatus,{cars:'observed_register',households:est,population:est,distance:kommunKm?'derived_official':'transferred_assumption'});assert.equal(cell('korstracka_kallstatus'),resultRow.inputStatus.distance);
     }
     const zeroProxy=d.baseMap.get('deso|1280|1280C2850');near(zeroProxy.cars,545,'Nollproxyområdets observerade bilar');near(zeroProxy.vkm,545*(kommunKm?kommunKm['1280'].kmPerCar:12753),'Nollproxyområdets körning');if(!observed)assert.equal(zeroProxy.households,0);
   });

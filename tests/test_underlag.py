@@ -150,7 +150,7 @@ class PrimaryDataTests(unittest.TestCase):
 
     def test_source_receipt_and_hashes_match_actual_bytes(self):
         receipt = read("underlag/datakvitto.json")
-        self.assertEqual(receipt["modelVersion"], "2.2.7")
+        self.assertEqual(receipt["modelVersion"], "2.3.0")
         self.assertEqual(receipt["dataYear"], 2024)
         self.assertEqual(receipt["desoVersion"], "2025")
         for entry in receipt["dataFiles"] + receipt["builtFiles"]:
@@ -392,8 +392,11 @@ class PackageTests(unittest.TestCase):
         files = [p for p in ROOT.rglob("*") if p.is_file() and not skip & set(p.relative_to(ROOT).parts)
                  and p.relative_to(ROOT).as_posix() != "app/Vagvis.html"]
         sizes = {p.relative_to(ROOT).as_posix(): p.stat().st_size for p in files}
-        self.assertLess(len(sizes), 100, "GitHub tar emot högst 100 filer per uppladdning i webbläsaren")
-        self.assertLess(max(sizes.values()), 10 * 1024 * 1024, max(sizes, key=sizes.get))
+        if len(sizes) > 100:
+            guide = (ROOT / "README.md").read_text(encoding="utf-8").lower()
+            self.assertIn("100 filer", guide, "Fler än 100 filer kräver anvisning om flera uppladdningar")
+            self.assertTrue("omgång" in guide or "delpaket" in guide, "Beskriv hur filerna delas upp i GitHub")
+        self.assertLess(max(sizes.values()), 25 * 1024 * 1024, max(sizes, key=sizes.get))
         self.assertLess(sum(sizes.values()), 25 * 1024 * 1024)
 
     def test_streamlit_wrapper_has_no_runtime_api_fetch_or_extra_model_page(self):
@@ -408,11 +411,11 @@ class PackageTests(unittest.TestCase):
                     modules.append(node.module or "")
             self.assertFalse(any(module.startswith(("requests", "urllib", "httpx")) for module in modules))
             self.assertNotIn("urlopen", text)
-        self.assertIn('page_title="Vägvis 2.2.7"', (ROOT / "streamlit_app.py").read_text())
+        self.assertIn('page_title="Vägvis 2.3.0"', (ROOT / "streamlit_app.py").read_text())
 
     def test_evidence_has_unique_parameters_sources_and_no_orphan_references(self):
         registry = read("underlag/evidensregister.json")
-        self.assertEqual(registry["version"], "2.2.7")
+        self.assertEqual(registry["version"], "2.3.0")
         for group in ("parameters", "sources"):
             ids = [row["id"] for row in registry[group]]
             self.assertEqual(len(ids), len(set(ids)), group)

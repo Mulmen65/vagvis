@@ -1,0 +1,666 @@
+{
+  "schema": "vagvis-legacy-regression-1",
+  "sourceVersion": "2.2.7",
+  "sourceArchive": "Vagvis_2.2.7_GitHub_Streamlit.zip",
+  "sourceArchiveSHA256": "3a1deb462d243416f41cf35b3e537628ea7765828deef9f7af42c9fa2404f7e7",
+  "numericKeys": [
+    "ttw",
+    "wtt",
+    "vehicle",
+    "battery",
+    "maintenance",
+    "endoflife",
+    "electricity",
+    "fuelUpstream",
+    "direct",
+    "credit",
+    "biogenic",
+    "total",
+    "net",
+    "vkm",
+    "cars",
+    "households",
+    "population"
+  ],
+  "cases": [
+    {
+      "id": "A-default",
+      "model": "territorial",
+      "patch": {},
+      "baseDigest": "7616c1224a67700b9045da690fee083196f6cb58805fb28be5f4c99ba5209312",
+      "scenarioDigest": "7616c1224a67700b9045da690fee083196f6cb58805fb28be5f4c99ba5209312",
+      "cityCentral": [
+        [
+          "city|1280",
+          {
+            "ttw": 279650.00000000023,
+            "wtt": 91682.80099897782,
+            "vehicle": 39601.815411341726,
+            "battery": 1817.2430692671555,
+            "maintenance": 11861.61401439107,
+            "endoflife": 262.35508932192016,
+            "electricity": 2497.3859290048977,
+            "fuelUpstream": 89185.41506997295,
+            "direct": 282147.3859290052,
+            "credit": 1405.4197216782022,
+            "biogenic": 39354.112174166476,
+            "total": 424875.8285833,
+            "net": 423470.4088616218,
+            "vkm": 1289353493.1389887
+          }
+        ],
+        [
+          "city|1283",
+          {
+            "ttw": 204999.99999999953,
+            "wtt": 67077.28336957075,
+            "vehicle": 30267.18865349718,
+            "battery": 1405.9597949637257,
+            "maintenance": 8747.28298080652,
+            "endoflife": 192.66506460951427,
+            "electricity": 1928.8704857013522,
+            "fuelUpstream": 65148.412883869394,
+            "direct": 206928.8704857009,
+            "credit": 1072.9706152901656,
+            "biogenic": 28272.82667417479,
+            "total": 312690.37986344716,
+            "net": 311617.409248157,
+            "vkm": 988450596.6082816
+          }
+        ],
+        [
+          "city|2180",
+          {
+            "ttw": 194700.0000000003,
+            "wtt": 63592.611848092514,
+            "vehicle": 29580.29072020123,
+            "battery": 1379.6660567345389,
+            "maintenance": 8373.202346527163,
+            "endoflife": 182.86234095945477,
+            "electricity": 1878.425719343835,
+            "fuelUpstream": 61714.186128748675,
+            "direct": 196578.42571934417,
+            "credit": 1047.9954057453833,
+            "biogenic": 26229.37722141148,
+            "total": 297808.6333125152,
+            "net": 296760.6379067698,
+            "vkm": 967354763.4751387
+          }
+        ]
+      ]
+    },
+    {
+      "id": "A-network",
+      "model": "territorial",
+      "patch": {
+        "mode": "network"
+      },
+      "baseDigest": "95d40a5b4a7ff972a44a02a1a91bb8bceeb653cdf922a6d2b4049821f68c49cd",
+      "scenarioDigest": "95d40a5b4a7ff972a44a02a1a91bb8bceeb653cdf922a6d2b4049821f68c49cd",
+      "cityCentral": [
+        [
+          "city|1280",
+          {
+            "ttw": 273020.47647787235,
+            "wtt": 89509.16563224109,
+            "vehicle": 38665.82961475398,
+            "battery": 1774.4303983039572,
+            "maintenance": 11580.264760216049,
+            "endoflife": 256.0388712143115,
+            "electricity": 2438.5022762055887,
+            "fuelUpstream": 87070.66335603548,
+            "direct": 275458.9787540779,
+            "credit": 1372.1906410706774,
+            "biogenic": 38420.12664580533,
+            "total": 414806.20575460175,
+            "net": 413434.01511353115,
+            "vkm": 1258882748.665532
+          }
+        ],
+        [
+          "city|1283",
+          {
+            "ttw": 246115.0286348943,
+            "wtt": 80530.37813294075,
+            "vehicle": 36337.60976660107,
+            "battery": 1687.9406594976,
+            "maintenance": 10501.64781121329,
+            "endoflife": 231.30618484543635,
+            "electricity": 2315.726901567764,
+            "fuelUpstream": 78214.65123137299,
+            "direct": 248430.75553646195,
+            "credit": 1288.1667985684867,
+            "biogenic": 33943.25632440949,
+            "total": 375403.91118999233,
+            "net": 374115.7443914239,
+            "vkm": 1186695350.6752489
+          }
+        ],
+        [
+          "city|2180",
+          {
+            "ttw": 398797.3827835634,
+            "wtt": 130254.58227729987,
+            "vehicle": 60588.30262554268,
+            "battery": 2825.9230228097194,
+            "maintenance": 17150.545358563013,
+            "endoflife": 374.550708702137,
+            "electricity": 3847.5154629052527,
+            "fuelUpstream": 126407.06681439461,
+            "direct": 402644.8982464686,
+            "credit": 2146.573317824638,
+            "biogenic": 53724.7405646723,
+            "total": 609991.2867764807,
+            "net": 607844.7134586561,
+            "vkm": 1981399835.1160638
+          }
+        ]
+      ]
+    },
+    {
+      "id": "A-scenario",
+      "model": "territorial",
+      "patch": {
+        "trafficChange": 0.12,
+        "electrify": 0.03,
+        "energyScale": 0.94
+      },
+      "baseDigest": "2ad15675de6afe3d5bc47e24f20cabd22063e4356f60d2fc201beeedd90bdba5",
+      "scenarioDigest": "72b5971e3eb5ab758d76e9e9750d0af0ba2a558f119653caa8228afa637510c3",
+      "cityCentral": [
+        [
+          "city|1280",
+          {
+            "ttw": 279649.9999999999,
+            "wtt": 91643.61968915506,
+            "vehicle": 42103.82778192001,
+            "battery": 1931.6869345030705,
+            "maintenance": 12613.697344036846,
+            "endoflife": 279.2391658732094,
+            "electricity": 2495.5022514638026,
+            "fuelUpstream": 89148.11743769128,
+            "direct": 282145.50225146365,
+            "credit": 1494.2453972878789,
+            "biogenic": 39339.730912353676,
+            "total": 428222.0709154881,
+            "net": 426727.82551820023,
+            "vkm": 1370805775.7390597
+          }
+        ],
+        [
+          "city|1283",
+          {
+            "ttw": 205000.00000000017,
+            "wtt": 67048.30686657854,
+            "vehicle": 32185.227262366814,
+            "battery": 1495.0557860097015,
+            "maintenance": 9301.600286981457,
+            "endoflife": 204.8742934457945,
+            "electricity": 1928.0372390552036,
+            "fuelUpstream": 65120.26962752335,
+            "direct": 206928.0372390553,
+            "credit": 1140.9650065059932,
+            "biogenic": 28260.613185411272,
+            "total": 315235.0644953825,
+            "net": 314094.09948887647,
+            "vkm": 1051088935.073055
+          }
+        ],
+        [
+          "city|2180",
+          {
+            "ttw": 194699.99999999997,
+            "wtt": 63565.03159434419,
+            "vehicle": 31454.74647226544,
+            "battery": 1467.0932899702034,
+            "maintenance": 8903.798798404718,
+            "endoflife": 194.45003528232675,
+            "electricity": 1877.6110420333534,
+            "fuelUpstream": 61687.42055231084,
+            "direct": 196577.6110420333,
+            "credit": 1114.4051998551738,
+            "biogenic": 26218.001483595344,
+            "total": 300285.12019026687,
+            "net": 299170.7149904117,
+            "vkm": 1028654488.9522908
+          }
+        ]
+      ]
+    },
+    {
+      "id": "B-local",
+      "model": "household",
+      "patch": {
+        "household": {
+          "kmMode": "local"
+        }
+      },
+      "baseDigest": "6244892544f496bbebdd9043ec421ebfb0ea95c55c79bf52ba09f250f5f99d1e",
+      "scenarioDigest": "6244892544f496bbebdd9043ec421ebfb0ea95c55c79bf52ba09f250f5f99d1e",
+      "cityCentral": [
+        [
+          "city|1280",
+          {
+            "ttw": 172681.8269108842,
+            "wtt": 54955.87100587453,
+            "vehicle": 35873.37835619187,
+            "battery": 1949.3776442343838,
+            "maintenance": 6816.349888416001,
+            "endoflife": 0,
+            "electricity": 2742.0551727072925,
+            "fuelUpstream": 52213.81583316724,
+            "direct": 175423.8820835917,
+            "credit": 1245.2410500000003,
+            "biogenic": 15388.883254940132,
+            "total": 272276.80380560126,
+            "net": 271031.5627556013,
+            "vkm": 1195431408,
+            "cars": 100524,
+            "households": 172941,
+            "population": 365644
+          }
+        ],
+        [
+          "city|1283",
+          {
+            "ttw": 108221.02072129751,
+            "wtt": 34441.26438361666,
+            "vehicle": 22482.120393780002,
+            "battery": 1221.6898686113334,
+            "maintenance": 4271.858572000001,
+            "endoflife": 0,
+            "electricity": 1718.4669340893595,
+            "fuelUpstream": 32722.7974495273,
+            "direct": 109939.48765538687,
+            "credit": 780.4020833333332,
+            "biogenic": 9644.33075212926,
+            "total": 170637.9539393055,
+            "net": 169857.55185597227,
+            "vkm": 749186000,
+            "cars": 58000,
+            "households": 70852,
+            "population": 152091
+          }
+        ],
+        [
+          "city|2180",
+          {
+            "ttw": 78335.60454806834,
+            "wtt": 24930.251525150445,
+            "vehicle": 16273.645183080633,
+            "battery": 884.3181647157129,
+            "maintenance": 3092.177670762001,
+            "endoflife": 0,
+            "electricity": 1243.9094113188619,
+            "fuelUpstream": 23686.342113831583,
+            "direct": 79579.51395938722,
+            "credit": 564.892740625,
+            "biogenic": 6981.032657926994,
+            "total": 123515.99709177714,
+            "net": 122951.10435115213,
+            "vkm": 542297031,
+            "cars": 43311,
+            "households": 50993,
+            "population": 103838
+          }
+        ]
+      ],
+      "monteCarlo": {
+        "iterations": 100,
+        "seed": 732041,
+        "drawsDigest": "92d5eb5ae5080ab1d9a1f4c081603fdee23f45fb2b4ccb881acb53c7271fc452"
+      }
+    },
+    {
+      "id": "B-national",
+      "model": "household",
+      "patch": {
+        "household": {
+          "kmMode": "national"
+        }
+      },
+      "baseDigest": "f4af93a5c1c97d4db1b43589958fbe321c91e410388e2cc29430eb913bc10310",
+      "scenarioDigest": "f4af93a5c1c97d4db1b43589958fbe321c91e410388e2cc29430eb913bc10310",
+      "cityCentral": [
+        [
+          "city|1280",
+          {
+            "ttw": 185184.2699793566,
+            "wtt": 58934.764794644965,
+            "vehicle": 38470.66886785359,
+            "battery": 2090.51573300716,
+            "maintenance": 7309.864625543999,
+            "endoflife": 0,
+            "electricity": 2940.5843943437694,
+            "fuelUpstream": 55994.18040030114,
+            "direct": 188124.8543737005,
+            "credit": 1335.3985125000004,
+            "biogenic": 16503.063248423434,
+            "total": 291990.08400040615,
+            "net": 290654.68548790633,
+            "vkm": 1281982572,
+            "cars": 100524,
+            "households": 172941,
+            "population": 365644
+          }
+        ],
+        [
+          "city|1283",
+          {
+            "ttw": 106846.99831684658,
+            "wtt": 34003.98271148589,
+            "vehicle": 22196.677354020016,
+            "battery": 1206.1787485019995,
+            "maintenance": 4217.621148000001,
+            "endoflife": 0,
+            "electricity": 1696.64851052424,
+            "fuelUpstream": 32307.334200961654,
+            "direct": 108543.64682737083,
+            "credit": 770.49375,
+            "biogenic": 9521.882022288799,
+            "total": 168471.45827885458,
+            "net": 167700.9645288546,
+            "vkm": 739674000,
+            "cars": 58000,
+            "households": 70852,
+            "population": 152091
+          }
+        ],
+        [
+          "city|2180",
+          {
+            "ttw": 79787.07489829209,
+            "wtt": 25392.180952020095,
+            "vehicle": 16575.177463447595,
+            "battery": 900.7035823512082,
+            "maintenance": 3149.4722334660014,
+            "endoflife": 0,
+            "electricity": 1266.9576489537133,
+            "fuelUpstream": 24125.22330306639,
+            "direct": 81054.03254724584,
+            "credit": 575.359565625,
+            "biogenic": 7110.3833149543125,
+            "total": 125804.60912957697,
+            "net": 125229.249563952,
+            "vkm": 552345183,
+            "cars": 43311,
+            "households": 50993,
+            "population": 103838
+          }
+        ]
+      ],
+      "monteCarlo": {
+        "iterations": 100,
+        "seed": 732041,
+        "drawsDigest": "05e5c9f49d739d511d328026e747e0870f7c34a5a41f6ca05c8c6572acc8036a"
+      }
+    },
+    {
+      "id": "B-measures",
+      "model": "household",
+      "patch": {
+        "household": {
+          "kmMode": "local"
+        },
+        "areaScenario": {
+          "bilpool": {
+            "enabled": true,
+            "coverage": 1,
+            "intensity": 1,
+            "preset": "carsharing_pbl2015"
+          }
+        }
+      },
+      "baseDigest": "6244892544f496bbebdd9043ec421ebfb0ea95c55c79bf52ba09f250f5f99d1e",
+      "scenarioDigest": "58d0e6930e7b013b475a92f557446cb4e548f08cabf6e24aa72bafafa0766943",
+      "cityCentral": [
+        [
+          "city|1280",
+          {
+            "ttw": 172681.8269108842,
+            "wtt": 54955.87100587453,
+            "vehicle": 35873.37835619187,
+            "battery": 1949.3776442343838,
+            "maintenance": 6816.349888416001,
+            "endoflife": 0,
+            "electricity": 2742.0551727072925,
+            "fuelUpstream": 52213.81583316724,
+            "direct": 175423.8820835917,
+            "credit": 1245.2410500000003,
+            "biogenic": 15388.883254940132,
+            "total": 272276.80380560126,
+            "net": 271031.5627556013,
+            "vkm": 1195431408,
+            "cars": 100524,
+            "households": 172941,
+            "population": 365644
+          }
+        ],
+        [
+          "city|1283",
+          {
+            "ttw": 108221.02072129751,
+            "wtt": 34441.26438361666,
+            "vehicle": 22482.120393780002,
+            "battery": 1221.6898686113334,
+            "maintenance": 4271.858572000001,
+            "endoflife": 0,
+            "electricity": 1718.4669340893595,
+            "fuelUpstream": 32722.7974495273,
+            "direct": 109939.48765538687,
+            "credit": 780.4020833333332,
+            "biogenic": 9644.33075212926,
+            "total": 170637.9539393055,
+            "net": 169857.55185597227,
+            "vkm": 749186000,
+            "cars": 58000,
+            "households": 70852,
+            "population": 152091
+          }
+        ],
+        [
+          "city|2180",
+          {
+            "ttw": 78335.60454806834,
+            "wtt": 24930.251525150445,
+            "vehicle": 16273.645183080633,
+            "battery": 884.3181647157129,
+            "maintenance": 3092.177670762001,
+            "endoflife": 0,
+            "electricity": 1243.9094113188619,
+            "fuelUpstream": 23686.342113831583,
+            "direct": 79579.51395938722,
+            "credit": 564.892740625,
+            "biogenic": 6981.032657926994,
+            "total": 123515.99709177714,
+            "net": 122951.10435115213,
+            "vkm": 542297031,
+            "cars": 43311,
+            "households": 50993,
+            "population": 103838
+          }
+        ]
+      ],
+      "monteCarlo": {
+        "iterations": 100,
+        "seed": 732041,
+        "drawsDigest": "0780215e6eb22337a4a416ec8f73a996403096dd80c956a9558b3f5404f27410"
+      }
+    },
+    {
+      "id": "B-exploitation",
+      "model": "household",
+      "patch": {
+        "household": {
+          "kmMode": "local"
+        },
+        "exploitation": {
+          "enabled": true,
+          "city": "1280",
+          "deso": "1280C1010",
+          "newHouseholds": 125,
+          "carsPerHousehold": 0.6,
+          "kmPerCar": null
+        }
+      },
+      "baseDigest": "6244892544f496bbebdd9043ec421ebfb0ea95c55c79bf52ba09f250f5f99d1e",
+      "scenarioDigest": "7053cd7d65d1a2662e27c9106d8b149cfaeddc9a824fd215f8f525100c09e624",
+      "cityCentral": [
+        [
+          "city|1280",
+          {
+            "ttw": 172681.8269108842,
+            "wtt": 54955.87100587453,
+            "vehicle": 35873.37835619187,
+            "battery": 1949.3776442343838,
+            "maintenance": 6816.349888416001,
+            "endoflife": 0,
+            "electricity": 2742.0551727072925,
+            "fuelUpstream": 52213.81583316724,
+            "direct": 175423.8820835917,
+            "credit": 1245.2410500000003,
+            "biogenic": 15388.883254940132,
+            "total": 272276.80380560126,
+            "net": 271031.5627556013,
+            "vkm": 1195431408,
+            "cars": 100524,
+            "households": 172941,
+            "population": 365644
+          }
+        ],
+        [
+          "city|1283",
+          {
+            "ttw": 108221.02072129751,
+            "wtt": 34441.26438361666,
+            "vehicle": 22482.120393780002,
+            "battery": 1221.6898686113334,
+            "maintenance": 4271.858572000001,
+            "endoflife": 0,
+            "electricity": 1718.4669340893595,
+            "fuelUpstream": 32722.7974495273,
+            "direct": 109939.48765538687,
+            "credit": 780.4020833333332,
+            "biogenic": 9644.33075212926,
+            "total": 170637.9539393055,
+            "net": 169857.55185597227,
+            "vkm": 749186000,
+            "cars": 58000,
+            "households": 70852,
+            "population": 152091
+          }
+        ],
+        [
+          "city|2180",
+          {
+            "ttw": 78335.60454806834,
+            "wtt": 24930.251525150445,
+            "vehicle": 16273.645183080633,
+            "battery": 884.3181647157129,
+            "maintenance": 3092.177670762001,
+            "endoflife": 0,
+            "electricity": 1243.9094113188619,
+            "fuelUpstream": 23686.342113831583,
+            "direct": 79579.51395938722,
+            "credit": 564.892740625,
+            "biogenic": 6981.032657926994,
+            "total": 123515.99709177714,
+            "net": 122951.10435115213,
+            "vkm": 542297031,
+            "cars": 43311,
+            "households": 50993,
+            "population": 103838
+          }
+        ]
+      ]
+    },
+    {
+      "id": "B-national-custom",
+      "model": "household",
+      "patch": {
+        "household": {
+          "kmMode": "national",
+          "kmPerCar": 9000
+        },
+        "areaScenario": {
+          "bilpool": {
+            "enabled": true,
+            "coverage": 1,
+            "intensity": 1,
+            "preset": "carsharing_pbl2015"
+          }
+        }
+      },
+      "baseDigest": "fc4b4f3aa2ae2b34d0283c8b371b5d7b0988b69916471145b871f1de50fd7c6f",
+      "scenarioDigest": "154263db1024e48daaba12ff2b1a860c06c59786e2ddf078e65cca7abb9ddb7c",
+      "cityCentral": [
+        [
+          "city|1280",
+          {
+            "ttw": 130687.5582070265,
+            "wtt": 41591.22427286164,
+            "vehicle": 27149.378170680004,
+            "battery": 1475.311032468,
+            "maintenance": 5158.690632000002,
+            "endoflife": 0,
+            "electricity": 2075.218344632158,
+            "fuelUpstream": 39516.00592822948,
+            "direct": 132762.77655165867,
+            "credit": 942.4124999999998,
+            "biogenic": 11646.480768118166,
+            "total": 206062.16231503623,
+            "net": 205119.7498150362,
+            "vkm": 904716000,
+            "cars": 100524,
+            "households": 172941,
+            "population": 365644
+          }
+        ],
+        [
+          "city|1283",
+          {
+            "ttw": 75403.66853694186,
+            "wtt": 23997.164934005566,
+            "vehicle": 15664.557059999997,
+            "battery": 851.2200060000002,
+            "maintenance": 2976.444000000001,
+            "endoflife": 0,
+            "electricity": 1197.3525127199998,
+            "fuelUpstream": 22799.812421285566,
+            "direct": 76601.02104966185,
+            "credit": 543.75,
+            "biogenic": 6719.747369293437,
+            "total": 118893.05453694737,
+            "net": 118349.30453694737,
+            "vkm": 522000000,
+            "cars": 58000,
+            "households": 70852,
+            "population": 152091
+          }
+        ],
+        [
+          "city|2180",
+          {
+            "ttw": 56307.039448335985,
+            "wtt": 17919.67604235715,
+            "vehicle": 11697.372945269999,
+            "battery": 635.6412013769999,
+            "maintenance": 2222.633898,
+            "endoflife": 0,
+            "electricity": 894.1126668692398,
+            "fuelUpstream": 17025.56337548792,
+            "direct": 57201.15211520522,
+            "credit": 406.04062500000003,
+            "biogenic": 5017.913419163241,
+            "total": 88782.36353534013,
+            "net": 88376.32291034017,
+            "vkm": 389799000,
+            "cars": 43311,
+            "households": 50993,
+            "population": 103838
+          }
+        ]
+      ]
+    }
+  ]
+}

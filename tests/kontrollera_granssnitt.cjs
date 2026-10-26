@@ -61,7 +61,7 @@ async function main(){
     await page.goto(pathToFileURL(path.join(root,'app/Vagvis.html')).href,{waitUntil:'load'});
     await page.waitForFunction(()=>window.VagvisApp&&window.VagvisApp.ready);
     await page.evaluate(async()=>{await window.VagvisApp.ready;return true;});
-    assert.equal(await page.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.7');
+    assert.equal(await page.evaluate(()=>window.VagvisApp.getResult()?.version),'2.3.0');
     assert.ok((await page.locator('#view').innerText()).includes('Livscykel'));
     await page.screenshot({path:path.join(out,'granssnitt-A-oversikt.png')});
     await views(page,['map','calc','parameters','data','method']);
@@ -98,6 +98,32 @@ async function main(){
       }
       checks.push('Räkneexemplen i B stämmer med beräkningen för kommun, RegSO och DeSO');
     }
+    // The optional panel appears only after selection. Default local results were checked above.
+    await page.locator('[data-city="1280"]').click();
+    await page.locator('.nav[data-view="parameters"]').click();
+    assert.equal(await page.locator('#distance-model-panel').count(),0,'New controls must not change the default layout');
+    const originalCityVkm=await page.evaluate(()=>window.VagvisApp.getResult().results.find(r=>r.key==='city|1280').central.vkm);
+    await page.selectOption('[data-path="household.kmMode"]','deso_estimate');
+    assert.equal(await page.locator('#distance-model-panel').count(),1);
+    assert.ok((await page.locator('#distance-model-panel').innerText()).includes('inte validerad'));
+    assert.equal(await page.locator('#export').isDisabled(),true,'Changed mode must invalidate result export');
+    await page.evaluate(async()=>{await window.VagvisApp.run();return true;});
+    near(await page.evaluate(()=>window.VagvisApp.getResult().results.find(r=>r.key==='city|1280').central.vkm),originalCityVkm);
+    await page.screenshot({path:path.join(out,'granssnitt-B-DeSO-antaganden.png')});
+    const distances=await page.evaluate(()=>window.VagvisHouseholds.explain(window.VagvisApp.getProject(),window.VagvisApp.getConfig(),'city|1280').rows.map(r=>r.kmPerCar));
+    assert.ok(new Set(distances.map(x=>x.toFixed(6))).size>1,'Selected mode must vary DeSO distances');
+    await page.locator('[data-edit="household.distanceModel.coefficients.centre"]').fill('0.25');
+    await page.locator('[data-edit="household.distanceModel.coefficients.centre"]').press('Tab');
+    assert.equal(await page.locator('#export').isDisabled(),true);
+    await page.evaluate(async()=>{await window.VagvisApp.run();return true;});
+    const changed=await page.evaluate(()=>window.VagvisHouseholds.explain(window.VagvisApp.getProject(),window.VagvisApp.getConfig(),'city|1280').rows.map(r=>r.kmPerCar));
+    assert.ok(changed.some((x,i)=>Math.abs(x-distances[i])>1e-6),'Coefficient editing must affect the selected model');
+    await page.locator('#reset-distance-model').click();
+    await page.evaluate(async()=>{await window.VagvisApp.run();return true;});
+    await views(page,['overview','map','calc','parameters','measures','control','data','method']);
+    const distanceAudit=await page.evaluate(()=>window.VagvisApp.getAudit().distanceModel);
+    assert.equal(distanceAudit.estimate.status,'model_estimate');assert.equal(distanceAudit.indicators.rows.length,348);
+    checks.push('Explicit DeSO selection, hidden default controls, coefficient editing/reset, city conservation and all views');
     await page.locator('.nav[data-view="measures"]').click();
     await page.locator('[data-preset="carsharing_pbl2015"]').click();
     await page.locator('#scenario-note').fill('Test med <tagg> & Öresund.');
@@ -114,15 +140,16 @@ async function main(){
     await page.locator('#download-audit').click();
     const auditDownload=await auditPending,auditFile=await auditDownload.path();
     const audit=JSON.parse(fs.readFileSync(auditFile,'utf8'));
-    assert.equal(audit.version,'2.2.7');assert.equal(audit.model,'household');assert.equal(audit.evidence.modelVersion,'2.2.7');
-    assert.equal(audit.dirty,false);assert.ok(audit.result.results.length>0);
+    assert.equal(audit.version,'2.3.0');assert.equal(audit.model,'household');assert.equal(audit.evidence.modelVersion,'2.3.0');
+    assert.equal(audit.dirty,false);assert.ok(audit.result.results.length>0);assert.equal(audit.distanceModel.estimate.status,'model_estimate');
     checks.push('JSON-export med resultat, inställningar och källkvitto');
     const csvPending=page.waitForEvent('download');
     await page.locator('#download-csv').click();
     const csvDownload=await csvPending,csv=fs.readFileSync(await csvDownload.path(),'utf8');
     assert.ok(csv.split('\n').length>100,'CSV saknar områdesrader');
     assert.ok(/total|livscykel|co2/i.test(csv.split('\n')[0]),'CSV saknar utsläppskolumner');
-    checks.push('CSV-export med områdesrader');
+    assert.ok(csv.split('\n')[0].includes('korstracka_kallstatus'),'CSV lacks distance provenance');assert.ok(csv.includes('model_estimate'),'CSV must label model estimates');
+    checks.push('CSV-export med områdesrader och modellerad körsträckas källstatus');
     const offlinePending=page.waitForEvent('download');
     await page.locator('#download-offline').click();
     const offlineDownload=await offlinePending,offlineFile=path.join(out,'export-offline.html');
@@ -133,9 +160,11 @@ async function main(){
     await offline.waitForFunction(()=>window.VagvisApp&&window.VagvisApp.ready);
     await offline.evaluate(async()=>{await window.VagvisApp.ready;return true;});
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getModel()),'household');
+    assert.equal(await offline.evaluate(()=>window.VagvisApp.getConfig().household.kmMode),'deso_estimate');
+    assert.equal(await offline.evaluate(()=>window.VagvisApp.getProject().distanceData.rows.length),348);
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getConfig().scenarioNote),'Test med <tagg> & Öresund.');
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getConfig().areaScenario.bilpool.preset),'carsharing_pbl2015');
-    assert.equal(await offline.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.7');
+    assert.equal(await offline.evaluate(()=>window.VagvisApp.getResult()?.version),'2.3.0');
     assert.ok(await offline.evaluate(()=>window.VagvisApp.getProject().cities.some(city=>city.name==='Malmö')));
     await offline.close();
     checks.push('Offlineexport öppnas med samma modell, scenario och svenska tecken');
@@ -155,7 +184,7 @@ async function main(){
       await server.close();
     }
     assert.deepEqual(errors,[]);
-    fs.writeFileSync(path.join(out,'granssnitt.json'),JSON.stringify({version:'2.2.7',executedAt:new Date().toISOString(),browser:'Chromium via Playwright',passed:checks.length,checks,errors},null,2)+'\n');
+    fs.writeFileSync(path.join(out,'granssnitt.json'),JSON.stringify({version:'2.3.0',executedAt:new Date().toISOString(),browser:'Chromium via Playwright',passed:checks.length,checks,errors},null,2)+'\n');
     console.log(checks.length+' verkliga webbläsarkontroller godkända.');
   }finally{
     await browser.close();
