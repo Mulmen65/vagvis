@@ -1,4 +1,4 @@
-# Vägvis 2.2.7 för GitHub och Streamlit
+# Vägvis 2.3.0 för GitHub och Streamlit
 
 Vägvis uppskattar vägtrafikens klimatpåverkan med livscykelperspektiv i Malmö, Helsingborg och Gävle. Paketet innehåller läsbar beräkningskod, data, källregister, importverktyg, tester och manual. Det körs lokalt eller via Streamlit utan Netlify-krediter, API-nycklar eller AI-tjänster.
 
@@ -9,74 +9,38 @@ Två självständiga modeller ingår:
 
 A och B har olika systemgränser och ska inte summeras.
 
-## Nytt i 2.2.7
+## Valbar körsträcka per DeSO i 2.3.0
 
-- **Exakt landmask ingår.** Kartan visar bara land, med OpenStreetMaps landpolygoner (osmdata.openstreetmap.de, dataläge 26 oktober 2026). Hamnar, pirar och öar följer den verkliga kustlinjen. Kontrollen mot vägnätet: 0,01 % (Malmö), 0,02 % (Helsingborg) och 0,00 % (Gävle) av vägpunkterna ligger utanför landytan (broar), mot 2,0 respektive 2,9 % med masken i 2.2.5.
-- **Yta utan hav:** Malmö 15 858 ha, Helsingborg 34 530 ha och Gävle 178 249 ha (sjöar räknas som land). Nyckeltalet *t CO₂e per hektar utan hav* finns nu i kartan och panelen.
-- Flödet **Bygg landmask** behövs bara för att uppdatera masken senare.
+Under **B → Antaganden & scenario → Körsträcka i modell B** finns tre alternativ:
 
-## Nytt i 2.2.6
+1. Kommunvärden och eventuella verifierade lokala värden (befintligt standardläge).
+2. Samma riksgenomsnitt för alla områden (befintligt jämförelseläge).
+3. **Skattning per DeSO – valda antaganden** (nytt, kräver aktivt val).
 
-- **Den grova landmasken från 2.2.5 är borttagen.** Den byggde på geo-maps earth-lands-10m, som visade sig vara för grov och delvis inaktuell: delar av hamnar (bland annat Norra hamnen i Malmö) och öar saknades, medan vissa hamnbassänger räknades som land. Kontrollen mot vägnätet visar att 2,0 % (Malmö) och 2,9 % (Gävle) av vägpunkterna låg "i havet". Kartan visar nu SCB:s exakta DeSO-gränser igen, som även omfattar vatten.
-- **Bakgrundskartan syns igenom.** Med OpenStreetMap påslaget är områdena halvgenomskinliga (50 %), så att gator, namn, hamnar och kustlinje syns. Utan bakgrund är färgerna täckande.
-- **Exakt landmask från OpenStreetMap** kan byggas med det nya GitHub-flödet **Bygg landmask** (se *Landmask* nedan). Det hämtar OpenStreetMaps landpolygoner, kontrollerar dem mot vägnätet och lägger resultatet i en pull request. Därefter visas kartan utan hav och nyckeltalet *t CO₂e per hektar utan hav* blir tillgängligt.
-- **Nytt nyckeltal i panelen för modell A:** t CO₂e per km väg, jämfört med kommunen.
-- Ett fel som gjorde att namnrutor och markeringar kunde bli kvar i kartan efter hovring är rättat.
+Det nya alternativet ger olika körsträcka mellan DeSO. Det använder tillgängliga indikatorer för centrumavstånd, kollektivtrafik, dagligvaror/service, inkomst och bilinnehav. Koefficienterna är öppet redovisade modellval, inte skattade svenska effekter. Inget forskningsresultat används som påstått belägg för deras numeriska värden. Saknade indikatorer ger inget eget bidrag och visas som saknade.
 
-## Nytt i 2.2.5
+Första leveransen innehåller centrumavstånd som beräknats från paketets OSM-vägnät och registrerade bilar per hushåll för samtliga 348 DeSO. **Inkomst, kollektivtrafikpunkter och servicepunkter har inte kunnat hämtas i byggmiljön (HTTP 403) och är tomma.** De tre faktorerna påverkar därför inte första leveransens skattning. Bilinnehavets koefficient är noll från start för att undvika en ogrundad extra bilinnehavseffekt. Centrumavståndet bygger på bostadsvägar som geografisk proxy och är fågelvägsavstånd, inte befolkningsvägd restid. GIS-underlaget avser 2026; utsläppsberäkningens basår är 2024.
 
-- **Ny karta och områdespanel under *Karta & områden*.** Klasserna är kvintiler bland områdena i kommunen med en teckenförklaring i kartan, och skillnaden mellan scenario och basfall visas i en tvåfärgad skala (blått minskning, rött ökning). Kartan visar namn och värde när muspekaren hålls över ett område, och valt område ramas in.
-- **Panelen till höger** visar områdets namn, utsläpp med modellintervall, placering bland kommunens områden och de nyckeltal som beräkningen bygger på (för B: hushåll, invånare, bilar, bilar per hushåll, körsträcka per bil med nivå, fordonskilometer och utsläpp per hushåll och invånare jämfört med kommunen; för A: väglängd, fordonskilometer, andel uppmätt trafik, landyta och utsläpp per hektar land). Livscykelns delar visas som staplar.
-- **Områdestabellen** visar RegSO-namn med DeSO-kod, placering, basfall, scenario med procentuell förändring, modellintervall och andel av kommunens utsläpp. En rad som väljs markeras och visas i kartan och panelen.
-- Landmask och landareal från geo-maps earth-lands-10m (borttagna i 2.2.6, se ovan).
-- Knappar med vit bakgrund (t.ex. *Beräkningsbeskrivning och källor*) är nu läsbara.
+DeSO-faktorerna begränsas till valda intervall och normaliseras så att kommunens bilvägda medelkörsträcka och sammanlagda trafikarbete behålls. Detta kontrollerar summeringen, inte fördelningens träffsäkerhet. Osäkerhetsintervallet är villkorat av valda CV, utan empiriskt skattad säkerhet för DeSO-fördelningen. Nya modellantaganden anges i en separat panel när det nya läget väljs; färger, karta, navigering och befintliga beräkningslägen behålls.
 
-## Nytt i 2.2.4
+### Komplettera indikatorerna automatiskt
 
-- Räkneexemplen i modell B visas med så många decimaler att de kan räknas om exakt, och en automatisk kontroll jämför varje exempel med beräkningen för kommun, RegSO och DeSO.
-- Nya hushåll i exploateringsscenariot får som standard samma körsträcka som områdets befintliga bilar (tidigare riksmedelvärdet).
+Kör **Actions → Hamta korstrackeindikatorer → Run workflow** i GitHub. Flödet försöker hämta SCB:s medianekonomiska standard 2024 och OSM-punkter för kollektivtrafik och dagligvaror, validerar data och skapar en granskningsbar uppdatering på en ny gren. Befintliga underlag behålls om en källa inte kan hämtas. Granska täckningen i `underlag/korstracka/`, slå ihop ändringen och välj **Reboot app** i Streamlit. Nya data ändrar inte de valda koefficienternas evidensstatus. Hållplatsavstånd är en fysisk tillgänglighetsproxy; turtäthet och restider ingår inte.
 
-## Nytt i 2.2.3
+Lokalt kan samma hämtning köras med `python verktyg/hamta_korstrackeindikatorer.py`. Se verktygets `--help` för import av egna källfiler. Beräkning och sparade projekt fungerar därefter utan nätanrop. Full metod, källor och datatäckning finns i knappen **Beräkningsbeskrivning och källor**, i `underlag/korstrackemodell_metod.md` och i den uppdaterade manualen.
 
-- **Stegvis beräkning i modell B** under *Så räknas resultatet*: hushåll och bilar, bilar per hushåll, körsträcka per bil, fordonskilometer och livscykelutsläpp, med räkneexempel för valt område och numrerade källor. Texterna beskriver den aktuella metoden (SCB-register 2024, uppmätt körsträcka per kommun). Uppräkning för förmånsbilar och körsträcka efter avstånd till centrum används inte.
-- **Officiella RegSO-namn** (t.ex. *Västra hamnen sydöst*) i listor, kartor och tabeller. Namnen kommer från SCB TAB6589 och kopplas till RegSO-koderna genom summor per år och status; alla 144 RegSO får ett entydigt namn. DeSO visas som *kod (RegSO-namn)*.
-
-## Nytt i 2.2.2
-
-- **Uppmätt körsträcka per kommun 2024** i modell B, från SCB:s körsträckedata hos RUS (tabell 2, mätarställningar vid besiktning): Malmö 11 892, Helsingborg 12 917 och Gävle 12 521 km per privat bil (riksmedelvärdet är 12 753). Modell B ändras med −6,8, +1,3 respektive −1,8 % och intervallen blir smalare. Originaltabellerna ligger i `underlag/raw/rus/`.
-
-## Nytt i 2.2.1
-
-- **Körsträcka per kommun och DeSO i modell B.** Modellen använder uppmätt körsträcka (mätarställningar vid besiktning, sammanställda av SCB) när den finns: i första hand per DeSO, i andra hand per kommun, och annars riksmedelvärdet 12 753 km. Ingen schablon för avstånd till centrum används. Se *Körsträcka i modell B* nedan.
-- **Städning av repot.** GitHub-flödet **Stada repo** tar bort filer från äldre modellversioner som blivit kvar efter tidigare uppladdningar.
-- Beställningsunderlag till SCB för körsträcka per DeSO: `dokument/Bestallning_korstracka_DeSO_SCB.txt`.
-
-## Nytt i 2.2.0
-
-| Område | 2.1.1 | 2.2.0 |
-|---|---|---|
-| Direktutsläpp per fordonskm | Egna förbrukningsvärden | Kalibrerade så att varje fordonsklass återger Trafikverkets reviderade nationella utsläpp och trafikarbete 2024 |
-| Personbilens livscykel | Egna schabloner | ICCT (2025): 240 000 km, tillverkning 7,2/7,9/6,5 t, batteri 72,8 kg CO₂e/kWh, 53,4 kWh, underhåll per drivlina |
-| Drivlinor | Bensin, diesel, el, laddhybrid, biogas | + elhybrid; körsträckeviktad mix 2024 från Trafikanalys |
-| Laddhybrid | 45 % eldrift i A och B | 35 % i A (all trafik), 47 % i B (privatbilar) |
-| El | 37 g/kWh (byggexempel) | 90 g/kWh, nordisk elmix (Naturvårdsverket/SMED) |
-| Fordonsandelar per vägtyp | Egna schabloner | Trafikverkets normalvärden per vägtyp och DeSO-typ (landsbygd/tätort) |
-| Direktutsläpp stad/landsbygd | En faktor | Kvoter enligt Trafikverkets HBEFA-faktorer |
-| Trafikflöden | 100 % schablon | Uppmätt ÅDT på Öresundsbron; importverktyg för NVDB och kommunala mätningar |
-| Kommuntotal i A | Okalibrerad | Grundfallet kalibreras mot kommunal statistik för direktutsläpp 2024; uppmätta länkar skalas inte |
-| Körsträcka i B | 11 410 km (fel population) | 12 753 km per privat bil i årsslutsbeståndet, härledd ur Trafikanalys |
-| Hushåll och befolkning per DeSO | Fördelade efter bostadsgatornas längd i OSM | SCB:s register 2024 (TAB6568, TAB6574); summorna stämmer exakt med kommunraderna |
-| Osäkerhet | Valda CV | Kommunnivåfelet (0,45) motsvarar observerad avvikelse; kalibrerat läge använder referensens CV |
-| Paketstorlek | 61 MB, 69 filer | cirka 8 MB, packade data, ingen färdigbyggd 18 MB-HTML i repot |
+Landmasken från OpenStreetMap, registrerade bilar/hushåll/befolkning, fordonsfaktorer, A-modellen och de två tidigare körsträckelägena har bevarats. A och B ska fortfarande inte summeras.
 
 ## Ladda upp till GitHub
 
-1. Packa upp paketet och öppna mappen `vagvis_2_2_7`.
-2. Skapa helst ett nytt repo. Välj **Add file → Upload files** och dra in mappens **innehåll** i ett enda steg (under 100 filer och cirka 12 MB). `streamlit_app.py` ska ligga direkt i repots rot.
+1. Packa upp paketet och öppna mappen `vagvis_2_3_0`.
+2. Skapa helst ett nytt repo. Välj **Add file → Upload files** och dra in mappens **innehåll**. Om du använder de uppdelade ZIP-filerna, packa upp dem först och ladda upp delarnas innehåll till samma repo i ordning. Gör en commit efter varje del och behåll mappstrukturen. `streamlit_app.py` ska ligga direkt i repots rot.
+GitHubs webbuppladdning tillåter högst **100 filer** i samma uppladdning. Använd de uppdelade paketen och ladda upp i **flera omgångar** om hela mappen inte accepteras. Varje del ska packas upp och läggas i samma repo, med bibehållna sökvägar.
+
 3. Kontrollera att `.github/` och `.streamlit/` kom med. Webbläsaren kan dölja punktmappar; använd GitHub Desktop eller Git om de saknas.
-4. Gör commit, exempelvis `Vägvis 2.2.7`.
+4. Gör commit, exempelvis `Vägvis 2.3.0`.
 5. I Streamlit Community Cloud: välj repot och huvudfilen `streamlit_app.py`, Python 3.12.
-6. Öppna appen och kontrollera att den visar **Vägvis 2.2.7** och **MODELLPAKET 2.2** i sidomenyn.
+6. Öppna appen och kontrollera att den visar **Vägvis 2.3.0** och **MODELLPAKET 2.3** i sidomenyn.
 
 Vid uppdatering av ett befintligt repo tas gamla filer inte bort av en uppladdning. Kör därför **Actions → Stada repo → Run workflow** efter uppladdningen. Flödet jämför repot med `MANIFEST_SHA256.json`, tar bort filer som inte hör till paketet (till exempel sidor och skript från äldre modellversioner, `app/Vagvis.html` och okomprimerade geodatafiler från 2.1.1) och lägger ändringen i en pull request som listar varje fil. Filer under `underlag/` och `dokument/` behålls. Lokalt: `python verktyg/stada_repo.py` (visar) och `python verktyg/stada_repo.py --ta-bort`.
 
@@ -111,7 +75,7 @@ Windows: dubbelklicka på `STARTA_LOKALT_WINDOWS.cmd`. För en fristående HTML-
 | Områden | SCB DeSO 2025 (348) och RegSO 2025 (144). Landmask och yta utan hav från OpenStreetMaps landpolygoner, 26 oktober 2026 |
 | Vägnät | OpenStreetMap, oktober 2026 (32 274 vägar) |
 | Trafikflöden | Uppmätt på Öresundsbron (Øresundsbron 2024); övriga vägar schablon per vägklass, kalibrerade per kommun |
-| Körsträcka (B) | Uppmätt per kommun 2024 (RUS/SCB tabell 2): Malmö 11 892, Helsingborg 12 917, Gävle 12 521 km per privat bil; samma värde för alla DeSO i kommunen tills DeSO-värden beställs |
+| Körsträcka (B) | Härledda kommunvärden: Malmö 11 892, Helsingborg 12 917, Gävle 12 521 km per bil. Valbart riksgenomsnitt eller antagandebaserad DeSO-fördelning. Inga uppmätta DeSO-körsträckor ingår |
 | Kommunreferenser (TTW 2024) | Malmö 279,7 kt (två kommunala serier), Helsingborg ≈ 205 kt och Gävle ≈ 195 kt (Nationella emissionsdatabasen framskriven) |
 | Bilar per DeSO (B) | SCB TAB6589, 2024, i trafik – registerdata |
 | Hushåll och befolkning per DeSO | SCB TAB6568 och TAB6574, 2024 – registerdata (Malmö 172 941 hushåll, Helsingborg 70 852, Gävle 50 993) |
@@ -135,23 +99,15 @@ Filerna laddas ned från `https://www.statistikdatabasen.scb.se/Resources/PX/bul
 
 ### Körsträcka i modell B
 
-Körsträckan per bil mäts genom mätarställningar vid kontrollbesiktning. SCB sammanställer dem per kommun (öppna data) och kan ta fram dem per DeSO på beställning.
+Körsträckestatistiken bygger på mätarställningar och metodskattningar. SCB har meddelat att körsträckor endast levereras ned till kommunnivå. Paketet hänvisar därför inte till beställning av uppmätt DeSO-körsträcka som en tillgänglig datakälla.
 
-**Per kommun (öppet, inläst för 2024):** SCB:s körsträckedata hos RUS, tabell 2 (https://www.rus.se/statistik-och-indikatorer/korstrackor/), mil per bil för bilar registrerade i kommunen. Vägvis överför värdet till privatägda bilar med kvoten mot riket: K = 12 753 km × (kommunens mil per bil / rikets mil per bil).
+Kommunvärdena bygger på RUS/SCB tabell 2 för 2024 och överförs till B-modellens privatbilsbestånd genom kvoten mot riket: K = 12 753 km × (kommunens mil per bil / rikets mil per bil). Tabell 2 omfattar alla personbilar som varit i trafik under året, även företagsägda. Att motsvarande relativa kommunskillnad gäller hushållens bilar vid årets slut är ett modellantagande.
 
 ```bash
 python verktyg/importera_korstracka.py kommun --ar 2024 --excel Tabell-2-Korstracka-till-ar-2025.xlsx
-# eller med värdena direkt (mil per bil):
-python verktyg/importera_korstracka.py kommun --ar 2024 --riket <riket> 1280=<Malmö> 1283=<Helsingborg> 2180=<Gävle>
 ```
 
-**Per DeSO (beställning):** skicka `dokument/Bestallning_korstracka_DeSO_SCB.txt` till SCB (uppdrag@scb.se). Leveransen läses in med
-
-```bash
-python verktyg/importera_korstracka.py deso korstracka_deso_2024.csv
-```
-
-Verktyget kräver alla 348 DeSO, bilantal som stämmer med TAB6589 och rimlig körsträcka per bil. Skyddade celler får kommunens eller rikets värde. Kör sedan `python verktyg/bygg_underlag.py` och `node kallkod/bygg_appen.cjs`. Under **Antaganden & scenario** kan du växla mellan uppmätta värden och samma riksmedelvärde för alla.
+Import av en egen verifierbar DeSO-leverans stöds även fortsättningsvis av `importera_korstracka.py deso fil.csv`, men någon sådan leverans ingår inte. Detta är inte en automatisk SCB-tjänst. Den nya delmodulen använder geografiska och socioekonomiska indikatorer för en uttrycklig modellskattning. Se `dokument/Bestallning_korstracka_DeSO_SCB.txt` för databehov och möjliga analysuttag ur resvaneundersökningar.
 
 ### Landmask (kustlinje)
 
@@ -199,6 +155,7 @@ python verktyg/bygg_underlag.py
 node kallkod/bygg_appen.cjs
 node tests/test_modell.cjs
 node tests/test_register.cjs
+node tests/test_distance.cjs
 python -m unittest discover -s tests -p 'test_*.py' -v
 python verktyg/skapa_manifest.py
 ```
