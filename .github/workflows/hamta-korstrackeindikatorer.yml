@@ -1,0 +1,59 @@
+name: Hamta korstrackeindikatorer
+# Manuell hämtning för den valbara DeSO-modulen. Standardlägenas indata ändras inte.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  indikatorer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Hamta och bygg indikatorer
+        run: python verktyg/hamta_korstrackeindikatorer.py
+      - name: Bygg och kontrollera
+        run: |
+          node kallkod/bygg_appen.cjs --reuse-result
+          node tests/test_distance.cjs
+          python -m unittest discover -s tests -p 'test_*.py' -v
+          python verktyg/skapa_manifest.py
+      - name: Skapa granskningsbar uppdatering
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! python -c "import json; d=json.load(open('underlag/korstracka/senaste_hamtning.json')); raise SystemExit(0 if any(s.get('success') for s in d.get('sources', [])) else 1)"; then
+            echo "Inga nya källdata kunde hämtas. Befintliga underlag behålls; hämtningskvittot finns i artefakten."
+            exit 0
+          fi
+          git add kallkod/data/distance-indicators.json underlag/korstracka underlag/SHA256.json app/Metod_och_anvandning.html MANIFEST_SHA256.json
+          if git diff --cached --quiet; then
+            echo "Inga indikatorer ändrades. Befintliga underlag behålls."
+            exit 0
+          fi
+          branch="korstrackeindikatorer-${{ github.run_number }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git commit -m "Uppdatera underlag till valbar DeSO-körsträcka"
+          git push origin "$branch"
+          cat > /tmp/korstrackeindikatorer-pr.txt <<'BODY'
+          Uppdaterade indikatorer till den valbara DeSO-modulen. Granska datakvittot och täckningen under underlag/korstracka. Körsträckefaktorerna är valda modellantaganden; hämtningen skattar inga nya koefficienter. Standardlägenas register- och kommunvärden ändras inte.
+          BODY
+          gh pr create --title "Uppdaterade körsträckeindikatorer" --body-file /tmp/korstrackeindikatorer-pr.txt --head "$branch" || echo "Öppna en pull request från grenen $branch."
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: Vagvis-korstrackeindikatorer
+          path: |
+            kallkod/data/distance-indicators.json
+            underlag/korstracka/
+          if-no-files-found: warn
+          retention-days: 30
