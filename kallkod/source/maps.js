@@ -5,13 +5,13 @@
 let map=null,layers={};
 const V=window.Vagvis,$=id=>document.getElementById(id),masks=JSON.parse($('embedded-land').textContent);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function dispose(){if(map){map.remove();map=null;}layers={};}
+function dispose(){if(map){map.remove();map=null;}layers={};selectedId=null;}
 function polygonPath(g,project){return (g.type==='Polygon'?[g.coordinates]:g.coordinates).map(p=>p.map(r=>r.map((x,i)=>(i?'L':'M')+project(x).join(',')).join('')+'Z').join('')).join('');}
 function color(x,max){if(x==null)return '#c9d1cb';const t=Math.sqrt(x/Math.max(1,max));return 'rgb('+Math.round(223-208*t)+','+Math.round(235-136*t)+','+Math.round(207-119*t)+')';}
-function draw({project,city,level,result,onSelect,fill,tooltip,dashed,fillOpacity,attribution}){
+function draw({project,city,level,result,onSelect,fill,tooltip,dashed,fillOpacity,attribution,legend}){
  dispose();const areas=project.areas.filter(a=>a.city===city&&a.level===level),land=project.isDemo?null:masks[city],index=Object.fromEntries((result?.results||[]).filter(x=>x.city===city&&x.level===level).map(x=>[x.id,x])),max=Math.max(1,...Object.values(index).map(x=>x.central?.total||0));
- const status=$('map-status');if(!window.L){drawSVG(areas,land,index,max,onSelect,fill,dashed);return;}
- const L=window.L;map=L.map('map-surface',{scrollWheelZoom:false,zoomSnap:.25,preferCanvas:false});
+ const status=$('map-status');if(!window.L){drawSVG(areas,land,index,max,onSelect,fill,dashed);if(legend)$('map-surface').insertAdjacentHTML('beforeend','<div class="map-legend">'+legend+'</div>');return;}
+ const L=window.L;map=L.map('map-surface',{scrollWheelZoom:false,zoomSnap:.25,preferCanvas:false,attributionControl:false});
  // SVG clipping affects only the display. The original DeSO geometry stays in
  // the calculation engine, including municipal waters and bridge sections.
  const LandSVG=L.SVG.extend({
@@ -25,10 +25,15 @@ function draw({project,city,level,result,onSelect,fill,tooltip,dashed,fillOpacit
   }
  });
  const renderer=new LandSVG({padding:.5}),fc={type:'FeatureCollection',features:areas.map(a=>({type:'Feature',properties:{id:a.id,name:a.name},geometry:a.geometry}))};
- const layer=L.geoJSON(fc,{renderer,style:f=>({color:'#fff',weight:level==='district'?1.6:.8,fillColor:fill?fill(f.properties.id):color(index[f.properties.id]?.central?.total,max),fillOpacity:fillOpacity??.62,dashArray:dashed&&dashed(f.properties.id)?'4 4':null}),onEachFeature(f,l){
-  const x=index[f.properties.id];layers[f.properties.id]=l;l.bindTooltip(tooltip?()=>tooltip(f.properties.id):esc(f.properties.name)+(x?.central?' · '+new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(x.central.total)+' ton CO₂e/år':' · trafik saknas'),{sticky:true});
+ baseWeight=level==='district'?1.4:.7;
+ const layer=L.geoJSON(fc,{renderer,style:f=>({color:'#ffffff',weight:baseWeight,opacity:.95,fillColor:fill?fill(f.properties.id):color(index[f.properties.id]?.central?.total,max),fillOpacity:fillOpacity??.85,dashArray:dashed&&dashed(f.properties.id)?'4 4':null}),onEachFeature(f,l){
+  const x=index[f.properties.id];layers[f.properties.id]=l;l.bindTooltip(tooltip?()=>tooltip(f.properties.id):esc(f.properties.name)+(x?.central?' · '+new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(x.central.total)+' ton CO₂e/år':' · trafik saknas'),{sticky:true,className:'map-tip'});
   l.on('click',()=>onSelect(f.properties.id));
+  // Ingen bringToFront vid hovring: att flytta elementet under muspekaren gör att Chrome tappar mouseout, och tooltips blir kvar.
+  l.on('mouseover',()=>{if(f.properties.id!==selectedId)l.setStyle({weight:2.2,color:'#0b463a'});});
+  l.on('mouseout',()=>{if(f.properties.id!==selectedId)l.setStyle({weight:baseWeight,color:'#ffffff'});});
  }}).addTo(map);
+ if(legend){const lc=L.control({position:'bottomright'});lc.onAdd=()=>{const d=L.DomUtil.create('div','map-legend');d.innerHTML=legend;L.DomEvent.disableClickPropagation(d);return d;};lc.addTo(map);}
  const bounds=land?L.geoJSON(land).getBounds():layer.getBounds();if(bounds.isValid())map.fitBounds(bounds,{padding:[15,15]});
  const tiles=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,referrerPolicy:'strict-origin-when-cross-origin',attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
  const osm=$('map-osm'),localFile=window.location?.protocol==='file:';
@@ -39,7 +44,7 @@ function draw({project,city,level,result,onSelect,fill,tooltip,dashed,fillOpacit
  osm.onchange=refresh;refresh();
  const roads=project.roads.filter(r=>r.city===city),roadLayer=L.geoJSON({type:'FeatureCollection',features:roads.map(r=>({type:'Feature',properties:{id:r.id,aadt:r.aadt},geometry:r.geometry}))},{style:f=>({color:f.properties.aadt==null?'#9a7d53':'#cc642d',weight:2,opacity:.8})});
  const show=$('map-roads');show.disabled=!roads.length;show.onchange=()=>{if(show.checked)roadLayer.addTo(map);else map.removeLayer(roadLayer);};
- L.control.attribution({position:'bottomleft',prefix:false}).addTo(map).addAttribution(attribution||'Områden: SCB DeSO/RegSO 2025 · vägar: OpenStreetMap');
+ L.control.attribution({position:'bottomleft',prefix:'<a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a>'}).addTo(map).addAttribution(attribution||'Områden: SCB DeSO/RegSO 2025');
  $('map-fit').onclick=()=>map.fitBounds(bounds,{padding:[15,15]});
  setTimeout(()=>map?.invalidateSize(),50);
 }
@@ -50,6 +55,7 @@ function drawSVG(areas,land,index,max,onSelect,fill,dashed){
  svg.addEventListener('click',e=>{const a=e.target.closest('[data-area]');if(a)onSelect(a.dataset.area);});
  if($('map-status'))$('map-status').textContent='Lokal områdeskarta · bakgrundskartan kunde inte startas.';
 }
-function select(id){for(const [key,l]of Object.entries(layers))l.setStyle({weight:key===id?2.5:.8,color:key===id?'#123d36':'#fff'});}
+let selectedId=null,baseWeight=.7;
+function select(id){selectedId=id;for(const [key,l]of Object.entries(layers)){l.setStyle({weight:key===id?3:baseWeight,color:key===id?'#0b2e28':'#ffffff'});if(key===id)l.bringToFront();}}
 window.VagvisMaps={draw,dispose,select,masks,color};
 })();

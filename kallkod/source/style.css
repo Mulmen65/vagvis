@@ -676,3 +676,65 @@ footer{flex-wrap:wrap;gap:12px}#method-footer{white-space:normal;max-width:100%}
 /* Independent interface: retain the existing palette, spacing and navigation. */
 #view>article.card{margin-bottom:18px}label.field{display:block;font-size:11px;font-weight:600;color:var(--ink)}label.field input,label.field select,label.field textarea{display:block;margin-top:6px;width:100%;box-sizing:border-box}label.field textarea{padding:10px;border:1px solid #cbd7ce;border-radius:6px;font:inherit}td label.field input{min-width:76px}#view td small{display:block;font-size:10px;line-height:1.5;color:var(--muted);font-weight:400;white-space:normal;max-width:320px}.scenario-number{width:76px}.map-options{align-items:center;margin:0 0 10px}.map-options label{font-size:11px}.map-options input{accent-color:var(--teal)}.map-options button{padding:7px 11px}.component-row>b{text-align:right;font-size:10px}.component-row{grid-template-columns:135px 1fr 85px}.table-tools{flex-wrap:wrap}#view .table-wrap td{vertical-align:top}#view select{max-width:100%}@media(max-width:720px){.component-row{grid-template-columns:110px 1fr 75px}.map-options{gap:8px}}
 .ref-wrap td{white-space:normal;vertical-align:top;line-height:1.5}.ref-wrap td:last-child{min-width:320px}
+/* Karta och områdespanel (2.2.5) */
+.map-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:22px;align-items:start}
+@media (max-width:1100px){.map-layout{grid-template-columns:1fr}}
+.map-options{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.map-options .map-fit{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;width:auto;line-height:1.2}
+.map-options .map-fit:hover{background:#eaf1ec}
+.map-legend{background:#ffffffeb;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:11.5px;line-height:1.35;color:var(--text);box-shadow:0 2px 8px #0b2e2814;min-width:150px;max-width:230px}
+.map-legend b{display:block;font-size:11.5px;color:var(--ink);margin-bottom:6px}
+.map-legend span{display:flex;align-items:center;gap:8px;margin:3px 0;font-variant-numeric:tabular-nums}
+.map-legend i{flex:0 0 18px;height:12px;border-radius:3px;border:1px solid #ffffff}
+.map-legend small{display:block;margin-top:6px;color:var(--muted);font-size:10px}
+#map-surface>.map-legend{position:absolute;right:12px;bottom:12px;z-index:5}
+.leaflet-tooltip.map-tip{font-size:12px;line-height:1.4;border-radius:8px;border:1px solid var(--line);box-shadow:0 2px 8px #0b2e2826;padding:6px 9px;color:var(--text)}
+.leaflet-tooltip.map-tip b{color:var(--ink)}
+.area-detail{padding:4px 2px 0}
+.ad-empty h3{font-size:18px;margin:8px 0}
+.ad-head{border-bottom:1px solid var(--line);padding-bottom:12px}
+.ad-kicker{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);font-weight:700}
+.ad-head h3{font-size:21px;line-height:1.2;margin:6px 0 0;color:var(--ink)}
+.ad-hero{padding:14px 0 12px;border-bottom:1px solid var(--line)}
+.ad-hero b{display:block;font-size:34px;line-height:1.05;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.ad-hero span{display:block;font-size:12.5px;color:var(--text);margin-top:3px}
+.ad-hero small{display:block;font-size:11px;color:var(--muted);margin-top:6px}
+.ad-rank{padding:12px 0;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--text)}
+.ad-rank small{display:block;color:var(--muted);font-size:10.5px;margin-top:2px}
+.ad-rank i{display:block;position:relative;height:6px;border-radius:3px;margin-top:9px;background:linear-gradient(90deg,#0b463a,#2c8670,#7dbfab)}
+.ad-rank em{position:absolute;top:-4px;width:4px;height:14px;margin-left:-2px;border-radius:2px;background:var(--ink);box-shadow:0 0 0 2px #fff}
+.ad-facts{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin:14px 0;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.ad-facts div{min-width:0}
+.ad-facts dt{font-size:10.5px;color:var(--muted);padding:0;margin:0}
+.ad-facts dd{margin:2px 0 0;font-size:15px;font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums}
+.ad-facts dd small{display:block;font-size:10px;font-weight:400;color:var(--muted);margin-top:1px}
+.ad-parts h4{font-size:11.5px;margin:0 0 8px;color:var(--ink)}
+.ad-part{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:11.5px;margin-bottom:7px;color:var(--text)}
+.ad-part b{font-variant-numeric:tabular-nums;color:var(--ink)}
+.ad-part i{grid-column:1/-1;display:block;height:6px;border-radius:3px;background:#e7ede9;overflow:hidden}
+.ad-part em{display:block;height:100%;border-radius:3px;background:var(--teal)}
+.area-detail .ad-button{margin-top:14px;width:100%;justify-content:center;text-align:center}
+.ad-note{margin-top:10px;line-height:1.45}
+main .ghost,dialog .ghost{background:#fff;color:var(--ink);border:1px solid var(--line);padding:9px 14px;font-size:12px}
+main .ghost:hover,dialog .ghost:hover{background:#eaf1ec}
+.map-legend{padding:8px 10px;font-size:11px;min-width:0;max-width:190px}
+.map-legend span{margin:2px 0}
+.map-legend small{margin-top:4px}
+.leaflet-control-attribution{max-width:70%!important;line-height:1.35}
+.ad-hero small.ad-scen{color:var(--ink);font-weight:600;margin-top:4px}
+.area-table{max-height:620px}
+.area-table th{white-space:normal;line-height:1.3;vertical-align:bottom}
+.area-table td{vertical-align:middle!important}
+.area-table td.rank{color:var(--muted);font-weight:500;width:36px}
+.area-table td small{display:block;font-size:10.5px;color:var(--muted);font-weight:400;margin-top:2px}
+.area-table tr{cursor:pointer}
+.area-table tr.sel td{background:#e7f1ec}
+.area-table tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--teal)}
+.link-btn{background:none;border:0;padding:0;font:inherit;font-size:12.5px;font-weight:650;color:var(--ink);text-align:left;cursor:pointer;white-space:normal}
+.link-btn:hover{color:var(--teal);text-decoration:underline}
+.table-note{margin:-4px 0 10px}
+.leaflet-control-attribution{white-space:nowrap!important;max-width:none!important}
+.area-table td{padding:9px 10px}
+
+.map-legend i.nodata{border-color:#b9c3be}
+@media (min-width:1101px){.map-layout .map-surface{height:640px!important}}

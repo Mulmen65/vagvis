@@ -1,24 +1,35 @@
 {
-  "schemaVersion": 1,
-  "accessed": "2026-10-23",
-  "use": "display_only",
-  "cities": {
-    "1280": {
-      "status": "unavailable",
-      "note": "Ingen oberoende landmask kunde hämtas. Officiell SCB-gräns inklusive vatten visas över OpenStreetMap."
-    },
-    "1283": {
-      "status": "unavailable",
-      "note": "Ingen oberoende landmask kunde hämtas. Officiell SCB-gräns inklusive vatten visas över OpenStreetMap."
-    },
-    "2180": {
-      "status": "primary_osm_generalised",
-      "source": "https://github.com/simonepri/geo-maps",
-      "file": "underlag/raw/land_gavle_osm_100m.geojson",
-      "sha256": "21b4ce6f1df8914e228229b64fa7c9ac3fbd8e03dd176d31fec8479609ac54a5",
-      "sourceDate": null,
-      "nominalSimplificationMetres": 100
-    }
+ "schemaVersion": 2,
+ "accessed": "2026-10-25",
+ "use": "display_and_land_area",
+ "source": "https://github.com/simonepri/geo-maps/releases/download/v0.6.0/earth-lands-10m.geo.json",
+ "sha256": "76ef0da9333e5e5c0366708ebdfc9d3a5a9e4caaec3493a0139f759fcf26fdd2",
+ "licence": "ODbL, © OpenStreetMap-bidragsgivare",
+ "cities": {
+  "1280": {
+   "status": "primary_osm_generalised",
+   "source": "https://github.com/simonepri/geo-maps/releases/download/v0.6.0/earth-lands-10m.geo.json",
+   "nominalResolutionMetres": 10,
+   "displaySimplificationDegrees": 4e-05,
+   "landHa": 15592.14,
+   "totalHa": 33444.78
   },
-  "attempts": "Direkta officiella källor, Overpass och npm gav HTTP 403 i leveransmiljön. Ingen härledd modellmask användes."
+  "1283": {
+   "status": "primary_osm_generalised",
+   "source": "https://github.com/simonepri/geo-maps/releases/download/v0.6.0/earth-lands-10m.geo.json",
+   "nominalResolutionMetres": 10,
+   "displaySimplificationDegrees": 4e-05,
+   "landHa": 34528.34,
+   "totalHa": 42306.34
+  },
+  "2180": {
+   "status": "primary_osm_generalised",
+   "source": "https://github.com/simonepri/geo-maps/releases/download/v0.6.0/earth-lands-10m.geo.json",
+   "nominalResolutionMetres": 10,
+   "displaySimplificationDegrees": 4e-05,
+   "landHa": 160162.53,
+   "totalHa": 319806.01
+  }
+ },
+ "note": "Beräkningen använder alltid SCB:s fullständiga DeSO-geometri. Masken påverkar bara kartvisningen och nyckeltalet per hektar land."
 }

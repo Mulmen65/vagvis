@@ -41,6 +41,9 @@ OBSOLETE = {
     'dokument/Kontrollresultat_2.2.2.json',
     'dokument/Vagvis_manual_2.2.3.docx',
     'dokument/Kontrollresultat_2.2.3.json',
+    'dokument/Vagvis_manual_2.2.4.docx',
+    'dokument/Kontrollresultat_2.2.4.json',
+    'underlag/raw/land_gavle_osm_100m.geojson',  # ersatt av coast_display_2026.json (10 m)
 }
 KEEP_PREFIXES = ('underlag/', 'dokument/')
 SKIP_DIRS = {'.git', '__pycache__', 'node_modules', 'testresultat'}

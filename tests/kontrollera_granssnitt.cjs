@@ -15,6 +15,31 @@ async function views(page,names){
     if(name==='map'){
       assert.ok(await page.locator('#map-surface').evaluate(node=>node.classList.contains('leaflet-container')),'Leaflet startade inte');
       assert.ok(await page.locator('.leaflet-control-attribution').count()>0,'Kartattribution saknas');
+      // Teckenförklaring, landmask och områdespanel.
+      assert.ok(await page.locator('#map-surface .map-legend span').count()>=3,'Teckenförklaring saknas');
+      assert.ok(await page.locator('#map-surface clipPath path').count()>0,'Landmask saknas i kartan');
+      const rowsN=await page.locator('#area-table tbody tr[data-area]').count();
+      assert.ok(rowsN>=20,'För få rader i områdestabellen: '+rowsN);
+      const shares=await page.locator('#area-table tbody tr[data-area] td:nth-child(6)').allInnerTexts();
+      const shareSum=shares.reduce((s,x)=>s+Number(x.replace(/[^0-9,]/g,'').replace(',','.')),0);
+      assert.ok(Math.abs(shareSum-100)<=0.05*rowsN+0.5,'Andelarna summerar inte till 100 %: '+shareSum);
+      const first=page.locator('#area-table tbody tr[data-area]').first();
+      const name=(await first.locator('.link-btn').innerText()).trim(),base=await first.locator('td:nth-child(3)').innerText();
+      await first.locator('.link-btn').click();
+      assert.equal((await page.locator('#area-detail .ad-head h3').innerText()).trim(),name,'Panelen visar inte valt område');
+      const hero=Number((await page.locator('#area-detail .ad-hero b').innerText()).replace(/[^0-9]/g,''));
+      assert.ok(Math.abs(hero-Number(base.replace(/[^0-9,]/g,'').replace(',','.')))<=1,'Panelens värde avviker från tabellen');
+      assert.equal(await first.evaluate(n=>n.classList.contains('sel')),true,'Vald rad markeras inte');
+      assert.ok(await page.locator('#area-detail .ad-facts dd').count()>=6,'Panelen saknar nyckeltal');
+      // Hovring över flera områden får inte lämna kvar tooltips eller markeringar.
+      const paths=page.locator('#map-surface path.leaflet-interactive'),np=await paths.count();
+      for(const i of [Math.floor(np/4),Math.floor(np/2),Math.floor(3*np/4)]){
+        const bb=await paths.nth(i).boundingBox().catch(()=>null);
+        if(bb&&bb.width>2&&bb.height>2)await page.mouse.move(bb.x+bb.width/2,bb.y+bb.height/2,{steps:3});
+      }
+      await page.mouse.move(2,2,{steps:6});await page.waitForTimeout(150);
+      assert.equal(await page.locator('.leaflet-tooltip').count(),0,'Tooltips blir kvar efter hovring');
+      checks.push('Karta: teckenförklaring, landmask, tabell, panel och hovring ('+rowsN+' områden)');
     }
     checks.push('Vy '+name+' i '+await page.evaluate(()=>window.VagvisApp.getModel()));
   }
@@ -30,7 +55,7 @@ async function main(){
     await page.goto(pathToFileURL(path.join(root,'app/Vagvis.html')).href,{waitUntil:'load'});
     await page.waitForFunction(()=>window.VagvisApp&&window.VagvisApp.ready);
     await page.evaluate(async()=>{await window.VagvisApp.ready;return true;});
-    assert.equal(await page.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.4');
+    assert.equal(await page.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.5');
     assert.ok((await page.locator('#view').innerText()).includes('Livscykel'));
     await page.screenshot({path:path.join(out,'granssnitt-A-oversikt.png')});
     await views(page,['map','calc','parameters','data','method']);
@@ -83,7 +108,7 @@ async function main(){
     await page.locator('#download-audit').click();
     const auditDownload=await auditPending,auditFile=await auditDownload.path();
     const audit=JSON.parse(fs.readFileSync(auditFile,'utf8'));
-    assert.equal(audit.version,'2.2.4');assert.equal(audit.model,'household');assert.equal(audit.evidence.modelVersion,'2.2.4');
+    assert.equal(audit.version,'2.2.5');assert.equal(audit.model,'household');assert.equal(audit.evidence.modelVersion,'2.2.5');
     assert.equal(audit.dirty,false);assert.ok(audit.result.results.length>0);
     checks.push('JSON-export med resultat, inställningar och källkvitto');
     const csvPending=page.waitForEvent('download');
@@ -104,7 +129,7 @@ async function main(){
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getModel()),'household');
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getConfig().scenarioNote),'Test med <tagg> & Öresund.');
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getConfig().areaScenario.bilpool.preset),'carsharing_pbl2015');
-    assert.equal(await offline.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.4');
+    assert.equal(await offline.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.5');
     assert.ok(await offline.evaluate(()=>window.VagvisApp.getProject().cities.some(city=>city.name==='Malmö')));
     await offline.close();
     checks.push('Offlineexport öppnas med samma modell, scenario och svenska tecken');
@@ -124,7 +149,7 @@ async function main(){
       await server.close();
     }
     assert.deepEqual(errors,[]);
-    fs.writeFileSync(path.join(out,'granssnitt.json'),JSON.stringify({version:'2.2.4',executedAt:new Date().toISOString(),browser:'Chromium via Playwright',passed:checks.length,checks,errors},null,2)+'\n');
+    fs.writeFileSync(path.join(out,'granssnitt.json'),JSON.stringify({version:'2.2.5',executedAt:new Date().toISOString(),browser:'Chromium via Playwright',passed:checks.length,checks,errors},null,2)+'\n');
     console.log(checks.length+' verkliga webbläsarkontroller godkända.');
   }finally{
     await browser.close();

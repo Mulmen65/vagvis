@@ -150,7 +150,7 @@ class PrimaryDataTests(unittest.TestCase):
 
     def test_source_receipt_and_hashes_match_actual_bytes(self):
         receipt = read("underlag/datakvitto.json")
-        self.assertEqual(receipt["modelVersion"], "2.2.4")
+        self.assertEqual(receipt["modelVersion"], "2.2.5")
         self.assertEqual(receipt["dataYear"], 2024)
         self.assertEqual(receipt["desoVersion"], "2025")
         for entry in receipt["dataFiles"] + receipt["builtFiles"]:
@@ -408,11 +408,11 @@ class PackageTests(unittest.TestCase):
                     modules.append(node.module or "")
             self.assertFalse(any(module.startswith(("requests", "urllib", "httpx")) for module in modules))
             self.assertNotIn("urlopen", text)
-        self.assertIn('page_title="Vägvis 2.2.4"', (ROOT / "streamlit_app.py").read_text())
+        self.assertIn('page_title="Vägvis 2.2.5"', (ROOT / "streamlit_app.py").read_text())
 
     def test_evidence_has_unique_parameters_sources_and_no_orphan_references(self):
         registry = read("underlag/evidensregister.json")
-        self.assertEqual(registry["version"], "2.2.4")
+        self.assertEqual(registry["version"], "2.2.5")
         for group in ("parameters", "sources"):
             ids = [row["id"] for row in registry[group]]
             self.assertEqual(len(ids), len(set(ids)), group)
@@ -431,6 +431,36 @@ class PackageTests(unittest.TestCase):
         self.assertIn("streamlit==1.50.0", (ROOT / "requirements.txt").read_text())
         self.assertTrue((ROOT / ".github/workflows/kontroller.yml").is_file())
         self.assertTrue((ROOT / ".streamlit/config.toml").is_file())
+
+
+
+class LandAreaTests(unittest.TestCase):
+    """Landareal (OSM-landmask) används för kartan och nyckeltalet per hektar land."""
+
+    def test_land_area_is_consistent(self):
+        land = json.loads((ROOT/"underlag/raw/land_area_2026.json").read_text(encoding="utf-8"))
+        receipt = json.loads((ROOT/"underlag/raw/coast_receipt.json").read_text(encoding="utf-8"))
+        self.assertEqual(land["sha256"], receipt["sha256"])
+        ytor = json.loads((ROOT/"kallkod/data/ytor.json").read_text(encoding="utf-8"))["A"]
+        areas = land["areas"]
+        for key, row in ytor.items():
+            parts = key.split("|")
+            level, city, code = parts[0], parts[1], parts[-1]
+            if level == "city":
+                self.assertAlmostEqual(row["landHa"], areas["city|"+city], places=1)
+                self.assertAlmostEqual(row["landHa"], receipt["cities"][city]["landHa"], places=1)
+                continue
+            self.assertIn(code, areas, key)
+            self.assertAlmostEqual(row["landHa"], areas[code], places=2)
+            self.assertLessEqual(row["landHa"], row["ha"]*1.001+0.05, key)
+            self.assertGreater(row["landHa"], 0, key)
+        for city in ("1280", "1283", "2180"):
+            deso = sum(v for k, v in areas.items() if k.startswith(city+"C") or k.startswith(city+"A") or k.startswith(city+"B"))
+            regso = sum(v for k, v in areas.items() if k.startswith(city+"R"))
+            self.assertAlmostEqual(deso, areas["city|"+city], delta=1)
+            self.assertAlmostEqual(regso, areas["city|"+city], delta=1)
+        masks = json.loads((ROOT/"underlag/raw/coast_display_2026.json").read_text(encoding="utf-8"))
+        self.assertEqual(sorted(masks), ["1280", "1283", "2180"])
 
 
 if __name__ == "__main__":
