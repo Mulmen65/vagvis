@@ -1,0 +1,33 @@
+﻿VÄGVIS 2.3.0 – RÄTTELSE AV TESTIMPORT I GITHUB ACTIONS
+
+Felet "test_underlag module incorrectly imported" uppstår när en äldre testfil i
+repots rot skuggar filen i tests/. Den här rättelsen avgränsar testimporten.
+Beräkningskod, gränssnitt och indata är byteidentiska med det tidigare paketet.
+
+1. Packa upp Vagvis_2.3.0_Testfix_GitHub.zip på din dator.
+2. Öppna ditt repo Mulmen65/vagvis på GitHub och välj Code och grenen main.
+3. Gå till repots översta nivå, där streamlit_app.py ligger.
+4. Välj Add file > Upload files.
+5. Dra in ALLT innehåll från den uppackade rättelsen, med mapparna kvar:
+   .github/  tests/  dokument/  README.md  MANIFEST_SHA256.json
+   Lägg inte till en extra yttre mapp med ZIP-filens namn.
+6. Välj Commit changes och spara på main.
+7. Kontrollera särskilt:
+   - tests/__init__.py finns (två understreck före och efter init).
+   - .github/workflows/hamta-korstrackeindikatorer.yml har testkommandot:
+     python -m unittest discover -s tests -t . -p 'test_*.py' -v
+8. Välj Actions > Hamta korstrackeindikatorer > Run workflow, välj main och starta.
+   Starta en NY körning efter commit. Re-run jobs för den gamla körningen
+   använder den gamla kodrevisionen.
+
+Ytterligare tre arbetsflöden är rättade så att samma importfel inte återkommer.
+Inga äldre filer behöver raderas för att den här rättelsen ska fungera.
+
+VERIFIERING
+51 Python-tester: 49 godkända, 2 överhoppade som kräver valfria GIS-paket.
+Dessutom verifierat med avsiktliga äldre rotfiler som skulle ge fel vid import.
+
+HÄMTNINGSRESULTATET
+De elva DeSO-modellkontrollerna i din logg var godkända. Loggen visar inte om
+SCB- och OSM-hämtningen lyckades. Det framgår i steget Hamta och bygg indikatorer.
+En grön körning kan även betyda att befintliga data behållits efter nätfel.

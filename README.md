@@ -156,7 +156,7 @@ node kallkod/bygg_appen.cjs
 node tests/test_modell.cjs
 node tests/test_register.cjs
 node tests/test_distance.cjs
-python -m unittest discover -s tests -p 'test_*.py' -v
+python -m unittest discover -s tests -t . -p 'test_*.py' -v
 python verktyg/skapa_manifest.py
 ```
 
@@ -178,3 +178,7 @@ Projektfilerna i `kallkod/data/` lagras förlustfritt packade (`vagvis-pack-1`: 
 | `app/` | Metodsida och trafikdatasida (huvudsidan byggs vid körning) |
 
 Koden omfattas av MIT-licensen i `LICENSE.txt`. Källdata behåller sina villkor; OpenStreetMaps attribution och ODbL ska respekteras. Leaflet har BSD 2-Clause-licens.
+
+## Rättelse av testimport
+
+Tester körs som paket med `python -m unittest discover -s tests -t . -p 'test_*.py' -v`. Filen `tests/__init__.py` ingår. Därmed används testerna i `tests/` även om äldre filer med samma namn finns i repots rot. Beräkningskod, gränssnitt och indata är oförändrade.

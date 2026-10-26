@@ -1,0 +1,41 @@
+{
+  "modelVersion": "2.3.0",
+  "repair": "test-import-1",
+  "verifiedAt": "2026-10-26T13:22:35.699811+00:00",
+  "status": "passed",
+  "originalFailure": "unittest imports root test_underlag instead of tests/test_underlag after sys.path mutation",
+  "fix": {
+    "packageMarker": "tests/__init__.py",
+    "command": "python -m unittest discover -s tests -t . -p 'test_*.py' -v",
+    "workflowFiles": [
+      ".github/workflows/bygg-landmask.yml",
+      ".github/workflows/hamta-korstrackeindikatorer.yml",
+      ".github/workflows/hamta-underlag.yml",
+      ".github/workflows/kontroller.yml"
+    ]
+  },
+  "verification": {
+    "originalUserErrorReproduced": true,
+    "fullPythonSuite": {
+      "run": 51,
+      "passed": 49,
+      "skipped": 2,
+      "failed": 0,
+      "skipReason": "Existing optional landmask tests require shapely and pyshp."
+    },
+    "dirtyRepositoryTest": {
+      "legacyRootFiles": [
+        "test_underlag.py",
+        "test_import.py",
+        "bygg_underlag.py"
+      ],
+      "run": 49,
+      "passed": 47,
+      "skipped": 2,
+      "failed": 0
+    },
+    "unchangedOriginalFilesVerified": 102,
+    "modelAndInterface": "All original model, input, interface and Streamlit bytes identical."
+  },
+  "scopeLimit": "This log and repair do not establish whether SCB or OSM data acquisition succeeded in GitHub."
+}
