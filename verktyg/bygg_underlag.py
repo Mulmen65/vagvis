@@ -26,7 +26,7 @@ RAW = ROOT / 'underlag/raw'
 DATA = ROOT / 'kallkod/data'
 CITIES = {'1280': 'Malmö', '1283': 'Helsingborg', '2180': 'Gävle'}
 COUNTS = {'1280': 209, '1283': 84, '2180': 55}
-# Körsträcka per privat bil i trafik vid årets slut, populationskonsistent (se KM_DEFINITION).
+# Körsträcka överförd till privatbilar vid årets slut med ett beståndsantagande (se KM_DEFINITION).
 KM = 12753
 KM_SOURCE = 'https://prod.trafa.se/globalassets/statistik/vagtrafik/korstrackor/2024/korstrackor-2024.pdf'
 KM_DEFINITION = ('Härledd: privatägda personbilar körde i snitt 10 950 km 2024 bland bilar i trafik minst en dag (Trafikanalys 2025a). '
@@ -332,7 +332,7 @@ def build(observed=None):
         'measuredLinks': measured, 'importedMeasuredRoads': len(imported)}
     if (RAW/'coast_receipt.json').exists():
         meta['coast'] = read(RAW/'coast_receipt.json')['cities']
-    project = {'schema': 'vagvis-1', 'model': 'territorial', 'title': 'Vägvis 2.2.7 · trafik inom området',
+    project = {'schema': 'vagvis-1', 'model': 'territorial', 'title': 'Vägvis 2.3.0 · trafik inom området',
         'isDemo': False, 'metadata': meta, 'cities': cities, 'areas': areas, 'roads': roads, 'config': config}
     active_path = Path(observed) if observed else RAW/'active_scb_2024.json'
     verified = read(active_path) if active_path.exists() else None
@@ -456,7 +456,7 @@ def build(observed=None):
              'riket': 'K=12 753 km är ett härlett riksmedelvärde för privatägda bilar per bil i årsslutsbeståndet, inte uppmätt körsträcka i varje DeSO eller kommun. Ingen faktor för avstånd till centrum används.',
              'blandad': 'Körsträckan är uppmätt per DeSO där SCB:s värden finns; skyddade celler har kommunens eller rikets värde.'}[km_level]]}
     bmeta['coast'] = meta.get('coast', {})
-    household = {'schema': 'vagvis-1', 'model': 'household', 'title': 'Vägvis 2.2.7 · hushållens bilar',
+    household = {'schema': 'vagvis-1', 'model': 'household', 'title': 'Vägvis 2.3.0 · hushållens bilar',
         'isDemo': False, 'metadata': bmeta, 'cities': copy.deepcopy(cities), 'areas': copy.deepcopy(areas),
         'roads': [], 'd': rows, 'config': copy.deepcopy(config)}
     household['config']['phevElectric'] = 0.47
@@ -497,7 +497,7 @@ def build(observed=None):
     summary = {city: {'deso': COUNTS[city], 'regso': sum(a['city'] == city and a['level'] == 'district' for a in areas),
         'hh': sum(r['hh'] for r in rows if r['kk'] == city), 'bef': sum(r['bef'] for r in rows if r['kk'] == city),
         'bil': sum(r['bil'] for r in rows if r['kk'] == city), 'vkm': sum(r['bil']*r['km'] for r in rows if r['kk'] == city)} for city in CITIES}
-    receipt = {'schemaVersion': 1, 'modelVersion': '2.2.7', 'dataYear': 2024, 'desoVersion': '2025',
+    receipt = {'schemaVersion': 1, 'modelVersion': '2.3.0', 'dataYear': 2024, 'desoVersion': '2025',
         'status': data_status, 'dataAvailability': 'SCB TAB6589: observerade bilantal i trafik 2024 för samtliga 348 DeSO aktiverade och avstämda mot kommunrader. Hushåll och invånares lokala fördelning är fortfarande proxy.' if car_data else 'Komplett SCB-uttag har ännu inte hämtats i denna leverans.' if not verified else 'SCB-register 2024 för samtliga 348 DeSO: hushåll (TAB6568), befolkning (TAB6574) och personbilar i trafik (TAB6589), avstämda mot kommunraderna.',
         'dataFiles': source_files+[digest(RAW/'municipal_baseline_2024.json')] if not verified else source_files+[digest(active_path)],
         'builtFiles': [digest(DATA/name) for name in ('omraden.json', 'project.json', 'household-project.json', 'ytor.json', 'land.json')],

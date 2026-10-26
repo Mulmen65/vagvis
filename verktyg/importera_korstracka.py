@@ -17,7 +17,7 @@ Transportstyrelsens vägtrafikregister. SCB sammanställer dem på två sätt so
      python verktyg/importera_korstracka.py kommun --ar 2024 --riket 1141 1280=1064 1283=<värde> 2180=<värde>
      python verktyg/importera_korstracka.py kommun --ar 2024 --excel Tabell-2-Korstracka-till-ar-2025.xlsx
 
-2. Per DeSO (beställning från SCB, se dokument/Bestallning_korstracka_DeSO_SCB.txt).
+2. Per DeSO (egen verifierbar leverans). SCB har meddelat att körsträckor endast levereras per kommun; detta verktyg är därför inte en hänvisning till en SCB-beställning. Se dokument/Bestallning_korstracka_DeSO_SCB.txt för databehov och RVU-alternativ.
    CSV med en rad per DeSO och kolumnerna
        deso, ar, antal_bilar_31dec, korstracka_km
    (valfritt antal_bilar_under_aret, antal_med_matarstallning). Körsträckan per bil blir
