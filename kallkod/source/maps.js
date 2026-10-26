@@ -26,7 +26,7 @@ function draw({project,city,level,result,onSelect,fill,tooltip,dashed,fillOpacit
  });
  const renderer=new LandSVG({padding:.5}),fc={type:'FeatureCollection',features:areas.map(a=>({type:'Feature',properties:{id:a.id,name:a.name},geometry:a.geometry}))};
  baseWeight=level==='district'?1.4:.7;
- const layer=L.geoJSON(fc,{renderer,style:f=>({color:'#ffffff',weight:baseWeight,opacity:.95,fillColor:fill?fill(f.properties.id):color(index[f.properties.id]?.central?.total,max),fillOpacity:fillOpacity??.85,dashArray:dashed&&dashed(f.properties.id)?'4 4':null}),onEachFeature(f,l){
+ const layer=L.geoJSON(fc,{renderer,style:f=>({color:'#ffffff',weight:baseWeight,opacity:.95,fillColor:fill?fill(f.properties.id):color(index[f.properties.id]?.central?.total,max),fillOpacity:fillOpacity??OPAQUE,dashArray:dashed&&dashed(f.properties.id)?'4 4':null}),onEachFeature(f,l){
   const x=index[f.properties.id];layers[f.properties.id]=l;l.bindTooltip(tooltip?()=>tooltip(f.properties.id):esc(f.properties.name)+(x?.central?' · '+new Intl.NumberFormat('sv-SE',{maximumFractionDigits:0}).format(x.central.total)+' ton CO₂e/år':' · trafik saknas'),{sticky:true,className:'map-tip'});
   l.on('click',()=>onSelect(f.properties.id));
   // Ingen bringToFront vid hovring: att flytta elementet under muspekaren gör att Chrome tappar mouseout, och tooltips blir kvar.
@@ -37,8 +37,11 @@ function draw({project,city,level,result,onSelect,fill,tooltip,dashed,fillOpacit
  const bounds=land?L.geoJSON(land).getBounds():layer.getBounds();if(bounds.isValid())map.fitBounds(bounds,{padding:[15,15]});
  const tiles=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,referrerPolicy:'strict-origin-when-cross-origin',attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
  const osm=$('map-osm'),localFile=window.location?.protocol==='file:';
- function refresh(){if(localFile){osm.checked=false;osm.disabled=true;status.textContent='Offlinekarta. För OpenStreetMap: starta appen med Streamlit enligt README. Beräkningen fungerar även direkt från HTML-filen.';return;}
-  if(osm.checked){tiles.addTo(map);tiles.bringToBack();status.textContent='OpenStreetMap · bakgrundskartan kräver internet. Områdesytor och beräkning finns lokalt.';}else{map.removeLayer(tiles);status.textContent='Bakgrund avstängd · områdeskartan fungerar utan internet.';}
+ // Med bakgrundskarta är ytorna halvgenomskinliga så att gator, namn och kustlinje syns igenom.
+ const surface=$('map-surface'),coastNote=land?'':' Områdena visas med SCB:s gränser, som även omfattar vatten.';
+ function opacity(on){if(fillOpacity==null)layer.setStyle({fillOpacity:on?SEE_THROUGH:OPAQUE});surface.classList.toggle('osm-on',on);}
+ function refresh(){if(localFile){osm.checked=false;osm.disabled=true;opacity(false);status.textContent='Offlinekarta. För OpenStreetMap: starta appen med Streamlit enligt README. Beräkningen fungerar även direkt från HTML-filen.'+coastNote;return;}
+  if(osm.checked){tiles.addTo(map);tiles.bringToBack();opacity(true);status.textContent='OpenStreetMap · bakgrundskartan kräver internet. Områdesytor och beräkning finns lokalt.'+coastNote;}else{map.removeLayer(tiles);opacity(false);status.textContent='Bakgrund avstängd · områdeskartan fungerar utan internet.'+coastNote;}
  }
  let tileFailures=0;tiles.on('tileerror',()=>{tileFailures++;if(tileFailures>2)status.textContent='Bakgrundskartan kunde inte hämtas. Områdeskartan och beräkningen fungerar ändå. Kontrollera internet eller stäng av bakgrunden.';});
  osm.onchange=refresh;refresh();
@@ -56,6 +59,7 @@ function drawSVG(areas,land,index,max,onSelect,fill,dashed){
  if($('map-status'))$('map-status').textContent='Lokal områdeskarta · bakgrundskartan kunde inte startas.';
 }
 let selectedId=null,baseWeight=.7;
+const OPAQUE=.85,SEE_THROUGH=.5;
 function select(id){selectedId=id;for(const [key,l]of Object.entries(layers)){l.setStyle({weight:key===id?3:baseWeight,color:key===id?'#0b2e28':'#ffffff'});if(key===id)l.bringToFront();}}
 window.VagvisMaps={draw,dispose,select,masks,color};
 })();

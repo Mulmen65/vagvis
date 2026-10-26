@@ -17,7 +17,13 @@ async function views(page,names){
       assert.ok(await page.locator('.leaflet-control-attribution').count()>0,'Kartattribution saknas');
       // Teckenförklaring, landmask och områdespanel.
       assert.ok(await page.locator('#map-surface .map-legend span').count()>=3,'Teckenförklaring saknas');
-      assert.ok(await page.locator('#map-surface clipPath path').count()>0,'Landmask saknas i kartan');
+      // Landmask bara när en godkänd mask finns (verktyg/bygg_landmask.py); annars SCB:s gränser inklusive vatten.
+      const city=await page.evaluate(()=>window.VagvisApp.getCity?.()??null);
+      const hasMask=await page.evaluate(c=>{const m=window.VagvisMaps.masks||{};return c?!!m[c]:Object.keys(m).length>0;},city);
+      const clips=await page.locator('#map-surface clipPath path').count();
+      if(hasMask)assert.ok(clips>0,'Landmask saknas i kartan');
+      else{assert.equal(clips,0,'Klippning utan godkänd landmask');assert.ok((await page.locator('#map-status').innerText()).includes('omfattar vatten'),'Kartan förklarar inte att områdena omfattar vatten');}
+      assert.equal(await page.locator('#map-metric option[value="perHa"]').count(),hasMask?1:0,'Nyckeltalet per hektar utan hav ska bara finnas med landmask');
       const rowsN=await page.locator('#area-table tbody tr[data-area]').count();
       assert.ok(rowsN>=20,'För få rader i områdestabellen: '+rowsN);
       const shares=await page.locator('#area-table tbody tr[data-area] td:nth-child(6)').allInnerTexts();
@@ -55,7 +61,7 @@ async function main(){
     await page.goto(pathToFileURL(path.join(root,'app/Vagvis.html')).href,{waitUntil:'load'});
     await page.waitForFunction(()=>window.VagvisApp&&window.VagvisApp.ready);
     await page.evaluate(async()=>{await window.VagvisApp.ready;return true;});
-    assert.equal(await page.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.5');
+    assert.equal(await page.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.6');
     assert.ok((await page.locator('#view').innerText()).includes('Livscykel'));
     await page.screenshot({path:path.join(out,'granssnitt-A-oversikt.png')});
     await views(page,['map','calc','parameters','data','method']);
@@ -108,7 +114,7 @@ async function main(){
     await page.locator('#download-audit').click();
     const auditDownload=await auditPending,auditFile=await auditDownload.path();
     const audit=JSON.parse(fs.readFileSync(auditFile,'utf8'));
-    assert.equal(audit.version,'2.2.5');assert.equal(audit.model,'household');assert.equal(audit.evidence.modelVersion,'2.2.5');
+    assert.equal(audit.version,'2.2.6');assert.equal(audit.model,'household');assert.equal(audit.evidence.modelVersion,'2.2.6');
     assert.equal(audit.dirty,false);assert.ok(audit.result.results.length>0);
     checks.push('JSON-export med resultat, inställningar och källkvitto');
     const csvPending=page.waitForEvent('download');
@@ -129,7 +135,7 @@ async function main(){
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getModel()),'household');
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getConfig().scenarioNote),'Test med <tagg> & Öresund.');
     assert.equal(await offline.evaluate(()=>window.VagvisApp.getConfig().areaScenario.bilpool.preset),'carsharing_pbl2015');
-    assert.equal(await offline.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.5');
+    assert.equal(await offline.evaluate(()=>window.VagvisApp.getResult()?.version),'2.2.6');
     assert.ok(await offline.evaluate(()=>window.VagvisApp.getProject().cities.some(city=>city.name==='Malmö')));
     await offline.close();
     checks.push('Offlineexport öppnas med samma modell, scenario och svenska tecken');
@@ -149,7 +155,7 @@ async function main(){
       await server.close();
     }
     assert.deepEqual(errors,[]);
-    fs.writeFileSync(path.join(out,'granssnitt.json'),JSON.stringify({version:'2.2.5',executedAt:new Date().toISOString(),browser:'Chromium via Playwright',passed:checks.length,checks,errors},null,2)+'\n');
+    fs.writeFileSync(path.join(out,'granssnitt.json'),JSON.stringify({version:'2.2.6',executedAt:new Date().toISOString(),browser:'Chromium via Playwright',passed:checks.length,checks,errors},null,2)+'\n');
     console.log(checks.length+' verkliga webbläsarkontroller godkända.');
   }finally{
     await browser.close();

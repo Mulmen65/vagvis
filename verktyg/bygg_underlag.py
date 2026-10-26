@@ -332,7 +332,7 @@ def build(observed=None):
         'measuredLinks': measured, 'importedMeasuredRoads': len(imported)}
     if (RAW/'coast_receipt.json').exists():
         meta['coast'] = read(RAW/'coast_receipt.json')['cities']
-    project = {'schema': 'vagvis-1', 'model': 'territorial', 'title': 'Vägvis 2.2.5 · trafik inom området',
+    project = {'schema': 'vagvis-1', 'model': 'territorial', 'title': 'Vägvis 2.2.6 · trafik inom området',
         'isDemo': False, 'metadata': meta, 'cities': cities, 'areas': areas, 'roads': roads, 'config': config}
     active_path = Path(observed) if observed else RAW/'active_scb_2024.json'
     verified = read(active_path) if active_path.exists() else None
@@ -456,7 +456,7 @@ def build(observed=None):
              'riket': 'K=12 753 km är ett härlett riksmedelvärde för privatägda bilar per bil i årsslutsbeståndet, inte uppmätt körsträcka i varje DeSO eller kommun. Ingen faktor för avstånd till centrum används.',
              'blandad': 'Körsträckan är uppmätt per DeSO där SCB:s värden finns; skyddade celler har kommunens eller rikets värde.'}[km_level]]}
     bmeta['coast'] = meta.get('coast', {})
-    household = {'schema': 'vagvis-1', 'model': 'household', 'title': 'Vägvis 2.2.5 · hushållens bilar',
+    household = {'schema': 'vagvis-1', 'model': 'household', 'title': 'Vägvis 2.2.6 · hushållens bilar',
         'isDemo': False, 'metadata': bmeta, 'cities': copy.deepcopy(cities), 'areas': copy.deepcopy(areas),
         'roads': [], 'd': rows, 'config': copy.deepcopy(config)}
     household['config']['phevElectric'] = 0.47
@@ -468,8 +468,13 @@ def build(observed=None):
         bmeta['carStockUncertaintyTreatment'] = 'Registerantalet hålls fast i den villkorade simuleringen (carStock CV=0). Detta är inget påstående om att registerstatistiken saknar mät- eller täckningsfel. Körsträcka och livscykelfaktorer har fortsatt antagandebaserad osäkerhet.'
     # Landareal per område kommer från verktyg/bygg_landmask.py (SCB:s DeSO snittad med OSM-land).
     # Saknas filen redovisas ingen landareal och nyckeltalet per hektar land kan inte visas.
+    # Bara en mask som verktyget har godkänt (kvittots status och kontrollsumma) används; en kvarglömd
+    # grov mask från 2.2.5 ignoreras.
     land_file = RAW/'land_area_2026.json'
-    land_ha = read(land_file)['areas'] if land_file.exists() else {}
+    coast = read(RAW/'coast_receipt.json') if (RAW/'coast_receipt.json').exists() else {}
+    approved = bool(coast.get('cities')) and all(c.get('status') == 'osm_land_polygons' for c in coast['cities'].values())
+    land_data = read(land_file) if approved and land_file.exists() else {}
+    land_ha = land_data['areas'] if land_data and land_data.get('sha256') == coast.get('sha256') else {}
 
     def ytor(level):
         out = {}
@@ -480,19 +485,19 @@ def build(observed=None):
             out['city|'+city] = {'ha': sum(area_ha(a['geometry']) for a in subset if a['level'] == 'deso'), 'landHa': land_ha.get('city|'+city)}
         return out
     y = {'meta': {'enhet': 'hektar', 'projektion': 'WGS84; sfärisk areaintegral R=6 371 008,8 m',
-        'A': 'ha: hela analysytan inklusive vatten. landHa: samma yta snittad med OpenStreetMaps landpolygoner (geo-maps earth-lands-10m, ODbL).' if land_ha else 'Hela analysytan inklusive vatten. landHa saknas.',
+        'A': 'ha: hela analysytan inklusive vatten. landHa: ytan utan hav (SCB:s DeSO snittad med OpenStreetMaps landpolygoner, ODbL; sjöar räknas som land), se underlag/raw/coast_receipt.json.' if land_ha else 'ha: hela analysytan inklusive vatten. landHa saknas: ingen godkänd landmask finns (kör Actions → Bygg landmask).',
         'B': 'Samma primära DeSO 2025- och RegSO 2025-geometri som modell A.'}, 'A': ytor('A'), 'B': ytor('B')}
     pack_and_write(project, household)
     write(DATA/'ytor.json', y)
     # Coast is an optional independently prepared primary-data derivative.
-    masks = read(RAW/'coast_display_2026.json') if (RAW/'coast_display_2026.json').exists() else {}
+    masks = read(RAW/'coast_display_2026.json') if land_ha and (RAW/'coast_display_2026.json').exists() else {}
     write(DATA/'land.json', masks)
     if observed:
         write(RAW/'active_scb_2024.json', verified)
     summary = {city: {'deso': COUNTS[city], 'regso': sum(a['city'] == city and a['level'] == 'district' for a in areas),
         'hh': sum(r['hh'] for r in rows if r['kk'] == city), 'bef': sum(r['bef'] for r in rows if r['kk'] == city),
         'bil': sum(r['bil'] for r in rows if r['kk'] == city), 'vkm': sum(r['bil']*r['km'] for r in rows if r['kk'] == city)} for city in CITIES}
-    receipt = {'schemaVersion': 1, 'modelVersion': '2.2.5', 'dataYear': 2024, 'desoVersion': '2025',
+    receipt = {'schemaVersion': 1, 'modelVersion': '2.2.6', 'dataYear': 2024, 'desoVersion': '2025',
         'status': data_status, 'dataAvailability': 'SCB TAB6589: observerade bilantal i trafik 2024 för samtliga 348 DeSO aktiverade och avstämda mot kommunrader. Hushåll och invånares lokala fördelning är fortfarande proxy.' if car_data else 'Komplett SCB-uttag har ännu inte hämtats i denna leverans.' if not verified else 'SCB-register 2024 för samtliga 348 DeSO: hushåll (TAB6568), befolkning (TAB6574) och personbilar i trafik (TAB6589), avstämda mot kommunraderna.',
         'dataFiles': source_files+[digest(RAW/'municipal_baseline_2024.json')] if not verified else source_files+[digest(active_path)],
         'builtFiles': [digest(DATA/name) for name in ('omraden.json', 'project.json', 'household-project.json', 'ytor.json', 'land.json')],

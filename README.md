@@ -1,4 +1,4 @@
-# Vägvis 2.2.5 för GitHub och Streamlit
+# Vägvis 2.2.6 för GitHub och Streamlit
 
 Vägvis uppskattar vägtrafikens klimatpåverkan med livscykelperspektiv i Malmö, Helsingborg och Gävle. Paketet innehåller läsbar beräkningskod, data, källregister, importverktyg, tester och manual. Det körs lokalt eller via Streamlit utan Netlify-krediter, API-nycklar eller AI-tjänster.
 
@@ -9,12 +9,20 @@ Två självständiga modeller ingår:
 
 A och B har olika systemgränser och ska inte summeras.
 
+## Nytt i 2.2.6
+
+- **Den grova landmasken från 2.2.5 är borttagen.** Den byggde på geo-maps earth-lands-10m, som visade sig vara för grov och delvis inaktuell: delar av hamnar (bland annat Norra hamnen i Malmö) och öar saknades, medan vissa hamnbassänger räknades som land. Kontrollen mot vägnätet visar att 2,0 % (Malmö) och 2,9 % (Gävle) av vägpunkterna låg "i havet". Kartan visar nu SCB:s exakta DeSO-gränser igen, som även omfattar vatten.
+- **Bakgrundskartan syns igenom.** Med OpenStreetMap påslaget är områdena halvgenomskinliga (50 %), så att gator, namn, hamnar och kustlinje syns. Utan bakgrund är färgerna täckande.
+- **Exakt landmask från OpenStreetMap** kan byggas med det nya GitHub-flödet **Bygg landmask** (se *Landmask* nedan). Det hämtar OpenStreetMaps landpolygoner, kontrollerar dem mot vägnätet och lägger resultatet i en pull request. Därefter visas kartan utan hav och nyckeltalet *t CO₂e per hektar utan hav* blir tillgängligt.
+- **Nytt nyckeltal i panelen för modell A:** t CO₂e per km väg, jämfört med kommunen.
+- Ett fel som gjorde att namnrutor och markeringar kunde bli kvar i kartan efter hovring är rättat.
+
 ## Nytt i 2.2.5
 
-- **Ny karta och områdespanel under *Karta & områden*.** Kartan visar bara land: havsytor inom DeSO färgas inte (sjöar räknas som land). Klasserna är kvintiler bland områdena i kommunen med en teckenförklaring i kartan, och skillnaden mellan scenario och basfall visas i en tvåfärgad skala (blått minskning, rött ökning). Kartan visar namn och värde när muspekaren hålls över ett område, och valt område ramas in.
+- **Ny karta och områdespanel under *Karta & områden*.** Klasserna är kvintiler bland områdena i kommunen med en teckenförklaring i kartan, och skillnaden mellan scenario och basfall visas i en tvåfärgad skala (blått minskning, rött ökning). Kartan visar namn och värde när muspekaren hålls över ett område, och valt område ramas in.
 - **Panelen till höger** visar områdets namn, utsläpp med modellintervall, placering bland kommunens områden och de nyckeltal som beräkningen bygger på (för B: hushåll, invånare, bilar, bilar per hushåll, körsträcka per bil med nivå, fordonskilometer och utsläpp per hushåll och invånare jämfört med kommunen; för A: väglängd, fordonskilometer, andel uppmätt trafik, landyta och utsläpp per hektar land). Livscykelns delar visas som staplar.
 - **Områdestabellen** visar RegSO-namn med DeSO-kod, placering, basfall, scenario med procentuell förändring, modellintervall och andel av kommunens utsläpp. En rad som väljs markeras och visas i kartan och panelen.
-- **Landareal per DeSO och RegSO** från OpenStreetMaps landpolygoner (geo-maps earth-lands-10m, ODbL), se `verktyg/bygg_landmask.py`. Den används bara för kartan och för nyckeltalet *t CO₂e per hektar land*. Utsläppen beräknas som tidigare med SCB:s fullständiga DeSO-geometri.
+- Landmask och landareal från geo-maps earth-lands-10m (borttagna i 2.2.6, se ovan).
 - Knappar med vit bakgrund (t.ex. *Beräkningsbeskrivning och källor*) är nu läsbara.
 
 ## Nytt i 2.2.4
@@ -57,12 +65,12 @@ A och B har olika systemgränser och ska inte summeras.
 
 ## Ladda upp till GitHub
 
-1. Packa upp paketet och öppna mappen `vagvis_2_2_5`.
-2. Skapa helst ett nytt repo. Välj **Add file → Upload files** och dra in mappens **innehåll** i ett enda steg (under 100 filer och cirka 11 MB). `streamlit_app.py` ska ligga direkt i repots rot.
+1. Packa upp paketet och öppna mappen `vagvis_2_2_6`.
+2. Skapa helst ett nytt repo. Välj **Add file → Upload files** och dra in mappens **innehåll** i ett enda steg (under 100 filer och cirka 10 MB). `streamlit_app.py` ska ligga direkt i repots rot.
 3. Kontrollera att `.github/` och `.streamlit/` kom med. Webbläsaren kan dölja punktmappar; använd GitHub Desktop eller Git om de saknas.
-4. Gör commit, exempelvis `Vägvis 2.2.5`.
+4. Gör commit, exempelvis `Vägvis 2.2.6`.
 5. I Streamlit Community Cloud: välj repot och huvudfilen `streamlit_app.py`, Python 3.12.
-6. Öppna appen och kontrollera att den visar **Vägvis 2.2.5** och **MODELLPAKET 2.2** i sidomenyn.
+6. Öppna appen och kontrollera att den visar **Vägvis 2.2.6** och **MODELLPAKET 2.2** i sidomenyn.
 
 Vid uppdatering av ett befintligt repo tas gamla filer inte bort av en uppladdning. Kör därför **Actions → Stada repo → Run workflow** efter uppladdningen. Flödet jämför repot med `MANIFEST_SHA256.json`, tar bort filer som inte hör till paketet (till exempel sidor och skript från äldre modellversioner, `app/Vagvis.html` och okomprimerade geodatafiler från 2.1.1) och lägger ändringen i en pull request som listar varje fil. Filer under `underlag/` och `dokument/` behålls. Lokalt: `python verktyg/stada_repo.py` (visar) och `python verktyg/stada_repo.py --ta-bort`.
 
@@ -94,7 +102,7 @@ Windows: dubbelklicka på `STARTA_LOKALT_WINDOWS.cmd`. För en fristående HTML-
 
 | Storhet | Status |
 |---|---|
-| Områden | SCB DeSO 2025 (348) och RegSO 2025 (144); landareal och kartans landmask från OpenStreetMap (geo-maps earth-lands-10m) |
+| Områden | SCB DeSO 2025 (348) och RegSO 2025 (144), inklusive vatten. Landmask och yta utan hav byggs med flödet *Bygg landmask* |
 | Vägnät | OpenStreetMap, oktober 2026 (32 274 vägar) |
 | Trafikflöden | Uppmätt på Öresundsbron (Øresundsbron 2024); övriga vägar schablon per vägklass, kalibrerade per kommun |
 | Körsträcka (B) | Uppmätt per kommun 2024 (RUS/SCB tabell 2): Malmö 11 892, Helsingborg 12 917, Gävle 12 521 km per privat bil; samma värde för alla DeSO i kommunen tills DeSO-värden beställs |
@@ -138,6 +146,21 @@ python verktyg/importera_korstracka.py deso korstracka_deso_2024.csv
 ```
 
 Verktyget kräver alla 348 DeSO, bilantal som stämmer med TAB6589 och rimlig körsträcka per bil. Skyddade celler får kommunens eller rikets värde. Kör sedan `python verktyg/bygg_underlag.py` och `node kallkod/bygg_appen.cjs`. Under **Antaganden & scenario** kan du växla mellan uppmätta värden och samma riksmedelvärde för alla.
+
+### Landmask (kustlinje)
+
+SCB:s DeSO omfattar även vatten, och flera DeSO i Malmö, Helsingborg och Gävle sträcker sig långt ut i havet. För att kartan ska visa bara land och för nyckeltalet *t CO₂e per hektar utan hav* behövs en detaljerad kustlinje. Paketet innehåller ingen, eftersom OpenStreetMaps landpolygoner (cirka 1 GB) inte går att hämta i miljön där paketet byggs.
+
+**Actions → Bygg landmask → Run workflow.** Flödet laddar ned landpolygonerna från osmdata.openstreetmap.de, klipper ut de tre kommunerna och kontrollerar masken mot vägnätet: högst 1 % av vägpunkterna inom kommunens DeSO får ligga mer än 15 m utanför landytan (broar). En grövre eller inaktuell kustlinje avvisas och inga filer ändras. Resultatet läggs på grenen `landmask-<nr>` med en pull request som visar ytan utan hav per kommun. Slå ihop den och välj **Reboot app** i Streamlit. Lokalt:
+
+```bash
+python -m pip install shapely==2.2.0 pyshp==2.3.1
+python verktyg/bygg_landmask.py land-polygons-split-4326.zip
+python verktyg/bygg_underlag.py
+node kallkod/bygg_appen.cjs
+```
+
+Masken påverkar bara kartvisningen och nyckeltalet per hektar. Utsläppen beräknas alltid med SCB:s fullständiga DeSO-geometri, så trafik på broar och i hamnar räknas med. Sjöar räknas som land. **Stada repo** tar bort den grova masken från 2.2.5 om den finns kvar i repot, men aldrig en mask som flödet har byggt.
 
 ### Trafikverkets ÅDT (NVDB)
 

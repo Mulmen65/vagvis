@@ -1,35 +1,28 @@
 {
- "schemaVersion": 2,
- "accessed": "2026-10-25",
- "use": "display_and_land_area",
- "source": "https://github.com/simonepri/geo-maps/releases/download/v0.6.0/earth-lands-10m.geo.json",
- "sha256": "76ef0da9333e5e5c0366708ebdfc9d3a5a9e4caaec3493a0139f759fcf26fdd2",
- "licence": "ODbL, © OpenStreetMap-bidragsgivare",
+ "schemaVersion": 3,
+ "accessed": "2026-10-26",
+ "use": "none",
  "cities": {
   "1280": {
-   "status": "primary_osm_generalised",
-   "source": "https://github.com/simonepri/geo-maps/releases/download/v0.6.0/earth-lands-10m.geo.json",
-   "nominalResolutionMetres": 10,
-   "displaySimplificationDegrees": 4e-05,
-   "landHa": 15592.14,
-   "totalHa": 33444.78
+   "status": "unavailable",
+   "note": "Ingen landmask i paketet. Kartan visar SCB:s DeSO-gränser, som även omfattar vatten. Kör Actions → Bygg landmask för en landmask från OpenStreetMaps landpolygoner."
   },
   "1283": {
-   "status": "primary_osm_generalised",
-   "source": "https://github.com/simonepri/geo-maps/releases/download/v0.6.0/earth-lands-10m.geo.json",
-   "nominalResolutionMetres": 10,
-   "displaySimplificationDegrees": 4e-05,
-   "landHa": 34528.34,
-   "totalHa": 42306.34
+   "status": "unavailable",
+   "note": "Ingen landmask i paketet. Kartan visar SCB:s DeSO-gränser, som även omfattar vatten. Kör Actions → Bygg landmask för en landmask från OpenStreetMaps landpolygoner."
   },
   "2180": {
-   "status": "primary_osm_generalised",
-   "source": "https://github.com/simonepri/geo-maps/releases/download/v0.6.0/earth-lands-10m.geo.json",
-   "nominalResolutionMetres": 10,
-   "displaySimplificationDegrees": 4e-05,
-   "landHa": 160162.53,
-   "totalHa": 319806.01
+   "status": "unavailable",
+   "note": "Ingen landmask i paketet. Kartan visar SCB:s DeSO-gränser, som även omfattar vatten. Kör Actions → Bygg landmask för en landmask från OpenStreetMaps landpolygoner."
   }
  },
- "note": "Beräkningen använder alltid SCB:s fullständiga DeSO-geometri. Masken påverkar bara kartvisningen och nyckeltalet per hektar land."
+ "rejected": [
+  {
+   "source": "https://github.com/simonepri/geo-maps/releases/download/v0.6.0/earth-lands-10m.geo.json",
+   "sha256": "76ef0da9333e5e5c0366708ebdfc9d3a5a9e4caaec3493a0139f759fcf26fdd2",
+   "usedIn": "2.2.5",
+   "reason": "För grov och inaktuell kustlinje: 2,0 % (Malmö) och 2,9 % (Gävle) av vägpunkterna inom kommunens DeSO låg mer än 15 m utanför landytan; delar av hamnar och öar saknades."
+  }
+ ],
+ "tool": "verktyg/bygg_landmask.py (GitHub-flödet Bygg landmask)"
 }

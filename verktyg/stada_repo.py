@@ -19,6 +19,7 @@ GitHub-flödet "Stada repo" kör verktyget och lägger ändringen i en pull requ
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -43,7 +44,15 @@ OBSOLETE = {
     'dokument/Kontrollresultat_2.2.3.json',
     'dokument/Vagvis_manual_2.2.4.docx',
     'dokument/Kontrollresultat_2.2.4.json',
+    'dokument/Vagvis_manual_2.2.5.docx',
+    'dokument/Kontrollresultat_2.2.5.json',
     'underlag/raw/land_gavle_osm_100m.geojson',  # ersatt av coast_display_2026.json (10 m)
+}
+# Grov landmask från 2.2.5 (geo-maps earth-lands-10m). Tas bort bara om innehållet är exakt det
+# gamla, så att en landmask som flödet "Bygg landmask" har byggt aldrig tas bort.
+OBSOLETE_CONTENT = {
+    'underlag/raw/coast_display_2026.json': 'bec960dbcc2667468a69637609357f18470cea781745d82c1798c5a5d69314bc',
+    'underlag/raw/land_area_2026.json': '5a44de2f3ee4c54d12e14f98c9abfb5fc59fc2d6a23215d0cb1312496b67a5ae',
 }
 KEEP_PREFIXES = ('underlag/', 'dokument/')
 SKIP_DIRS = {'.git', '__pycache__', 'node_modules', 'testresultat'}
@@ -60,12 +69,19 @@ def repo_files():
                       and p.relative_to(ROOT).as_posix() != 'app/Vagvis.html')
 
 
+def obsolete_content(f):
+    path = ROOT/f
+    if f not in OBSOLETE_CONTENT or not path.is_file():
+        return False
+    return hashlib.sha256(path.read_bytes()).hexdigest() == OBSOLETE_CONTENT[f]
+
+
 def classify(files, manifest):
     remove, review = [], []
     for f in files:
         if f == MANIFEST or f in manifest:
             continue
-        if OLD_MODEL.search(f) or f in OBSOLETE:
+        if OLD_MODEL.search(f) or f in OBSOLETE or obsolete_content(f):
             remove.append(f)
         elif f.startswith(KEEP_PREFIXES):
             review.append(f)

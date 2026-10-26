@@ -150,7 +150,7 @@ class PrimaryDataTests(unittest.TestCase):
 
     def test_source_receipt_and_hashes_match_actual_bytes(self):
         receipt = read("underlag/datakvitto.json")
-        self.assertEqual(receipt["modelVersion"], "2.2.5")
+        self.assertEqual(receipt["modelVersion"], "2.2.6")
         self.assertEqual(receipt["dataYear"], 2024)
         self.assertEqual(receipt["desoVersion"], "2025")
         for entry in receipt["dataFiles"] + receipt["builtFiles"]:
@@ -408,11 +408,11 @@ class PackageTests(unittest.TestCase):
                     modules.append(node.module or "")
             self.assertFalse(any(module.startswith(("requests", "urllib", "httpx")) for module in modules))
             self.assertNotIn("urlopen", text)
-        self.assertIn('page_title="Vägvis 2.2.5"', (ROOT / "streamlit_app.py").read_text())
+        self.assertIn('page_title="Vägvis 2.2.6"', (ROOT / "streamlit_app.py").read_text())
 
     def test_evidence_has_unique_parameters_sources_and_no_orphan_references(self):
         registry = read("underlag/evidensregister.json")
-        self.assertEqual(registry["version"], "2.2.5")
+        self.assertEqual(registry["version"], "2.2.6")
         for group in ("parameters", "sources"):
             ids = [row["id"] for row in registry[group]]
             self.assertEqual(len(ids), len(set(ids)), group)
@@ -435,13 +435,22 @@ class PackageTests(unittest.TestCase):
 
 
 class LandAreaTests(unittest.TestCase):
-    """Landareal (OSM-landmask) används för kartan och nyckeltalet per hektar land."""
+    """Landmask och yta utan hav (verktyg/bygg_landmask.py) används för kartan och nyckeltalet per hektar."""
 
-    def test_land_area_is_consistent(self):
-        land = json.loads((ROOT/"underlag/raw/land_area_2026.json").read_text(encoding="utf-8"))
+    def test_land_data_is_consistent(self):
         receipt = json.loads((ROOT/"underlag/raw/coast_receipt.json").read_text(encoding="utf-8"))
-        self.assertEqual(land["sha256"], receipt["sha256"])
         ytor = json.loads((ROOT/"kallkod/data/ytor.json").read_text(encoding="utf-8"))["A"]
+        built = json.loads((ROOT/"kallkod/data/land.json").read_text(encoding="utf-8"))
+        land_file = ROOT/"underlag/raw/land_area_2026.json"
+        if all(c.get("status") == "unavailable" for c in receipt["cities"].values()):
+            # Utan godkänd landmask: ingen mask i kartan och ingen yta utan hav. (En kvarglömd grov
+            # mask från 2.2.5 i underlag/raw tas bort av Stada repo och används inte av appen.)
+            self.assertEqual(built, {})
+            self.assertTrue(all(row["landHa"] is None for row in ytor.values()))
+            self.assertTrue(all(c["status"] == "unavailable" for c in receipt["cities"].values()))
+            return
+        land = json.loads(land_file.read_text(encoding="utf-8"))
+        self.assertEqual(land["sha256"], receipt["sha256"])
         areas = land["areas"]
         for key, row in ytor.items():
             parts = key.split("|")
@@ -453,15 +462,89 @@ class LandAreaTests(unittest.TestCase):
             self.assertIn(code, areas, key)
             self.assertAlmostEqual(row["landHa"], areas[code], places=2)
             self.assertLessEqual(row["landHa"], row["ha"]*1.001+0.05, key)
-            self.assertGreater(row["landHa"], 0, key)
         for city in ("1280", "1283", "2180"):
-            deso = sum(v for k, v in areas.items() if k.startswith(city+"C") or k.startswith(city+"A") or k.startswith(city+"B"))
+            self.assertEqual(receipt["cities"][city]["status"], "osm_land_polygons")
+            self.assertIsNotNone(receipt["cities"][city]["roadCheck"]["outsidePercent"])
+            deso = sum(v for k, v in areas.items() if k[:5] in (city+"A", city+"B", city+"C"))
             regso = sum(v for k, v in areas.items() if k.startswith(city+"R"))
             self.assertAlmostEqual(deso, areas["city|"+city], delta=1)
             self.assertAlmostEqual(regso, areas["city|"+city], delta=1)
-        masks = json.loads((ROOT/"underlag/raw/coast_display_2026.json").read_text(encoding="utf-8"))
-        self.assertEqual(sorted(masks), ["1280", "1283", "2180"])
+        self.assertEqual(sorted(built), ["1280", "1283", "2180"])
 
+
+@unittest.skipUnless(importlib.util.find_spec("shapely") and importlib.util.find_spec("shapefile"),
+                     "kräver shapely och pyshp")
+class LandmaskToolTests(unittest.TestCase):
+    """bygg_landmask.py med syntetiska landpolygoner i samma format som osmdata (zippad shapefil)."""
+
+    @staticmethod
+    def _zip(path, geoms):
+        import shapefile
+        from shapely.geometry.polygon import orient
+        stem = Path(path).with_suffix("")
+        w = shapefile.Writer(str(stem), shapeType=shapefile.POLYGON)
+        w.field("FID", "N")
+        for i, g in enumerate(geoms):
+            for poly in getattr(g, "geoms", [g]):
+                poly = orient(poly, sign=-1.0)  # yttre ring medurs enligt shapefilformatet
+                w.poly([list(poly.exterior.coords)]+[list(r.coords) for r in poly.interiors])
+                w.record(i)
+        w.close()
+        with zipfile.ZipFile(path, "w") as z:
+            for ext in (".shp", ".shx", ".dbf"):
+                z.write(str(stem)+ext, "land-polygons-split-4326/land_polygons"+ext)
+
+    def _load(self):
+        spec = importlib.util.spec_from_file_location("bygg_landmask", ROOT/"verktyg/bygg_landmask.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def _cities(self):
+        from shapely.geometry import shape
+        from shapely.ops import unary_union
+        deso = read("underlag/raw/scb_deso_2025.geojson.gz")["features"]
+        return {c: unary_union([shape(f["geometry"]).buffer(0) for f in deso if f["properties"]["city"] == c])
+                for c in ("1280", "1283", "2180")}
+
+    def test_accepts_detailed_land_and_writes_consistent_files(self):
+        mod = self._load()
+        cities = self._cities()
+        land = [u.buffer(0.003).simplify(0.0005) for u in cities.values()]
+        with tempfile.TemporaryDirectory() as tmp:
+            src = Path(tmp)/"land-polygons-split-4326.zip"
+            self._zip(src, land)
+            out = Path(tmp)/"ut"
+            result = mod.main([str(src)], out_dir=out)
+            self.assertEqual(sorted(result), ["1280", "1283", "2180"])
+            areas = json.loads((out/"land_area_2026.json").read_text(encoding="utf-8"))["areas"]
+            receipt = json.loads((out/"coast_receipt.json").read_text(encoding="utf-8"))
+            masks = json.loads((out/"coast_display_2026.json").read_text(encoding="utf-8"))
+            self.assertEqual(receipt["source"], mod.OSMDATA)
+            for c, r in result.items():
+                self.assertEqual(r["status"], "osm_land_polygons")
+                self.assertLessEqual(r["roadCheck"]["outsidePercent"], 0.1)
+                # Hela kommunen ligger på "land": ytan utan hav är lika med hela ytan.
+                self.assertAlmostEqual(r["landHa"], r["totalHa"], delta=r["totalHa"]*0.002)
+                self.assertEqual(masks[c]["type"], "FeatureCollection")
+                self.assertAlmostEqual(areas["city|"+c], r["landHa"], places=1)
+
+    def test_rejects_coarse_land_without_writing(self):
+        from shapely.geometry import box
+        mod = self._load()
+        cities = self._cities()
+        land = []
+        for u in cities.values():
+            x0, y0, x1, y1 = u.bounds
+            land.append(u.buffer(0.003).difference(box(x0, y0, (x0+x1)/2, (y0+y1)/2)))  # en fjärdedel "hav"
+        with tempfile.TemporaryDirectory() as tmp:
+            src = Path(tmp)/"grov.zip"
+            self._zip(src, land)
+            out = Path(tmp)/"ut"
+            with self.assertRaises(SystemExit) as err:
+                mod.main([str(src)], out_dir=out)
+            self.assertIn("avvisades", str(err.exception))
+            self.assertFalse(out.exists())
 
 if __name__ == "__main__":
     unittest.main()

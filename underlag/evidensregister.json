@@ -1,6 +1,6 @@
 {
  "schema": "vagvis-evidence-2",
- "version": "2.2.5",
+ "version": "2.2.6",
  "reviewDate": "2026-10-25",
  "release": {
   "model": "Vägvis",
@@ -242,17 +242,17 @@
   },
   {
    "id": "OSM_LAND",
-   "short": "OSM landpolygoner (geo-maps)",
-   "title": "Pri, S. (2018). geo-maps v0.6.0: earth-lands-10m. Landpolygoner ur OpenStreetMap, © OpenStreetMap-bidragsgivare (ODbL).",
-   "url": "https://github.com/simonepri/geo-maps/releases/tag/v0.6.0",
-   "use": "Landmask i kartan, så att havsytor inom DeSO inte färgas (sjöar räknas som land), och landareal per DeSO och RegSO för nyckeltalet t CO₂e per hektar land. Utsläppsberäkningen använder alltid SCB:s fullständiga DeSO-geometri, så trafik på broar och i hamnar räknas med.",
-   "accessed": "2026-10-25",
-   "verification": "Kontrollsumma (SHA256) i underlag/raw/coast_receipt.json. Landarealen per kommun stämmer med SCB:s redovisade landareal. Verktyg: verktyg/bygg_landmask.py."
+   "short": "OSM landpolygoner",
+   "title": "OpenStreetMap-bidragsgivare (u.å.). Land polygons. osmdata.openstreetmap.de (FOSSGIS). ODbL.",
+   "url": "https://osmdata.openstreetmap.de/data/land-polygons.html",
+   "use": "Landmask för kartan (havsytor inom DeSO visas inte) och yta utan hav per DeSO och RegSO för nyckeltalet t CO₂e per hektar utan hav. Byggs med GitHub-flödet Bygg landmask och ingår inte i paketet från start. Sjöar räknas som land. Utsläppsberäkningen använder alltid SCB:s fullständiga DeSO-geometri, så trafik på broar och i hamnar räknas med.",
+   "accessed": "2026-10-26",
+   "verification": "verktyg/bygg_landmask.py jämför masken med OSM-vägnätet: högst 1 % av vägpunkterna inom kommunens DeSO får ligga mer än 15 m utanför landytan. Kontrollsumma och resultat skrivs i underlag/raw/coast_receipt.json. geo-maps earth-lands-10m (använd i 2.2.5) avvisades: 2,0 % (Malmö) och 2,9 % (Gävle) av vägpunkterna låg utanför, eftersom delar av hamnar och öar saknades."
   },
   {
    "id": "ASSUMPTIONS",
    "short": "Vägvis 2026",
-   "title": "Vägvis (2026). Redovisade modellval, version 2.2.5.",
+   "title": "Vägvis (2026). Redovisade modellval, version 2.2.6.",
    "url": "",
    "use": "Eget parameterregister i underlag/evidensregister.json. Värden med denna källa är modellantaganden utan direkt extern belägg.",
    "accessed": "2026-10-25",
@@ -3134,11 +3134,11 @@
   },
   {
    "id": "LAND_AREA",
-   "name": "Landareal per område",
+   "name": "Yta utan hav per område",
    "unit": "hektar",
    "model": "both",
    "status": "derived_descriptor",
-   "rationale": "SCB:s DeSO 2025 snittad med OSM:s landpolygoner. Används bara för kartans landmask och för nyckeltalet t CO₂e per hektar land, inte för utsläppen.",
+   "rationale": "Yta utan hav: SCB:s DeSO 2025 snittad med OpenStreetMaps landpolygoner (sjöar räknas som land). Finns när flödet Bygg landmask har körts. Används bara för kartans landmask och nyckeltalet t CO₂e per hektar utan hav, inte för utsläppen.",
    "sources": [
     "SCB_DESO",
     "OSM_LAND"

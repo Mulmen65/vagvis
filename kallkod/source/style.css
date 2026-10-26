@@ -738,3 +738,4 @@ main .ghost:hover,dialog .ghost:hover{background:#eaf1ec}
 
 .map-legend i.nodata{border-color:#b9c3be}
 @media (min-width:1101px){.map-layout .map-surface{height:640px!important}}
+.map-surface.osm-on .map-legend i:not(.nodata){opacity:.6}

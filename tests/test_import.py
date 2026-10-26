@@ -241,6 +241,32 @@ class StadaRepoTests(unittest.TestCase):
                                        "app/Vagvis.html", "dokument/Vagvis_manual_2.1.1.docx", "underlag/raw/osm_roads_2026.geojson"})
         self.assertEqual(set(review), {"underlag/trafik/nvdb_adt_2024.json", "dokument/egna_anteckningar.docx"})
 
+    def test_coarse_land_mask_is_removed_only_when_content_matches(self):
+        import hashlib
+        old_root = stada_repo.ROOT
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                stada_repo.ROOT = Path(tmp)
+                raw = Path(tmp)/"underlag/raw"
+                raw.mkdir(parents=True)
+                (raw/"coast_display_2026.json").write_text("{}\n", encoding="utf-8")
+                (raw/"land_area_2026.json").write_text("{}\n", encoding="utf-8")
+                files = ["underlag/raw/coast_display_2026.json", "underlag/raw/land_area_2026.json"]
+                remove, review = stada_repo.classify(files, set())
+                self.assertEqual(remove, [])  # annat innehåll, t.ex. en landmask från flödet Bygg landmask
+                digest = hashlib.sha256((raw/"land_area_2026.json").read_bytes()).hexdigest()
+                saved = dict(stada_repo.OBSOLETE_CONTENT)
+                stada_repo.OBSOLETE_CONTENT["underlag/raw/land_area_2026.json"] = digest
+                try:
+                    remove, review = stada_repo.classify(files, set())
+                finally:
+                    stada_repo.OBSOLETE_CONTENT.clear()
+                    stada_repo.OBSOLETE_CONTENT.update(saved)
+                self.assertEqual(remove, ["underlag/raw/land_area_2026.json"])
+                self.assertEqual(review, ["underlag/raw/coast_display_2026.json"])
+        finally:
+            stada_repo.ROOT = old_root
+
 
 class KorstrackaTests(unittest.TestCase):
     @classmethod
