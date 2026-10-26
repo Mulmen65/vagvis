@@ -1,4 +1,4 @@
-# Vägvis 2.2.6 för GitHub och Streamlit
+# Vägvis 2.2.7 för GitHub och Streamlit
 
 Vägvis uppskattar vägtrafikens klimatpåverkan med livscykelperspektiv i Malmö, Helsingborg och Gävle. Paketet innehåller läsbar beräkningskod, data, källregister, importverktyg, tester och manual. Det körs lokalt eller via Streamlit utan Netlify-krediter, API-nycklar eller AI-tjänster.
 
@@ -8,6 +8,12 @@ Två självständiga modeller ingår:
 - **B – hushållens bilar:** registrerade personbilar per DeSO × årlig körsträcka, tilldelat bilarnas hemområde. Körning utanför kommunen ingår.
 
 A och B har olika systemgränser och ska inte summeras.
+
+## Nytt i 2.2.7
+
+- **Exakt landmask ingår.** Kartan visar bara land, med OpenStreetMaps landpolygoner (osmdata.openstreetmap.de, dataläge 26 oktober 2026). Hamnar, pirar och öar följer den verkliga kustlinjen. Kontrollen mot vägnätet: 0,01 % (Malmö), 0,02 % (Helsingborg) och 0,00 % (Gävle) av vägpunkterna ligger utanför landytan (broar), mot 2,0 respektive 2,9 % med masken i 2.2.5.
+- **Yta utan hav:** Malmö 15 858 ha, Helsingborg 34 530 ha och Gävle 178 249 ha (sjöar räknas som land). Nyckeltalet *t CO₂e per hektar utan hav* finns nu i kartan och panelen.
+- Flödet **Bygg landmask** behövs bara för att uppdatera masken senare.
 
 ## Nytt i 2.2.6
 
@@ -65,12 +71,12 @@ A och B har olika systemgränser och ska inte summeras.
 
 ## Ladda upp till GitHub
 
-1. Packa upp paketet och öppna mappen `vagvis_2_2_6`.
-2. Skapa helst ett nytt repo. Välj **Add file → Upload files** och dra in mappens **innehåll** i ett enda steg (under 100 filer och cirka 10 MB). `streamlit_app.py` ska ligga direkt i repots rot.
+1. Packa upp paketet och öppna mappen `vagvis_2_2_7`.
+2. Skapa helst ett nytt repo. Välj **Add file → Upload files** och dra in mappens **innehåll** i ett enda steg (under 100 filer och cirka 12 MB). `streamlit_app.py` ska ligga direkt i repots rot.
 3. Kontrollera att `.github/` och `.streamlit/` kom med. Webbläsaren kan dölja punktmappar; använd GitHub Desktop eller Git om de saknas.
-4. Gör commit, exempelvis `Vägvis 2.2.6`.
+4. Gör commit, exempelvis `Vägvis 2.2.7`.
 5. I Streamlit Community Cloud: välj repot och huvudfilen `streamlit_app.py`, Python 3.12.
-6. Öppna appen och kontrollera att den visar **Vägvis 2.2.6** och **MODELLPAKET 2.2** i sidomenyn.
+6. Öppna appen och kontrollera att den visar **Vägvis 2.2.7** och **MODELLPAKET 2.2** i sidomenyn.
 
 Vid uppdatering av ett befintligt repo tas gamla filer inte bort av en uppladdning. Kör därför **Actions → Stada repo → Run workflow** efter uppladdningen. Flödet jämför repot med `MANIFEST_SHA256.json`, tar bort filer som inte hör till paketet (till exempel sidor och skript från äldre modellversioner, `app/Vagvis.html` och okomprimerade geodatafiler från 2.1.1) och lägger ändringen i en pull request som listar varje fil. Filer under `underlag/` och `dokument/` behålls. Lokalt: `python verktyg/stada_repo.py` (visar) och `python verktyg/stada_repo.py --ta-bort`.
 
@@ -102,7 +108,7 @@ Windows: dubbelklicka på `STARTA_LOKALT_WINDOWS.cmd`. För en fristående HTML-
 
 | Storhet | Status |
 |---|---|
-| Områden | SCB DeSO 2025 (348) och RegSO 2025 (144), inklusive vatten. Landmask och yta utan hav byggs med flödet *Bygg landmask* |
+| Områden | SCB DeSO 2025 (348) och RegSO 2025 (144). Landmask och yta utan hav från OpenStreetMaps landpolygoner, 26 oktober 2026 |
 | Vägnät | OpenStreetMap, oktober 2026 (32 274 vägar) |
 | Trafikflöden | Uppmätt på Öresundsbron (Øresundsbron 2024); övriga vägar schablon per vägklass, kalibrerade per kommun |
 | Körsträcka (B) | Uppmätt per kommun 2024 (RUS/SCB tabell 2): Malmö 11 892, Helsingborg 12 917, Gävle 12 521 km per privat bil; samma värde för alla DeSO i kommunen tills DeSO-värden beställs |
@@ -149,9 +155,7 @@ Verktyget kräver alla 348 DeSO, bilantal som stämmer med TAB6589 och rimlig k�
 
 ### Landmask (kustlinje)
 
-SCB:s DeSO omfattar även vatten, och flera DeSO i Malmö, Helsingborg och Gävle sträcker sig långt ut i havet. För att kartan ska visa bara land och för nyckeltalet *t CO₂e per hektar utan hav* behövs en detaljerad kustlinje. Paketet innehåller ingen, eftersom OpenStreetMaps landpolygoner (cirka 1 GB) inte går att hämta i miljön där paketet byggs.
-
-**Actions → Bygg landmask → Run workflow.** Flödet laddar ned landpolygonerna från osmdata.openstreetmap.de, klipper ut de tre kommunerna och kontrollerar masken mot vägnätet: högst 1 % av vägpunkterna inom kommunens DeSO får ligga mer än 15 m utanför landytan (broar). En grövre eller inaktuell kustlinje avvisas och inga filer ändras. Resultatet läggs på grenen `landmask-<nr>` med en pull request som visar ytan utan hav per kommun. Slå ihop den och välj **Reboot app** i Streamlit. Lokalt:
+SCB:s DeSO omfattar även vatten, och flera DeSO i Malmö, Helsingborg och Gävle sträcker sig långt ut i havet. För att kartan ska visa bara land och för nyckeltalet *t CO₂e per hektar utan hav* behövs en detaljerad kustlinje. Paketet innehåller en sådan mask, byggd 26 oktober 2026 ur OpenStreetMaps landpolygoner. För att uppdatera den: **Actions → Bygg landmask → Run workflow.** Flödet laddar ned landpolygonerna från osmdata.openstreetmap.de, klipper ut de tre kommunerna och kontrollerar masken mot vägnätet: högst 1 % av vägpunkterna inom kommunens DeSO får ligga mer än 15 m utanför landytan (broar). En grövre eller inaktuell kustlinje avvisas och inga filer ändras. Resultatet läggs på grenen `landmask-<nr>` med en pull request som visar ytan utan hav per kommun. Slå ihop den och välj **Reboot app** i Streamlit. Lokalt:
 
 ```bash
 python -m pip install shapely==2.2.0 pyshp==2.3.1

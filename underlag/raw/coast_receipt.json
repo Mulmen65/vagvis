@@ -1,28 +1,51 @@
 {
  "schemaVersion": 3,
  "accessed": "2026-10-26",
- "use": "none",
+ "use": "display_and_area_without_sea",
+ "source": "https://osmdata.openstreetmap.de/download/land-polygons-split-4326.zip",
+ "file": "land-polygons-split-4326.zip",
+ "sha256": "84e76612d9fd7f15e0ee52ea956fbf7529a67576a175d1d5aa4021c9ddc20e24",
+ "licence": "ODbL, © OpenStreetMap-bidragsgivare",
  "cities": {
   "1280": {
-   "status": "unavailable",
-   "note": "Ingen landmask i paketet. Kartan visar SCB:s DeSO-gränser, som även omfattar vatten. Kör Actions → Bygg landmask för en landmask från OpenStreetMaps landpolygoner."
+   "status": "osm_land_polygons",
+   "landHa": 15858.23,
+   "totalHa": 33444.78,
+   "displaySimplificationDegrees": 2e-05,
+   "maskVertices": 2401,
+   "roadCheck": {
+    "roadVertices": 40773,
+    "outsideVertices": 4,
+    "outsidePercent": 0.01,
+    "toleranceMetres": 15
+   }
   },
   "1283": {
-   "status": "unavailable",
-   "note": "Ingen landmask i paketet. Kartan visar SCB:s DeSO-gränser, som även omfattar vatten. Kör Actions → Bygg landmask för en landmask från OpenStreetMaps landpolygoner."
+   "status": "osm_land_polygons",
+   "landHa": 34529.62,
+   "totalHa": 42306.34,
+   "displaySimplificationDegrees": 2e-05,
+   "maskVertices": 2017,
+   "roadCheck": {
+    "roadVertices": 35712,
+    "outsideVertices": 6,
+    "outsidePercent": 0.017,
+    "toleranceMetres": 15
+   }
   },
   "2180": {
-   "status": "unavailable",
-   "note": "Ingen landmask i paketet. Kartan visar SCB:s DeSO-gränser, som även omfattar vatten. Kör Actions → Bygg landmask för en landmask från OpenStreetMaps landpolygoner."
+   "status": "osm_land_polygons",
+   "landHa": 178249.22,
+   "totalHa": 319806.01,
+   "displaySimplificationDegrees": 2e-05,
+   "maskVertices": 30600,
+   "roadCheck": {
+    "roadVertices": 51950,
+    "outsideVertices": 0,
+    "outsidePercent": 0.0,
+    "toleranceMetres": 15
+   }
   }
  },
- "rejected": [
-  {
-   "source": "https://github.com/simonepri/geo-maps/releases/download/v0.6.0/earth-lands-10m.geo.json",
-   "sha256": "76ef0da9333e5e5c0366708ebdfc9d3a5a9e4caaec3493a0139f759fcf26fdd2",
-   "usedIn": "2.2.5",
-   "reason": "För grov och inaktuell kustlinje: 2,0 % (Malmö) och 2,9 % (Gävle) av vägpunkterna inom kommunens DeSO låg mer än 15 m utanför landytan; delar av hamnar och öar saknades."
-  }
- ],
- "tool": "verktyg/bygg_landmask.py (GitHub-flödet Bygg landmask)"
+ "note": "Utsläppen beräknas alltid med SCB:s fullständiga DeSO-geometri. Masken påverkar bara kartvisningen och nyckeltalet per hektar utan hav."
 }

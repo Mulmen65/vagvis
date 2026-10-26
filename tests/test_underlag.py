@@ -150,7 +150,7 @@ class PrimaryDataTests(unittest.TestCase):
 
     def test_source_receipt_and_hashes_match_actual_bytes(self):
         receipt = read("underlag/datakvitto.json")
-        self.assertEqual(receipt["modelVersion"], "2.2.6")
+        self.assertEqual(receipt["modelVersion"], "2.2.7")
         self.assertEqual(receipt["dataYear"], 2024)
         self.assertEqual(receipt["desoVersion"], "2025")
         for entry in receipt["dataFiles"] + receipt["builtFiles"]:
@@ -408,11 +408,11 @@ class PackageTests(unittest.TestCase):
                     modules.append(node.module or "")
             self.assertFalse(any(module.startswith(("requests", "urllib", "httpx")) for module in modules))
             self.assertNotIn("urlopen", text)
-        self.assertIn('page_title="Vägvis 2.2.6"', (ROOT / "streamlit_app.py").read_text())
+        self.assertIn('page_title="Vägvis 2.2.7"', (ROOT / "streamlit_app.py").read_text())
 
     def test_evidence_has_unique_parameters_sources_and_no_orphan_references(self):
         registry = read("underlag/evidensregister.json")
-        self.assertEqual(registry["version"], "2.2.6")
+        self.assertEqual(registry["version"], "2.2.7")
         for group in ("parameters", "sources"):
             ids = [row["id"] for row in registry[group]]
             self.assertEqual(len(ids), len(set(ids)), group)

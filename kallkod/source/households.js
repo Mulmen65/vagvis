@@ -1,7 +1,7 @@
 /* Independent household activity model: stock × annual distance. */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./core.js'),require('./scenarios.js'));else root.VagvisHouseholds=factory(root.Vagvis,root.VagvisScenarios);})(typeof globalThis!=='undefined'?globalThis:this,function(V,S){
 'use strict';
-const VERSION='2.2.6',DEFAULTS={kmPerCar:12753,kmMode:'local',uncertainty:{distance:.15,carStock:0,allocation:.50,distanceLocal:.05,allocationLocal:.05}};
+const VERSION='2.2.7',DEFAULTS={kmPerCar:12753,kmMode:'local',uncertainty:{distance:.15,carStock:0,allocation:.50,distanceLocal:.05,allocationLocal:.05}};
 /* Körsträcka per bil: uppmätt per DeSO (SCB, mätarställningar) går före kommunvärde (RUS/SCB körsträckedata),
    som går före riksmedelvärdet kmPerCar. kmMode 'national' tvingar samma värde för alla områden. */
 const LOCAL_KM={observed_register:'deso',derived_official:'kommun'};

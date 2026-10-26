@@ -36,7 +36,7 @@ function aggregateClosure(agg,cities){
 }
 async function main(){
   await check('Körbar källkod är självständig och har rätt version',()=>{
-    assert.equal(V.VERSION,'2.2.6');assert.equal(S.VERSION,'2.2.6');assert.equal(H.VERSION,'2.2.6');
+    assert.equal(V.VERSION,'2.2.7');assert.equal(S.VERSION,'2.2.7');assert.equal(H.VERSION,'2.2.7');
     // Endast filer som skalet laddar får finnas i kallkod/source; äldre modellers filer ska inte följa med.
     const sources=fs.readdirSync(path.join(root,'kallkod/source')).sort();
     const loaded=[...read('kallkod/source/shell.html').matchAll(/\{\{kallkod\/source\/([^}]+)\}\}/g)].map(m=>m[1]);

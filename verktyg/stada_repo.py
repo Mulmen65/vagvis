@@ -46,6 +46,8 @@ OBSOLETE = {
     'dokument/Kontrollresultat_2.2.4.json',
     'dokument/Vagvis_manual_2.2.5.docx',
     'dokument/Kontrollresultat_2.2.5.json',
+    'dokument/Vagvis_manual_2.2.6.docx',
+    'dokument/Kontrollresultat_2.2.6.json',
     'underlag/raw/land_gavle_osm_100m.geojson',  # ersatt av coast_display_2026.json (10 m)
 }
 # Grov landmask från 2.2.5 (geo-maps earth-lands-10m). Tas bort bara om innehållet är exakt det

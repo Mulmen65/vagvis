@@ -237,7 +237,7 @@
  {
   "id": "ASSUMPTIONS",
   "short": "Vägvis 2026",
-  "title": "Vägvis (2026). Redovisade modellval, version 2.2.6.",
+  "title": "Vägvis (2026). Redovisade modellval, version 2.2.7.",
   "url": "",
   "use": "Eget parameterregister i underlag/evidensregister.json. Värden med denna källa är modellantaganden utan direkt extern belägg.",
   "accessed": "2026-10-25",
